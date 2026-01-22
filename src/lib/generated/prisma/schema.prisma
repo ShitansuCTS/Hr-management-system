@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+///////////////////////////
+// ENUMS
+///////////////////////////
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+///////////////////////////
+// ORGANIZATION
+///////////////////////////
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  domain    String? // optional, e.g., company email domain
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[] // 1:N relation to Users
+}
+
+///////////////////////////
+// USER
+///////////////////////////
+
+model User {
+  id       String     @id @default(uuid())
+  email    String     @unique
+  password String
+  role     Role
+  status   UserStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation to Organization
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+}
