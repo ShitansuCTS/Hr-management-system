@@ -107,9 +107,14 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   status: 'status',
+  employeeId: 'employeeId',
+  fullName: 'fullName',
+  phone: 'phone',
+  designation: 'designation',
+  dateOfJoining: 'dateOfJoining',
+  organizationId: 'organizationId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  organizationId: 'organizationId'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -179,7 +184,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -188,13 +192,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n///////////////////////////\n// ENUMS\n///////////////////////////\n\nenum Role {\n  ADMIN\n  EMPLOYEE\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\n///////////////////////////\n// ORGANIZATION\n///////////////////////////\n\nmodel Organization {\n  id        String   @id @default(uuid())\n  name      String\n  domain    String? // optional, e.g., company email domain\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  users User[] // 1:N relation to Users\n}\n\n///////////////////////////\n// USER\n///////////////////////////\n\nmodel User {\n  id       String     @id @default(uuid())\n  email    String     @unique\n  password String\n  role     Role\n  status   UserStatus @default(ACTIVE)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relation to Organization\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  organizationId String\n}\n",
-  "inlineSchemaHash": "21f14cb4bcf461534b6e8fd8f380e09a0defc6ba315f3d19c9aa8bcbc858dd8b",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n///////////////////////////\n// ENUMS\n///////////////////////////\n\nenum Role {\n  ADMIN\n  EMPLOYEE\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\n///////////////////////////\n// ORGANIZATION\n///////////////////////////\n\nmodel Organization {\n  id        String   @id @default(uuid())\n  name      String\n  domain    String? // optional, e.g., company email domain\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  users User[] // 1:N relation to Users\n}\n\n///////////////////////////\n// USER\n///////////////////////////\n\nmodel User {\n  id String @id @default(uuid())\n\n  // Login & auth\n  email    String     @unique\n  password String\n  role     Role\n  status   UserStatus @default(ACTIVE)\n\n  // Employee details\n  employeeId    String // given by HR\n  fullName      String\n  phone         String\n  designation   String\n  dateOfJoining DateTime\n\n  // Relations\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  organizationId String\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([employeeId, organizationId]) // IMPORTANT\n}\n",
+  "inlineSchemaHash": "cfbe45f24a855f1dab86086e4ad4062b0f6b9998a1908cd8889a1378bf0a9489",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrganizationToUser\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToUser\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrganizationToUser\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"employeeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"designation\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfJoining\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToUser\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

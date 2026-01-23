@@ -29,9 +29,11 @@ const previtems = [
 ]
 
 const ProposalEditContent = () => {
-    const [selectedOption, setSelectedOption] = useState(null); 
+    const [selectedOption, setSelectedOption] = useState(null);
     const { startDate, endDate, setStartDate, setEndDate, renderFooter } = useDatePicker();
-    const { countries, states, cities, loading, error, fetchStates, fetchCities,} = useLocationData();
+    const { countries, states, cities, loading, error, fetchStates, fetchCities, } = useLocationData();
+
+
 
 
     useEffect(() => {
@@ -40,11 +42,66 @@ const ProposalEditContent = () => {
     }, []);
 
 
+
+    // form submission login
+    const [formData, setFormData] = useState({
+        name: "",
+        employeeId: "",
+        email: "",
+        phone: "",
+        designation: "",
+        dateOfJoining: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await fetch("/api/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                alert("Employee added successfully!"); // Success message
+                setFormData({
+                    name: "",
+                    employeeId: "",
+                    email: "",
+                    phone: "",
+                    designation: "",
+                    dateOfJoining: "",
+                }); // Reset form
+            } else {
+                alert("Error adding employee");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
+    };
+    // form submission login
+
+
+
+
+
+
+
+
     return (
         <>
             {loading ? <Loading /> : ""}
 
-            <div className="col-xl-6">
+            {/* <div className="col-xl-6">
                 <div className="card stretch stretch-full">
                     <div className="card-body">
                         <div className="mb-4">
@@ -240,7 +297,129 @@ const ProposalEditContent = () => {
                         </div>
                     </div>
                 </div>
+            </div> */}
+            <div className="col-xl-6">
+                <div className="card stretch stretch-full">
+                    <div className="card-body">
+                        <h5 className="mb-4">Add Employee</h5>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-4">
+                                <label className="form-label">
+                                    Employee Name <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="John Doe"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label">
+                                    Employee ID <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="EMP-001"
+                                    name="employeeId"
+                                    value={formData.employeeId}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label">
+                                    Email <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    placeholder="john.doe@company.com"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label">
+                                    Phone <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="9876543210"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label">
+                                    Designation <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Software Engineer"
+                                    name="designation"
+                                    value={formData.designation}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="form-label">
+                                    Date of Joining <span className="text-danger">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    className="form-control"
+                                    name="dateOfJoining"
+                                    value={formData.dateOfJoining}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+
+                            <div className="d-flex gap-2">
+                                <button type="submit" className="btn btn-primary">
+                                    Save Employee
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-light"
+                                    onClick={() =>
+                                        setFormData({
+                                            name: "",
+                                            employeeId: "",
+                                            email: "",
+                                            phone: "",
+                                            designation: "",
+                                            dateOfJoining: "",
+                                        })
+                                    }
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
+
+
             <AddProposal previtems={previtems} />
         </>
     )

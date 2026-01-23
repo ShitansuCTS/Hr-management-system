@@ -2097,9 +2097,14 @@ export namespace Prisma {
     password: string | null
     role: $Enums.Role | null
     status: $Enums.UserStatus | null
+    employeeId: string | null
+    fullName: string | null
+    phone: string | null
+    designation: string | null
+    dateOfJoining: Date | null
+    organizationId: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    organizationId: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2108,9 +2113,14 @@ export namespace Prisma {
     password: string | null
     role: $Enums.Role | null
     status: $Enums.UserStatus | null
+    employeeId: string | null
+    fullName: string | null
+    phone: string | null
+    designation: string | null
+    dateOfJoining: Date | null
+    organizationId: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    organizationId: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2119,9 +2129,14 @@ export namespace Prisma {
     password: number
     role: number
     status: number
+    employeeId: number
+    fullName: number
+    phone: number
+    designation: number
+    dateOfJoining: number
+    organizationId: number
     createdAt: number
     updatedAt: number
-    organizationId: number
     _all: number
   }
 
@@ -2132,9 +2147,14 @@ export namespace Prisma {
     password?: true
     role?: true
     status?: true
+    employeeId?: true
+    fullName?: true
+    phone?: true
+    designation?: true
+    dateOfJoining?: true
+    organizationId?: true
     createdAt?: true
     updatedAt?: true
-    organizationId?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2143,9 +2163,14 @@ export namespace Prisma {
     password?: true
     role?: true
     status?: true
+    employeeId?: true
+    fullName?: true
+    phone?: true
+    designation?: true
+    dateOfJoining?: true
+    organizationId?: true
     createdAt?: true
     updatedAt?: true
-    organizationId?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2154,9 +2179,14 @@ export namespace Prisma {
     password?: true
     role?: true
     status?: true
+    employeeId?: true
+    fullName?: true
+    phone?: true
+    designation?: true
+    dateOfJoining?: true
+    organizationId?: true
     createdAt?: true
     updatedAt?: true
-    organizationId?: true
     _all?: true
   }
 
@@ -2238,9 +2268,14 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date
+    organizationId: string
     createdAt: Date
     updatedAt: Date
-    organizationId: string
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2266,9 +2301,14 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    employeeId?: boolean
+    fullName?: boolean
+    phone?: boolean
+    designation?: boolean
+    dateOfJoining?: boolean
+    organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2278,9 +2318,14 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    employeeId?: boolean
+    fullName?: boolean
+    phone?: boolean
+    designation?: boolean
+    dateOfJoining?: boolean
+    organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2290,9 +2335,14 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    employeeId?: boolean
+    fullName?: boolean
+    phone?: boolean
+    designation?: boolean
+    dateOfJoining?: boolean
+    organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2302,12 +2352,17 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    employeeId?: boolean
+    fullName?: boolean
+    phone?: boolean
+    designation?: boolean
+    dateOfJoining?: boolean
+    organizationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    organizationId?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "status" | "createdAt" | "updatedAt" | "organizationId", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "status" | "employeeId" | "fullName" | "phone" | "designation" | "dateOfJoining" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
@@ -2329,9 +2384,14 @@ export namespace Prisma {
       password: string
       role: $Enums.Role
       status: $Enums.UserStatus
+      employeeId: string
+      fullName: string
+      phone: string
+      designation: string
+      dateOfJoining: Date
+      organizationId: string
       createdAt: Date
       updatedAt: Date
-      organizationId: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2761,9 +2821,14 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
     readonly status: FieldRef<"User", 'UserStatus'>
+    readonly employeeId: FieldRef<"User", 'String'>
+    readonly fullName: FieldRef<"User", 'String'>
+    readonly phone: FieldRef<"User", 'String'>
+    readonly designation: FieldRef<"User", 'String'>
+    readonly dateOfJoining: FieldRef<"User", 'DateTime'>
+    readonly organizationId: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
-    readonly organizationId: FieldRef<"User", 'String'>
   }
     
 
@@ -3209,9 +3274,14 @@ export namespace Prisma {
     password: 'password',
     role: 'role',
     status: 'status',
+    employeeId: 'employeeId',
+    fullName: 'fullName',
+    phone: 'phone',
+    designation: 'designation',
+    dateOfJoining: 'dateOfJoining',
+    organizationId: 'organizationId',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    organizationId: 'organizationId'
+    updatedAt: 'updatedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -3383,9 +3453,14 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    employeeId?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    phone?: StringFilter<"User"> | string
+    designation?: StringFilter<"User"> | string
+    dateOfJoining?: DateTimeFilter<"User"> | Date | string
+    organizationId?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    organizationId?: StringFilter<"User"> | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
   }
 
@@ -3395,26 +3470,37 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    employeeId?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    designation?: SortOrder
+    dateOfJoining?: SortOrder
+    organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     email?: string
+    employeeId_organizationId?: UserEmployeeIdOrganizationIdCompoundUniqueInput
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    employeeId?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    phone?: StringFilter<"User"> | string
+    designation?: StringFilter<"User"> | string
+    dateOfJoining?: DateTimeFilter<"User"> | Date | string
+    organizationId?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    organizationId?: StringFilter<"User"> | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
-  }, "id" | "email">
+  }, "id" | "email" | "employeeId_organizationId">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -3422,9 +3508,14 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    employeeId?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    designation?: SortOrder
+    dateOfJoining?: SortOrder
+    organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -3439,9 +3530,14 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     status?: EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+    employeeId?: StringWithAggregatesFilter<"User"> | string
+    fullName?: StringWithAggregatesFilter<"User"> | string
+    phone?: StringWithAggregatesFilter<"User"> | string
+    designation?: StringWithAggregatesFilter<"User"> | string
+    dateOfJoining?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    organizationId?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
-    organizationId?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type OrganizationCreateInput = {
@@ -3510,6 +3606,11 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     organization: OrganizationCreateNestedOneWithoutUsersInput
@@ -3521,9 +3622,14 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date | string
+    organizationId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
   }
 
   export type UserUpdateInput = {
@@ -3532,6 +3638,11 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
@@ -3543,9 +3654,14 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCreateManyInput = {
@@ -3554,9 +3670,14 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date | string
+    organizationId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    organizationId: string
   }
 
   export type UserUpdateManyMutationInput = {
@@ -3565,6 +3686,11 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3575,9 +3701,14 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    organizationId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    organizationId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -3729,15 +3860,25 @@ export namespace Prisma {
     isNot?: OrganizationWhereInput
   }
 
+  export type UserEmployeeIdOrganizationIdCompoundUniqueInput = {
+    employeeId: string
+    organizationId: string
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    employeeId?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    designation?: SortOrder
+    dateOfJoining?: SortOrder
+    organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -3746,9 +3887,14 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    employeeId?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    designation?: SortOrder
+    dateOfJoining?: SortOrder
+    organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -3757,9 +3903,14 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    employeeId?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    designation?: SortOrder
+    dateOfJoining?: SortOrder
+    organizationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    organizationId?: SortOrder
   }
 
   export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
@@ -4007,6 +4158,11 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4017,6 +4173,11 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4056,9 +4217,14 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    employeeId?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    phone?: StringFilter<"User"> | string
+    designation?: StringFilter<"User"> | string
+    dateOfJoining?: DateTimeFilter<"User"> | Date | string
+    organizationId?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    organizationId?: StringFilter<"User"> | string
   }
 
   export type OrganizationCreateWithoutUsersInput = {
@@ -4115,6 +4281,11 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    employeeId: string
+    fullName: string
+    phone: string
+    designation: string
+    dateOfJoining: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4125,6 +4296,11 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4135,6 +4311,11 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4145,6 +4326,11 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    employeeId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    designation?: StringFieldUpdateOperationsInput | string
+    dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

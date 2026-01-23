@@ -1,7 +1,66 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '../../../lib/generated/prisma';
+import { PrismaClient, Role } from '../../../lib/generated/prisma';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
+
+
+
+
+
+// POST request: receive form data and log it
+export async function POST(request) {
+    try {
+        const data = await request.json(); // Get JSON body from frontend
+
+        console.log("Received new user data:", data);
+
+        const joiningDate = new Date(data.dateOfJoining);
+        const organizationId = "ctsl_2026";
+
+        // Hash password (recommended)
+        const hashedPassword = await bcrypt.hash("1111", 10);
+
+        // Build the object to match Prisma User model
+        const newUserData = {
+            email: data.email,
+            password: hashedPassword,           // default password
+            role: Role.EMPLOYEE,        // enum Role
+            employeeId: data.employeeId,
+            fullName: data.name,        // map frontend "name" to fullName
+            phone: data.phone,
+            designation: data.designation,
+            dateOfJoining: joiningDate,
+            organizationId,             // required
+        };
+
+        // Create user
+        const newUser = await prisma.user.create({
+            data: newUserData,
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: "User data received",
+            newUser, // echo back the data
+        });
+    } catch (error) {
+        console.error("Error handling POST request:", error);
+        return NextResponse.json(
+            { success: false, error: "Failed to receive user data" },
+            { status: 500 }
+        );
+    }
+}
+
+
+
+
+
+
+
+
+
 
 export async function GET(request) {
     try {
@@ -21,6 +80,3 @@ export async function GET(request) {
         );
     }
 }
-
-
-

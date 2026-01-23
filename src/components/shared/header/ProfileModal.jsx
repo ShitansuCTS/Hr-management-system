@@ -1,10 +1,22 @@
 import Image from 'next/image'
 import React, { Fragment } from 'react'
 import { FiActivity, FiBell, FiChevronRight, FiDollarSign, FiLogOut, FiSettings, FiUser } from "react-icons/fi"
+import { useRouter } from "next/navigation";
+
 
 const activePosition = ["Active", "Always", "Bussy", "Inactive", "Disabled", "Cutomization"]
 const subscriptionsList = ["Plan", "Billings", "Referrals", "Payments", "Statements", "Subscriptions"]
 const ProfileModal = () => {
+    const router = useRouter();
+    const handleLogout = async () => {
+        await fetch("/api/auth/logout", {
+            method: "POST",
+        });
+
+        // Redirect to login
+        router.push("/authentication/login/minimal");
+        router.refresh(); // clears cached data
+    };
     return (
         <div className="dropdown nxl-h-item">
             <a href="#" data-bs-toggle="dropdown" role="button" data-bs-auto-close="outside">
@@ -96,10 +108,10 @@ const ProfileModal = () => {
                     <span>Account Settings</span>
                 </a>
                 <div className="dropdown-divider"></div>
-                <a href="./auth-login-minimal.html" className="dropdown-item">
+                <button onClick={handleLogout} className="dropdown-item " >
                     <i> <FiLogOut /></i>
                     <span>Logout</span>
-                </a>
+                </button>
             </div>
         </div>
     )

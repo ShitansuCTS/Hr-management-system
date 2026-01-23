@@ -1,19 +1,58 @@
+'use client'
+
 import Link from 'next/link'
 import React from 'react'
 import { FiFacebook, FiGithub, FiTwitter } from 'react-icons/fi'
+import { useRouter } from "next/navigation";
+import { useState } from 'react';
 
 const LoginForm = ({ registerPath, resetPath }) => {
+
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!res.ok) {
+                throw new Error("Login failed");
+            }
+
+            router.push("/");
+        } catch (error) {
+            console.error(error);
+            alert("Login failed. Please check your credentials.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
     return (
         <>
+
             <h2 className="fs-20 fw-bolder mb-4">Login</h2>
-            <h4 className="fs-13 fw-bold mb-2">Login to your account</h4>
+            <h4 className="fs-13 fw-bold mb-2">Login to your accounts</h4>
             <p className="fs-12 fw-medium text-muted">Thank you for get back <strong>Nelel</strong> web applications, let's access our the best recommendation for you.</p>
-            <form action="index.html" className="w-100 mt-4 pt-2">
+            <form className="w-100 mt-4 pt-2" onSubmit={handleLogin}>
                 <div className="mb-4">
-                    <input type="email" className="form-control" placeholder="Email or Username" defaultValue="wrapcode.info@gmail.com" required />
+                    <input type="email" className="form-control" placeholder="Email or Username"
+                        value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
                 <div className="mb-3">
-                    <input type="password" className="form-control" placeholder="Password" defaultValue="123456" required />
+                    <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
                 <div className="d-flex align-items-center justify-content-between">
                     <div>
@@ -27,27 +66,18 @@ const LoginForm = ({ registerPath, resetPath }) => {
                     </div>
                 </div>
                 <div className="mt-5">
-                    <button type="submit" className="btn btn-lg btn-primary w-100">Login</button>
+                    <button
+                        type="submit"
+                        className="btn btn-lg btn-primary w-100"
+                        disabled={loading}
+                    >
+                        {loading ? "Logging in..." : "Login"}
+                    </button>
                 </div>
+
             </form>
-            <div className="w-100 mt-5 text-center mx-auto">
-                <div className="mb-4 border-bottom position-relative"><span className="small py-1 px-3 text-uppercase text-muted bg-white position-absolute translate-middle">or</span></div>
-                <div className="d-flex align-items-center justify-content-center gap-2">
-                    <a href="#" className="btn btn-light-brand flex-fill" data-toggle="tooltip" data-title="Login with Facebook">
-                        <FiFacebook size={16} />
-                    </a>
-                    <a href="#" className="btn btn-light-brand flex-fill" data-toggle="tooltip" data-title="Login with Twitter">
-                        <FiTwitter size={16} />
-                    </a>
-                    <a href="#" className="btn btn-light-brand flex-fill" data-toggle="tooltip" data-title="Login with Github">
-                        <FiGithub size={16} className='text' />
-                    </a>
-                </div>
-            </div>
-            <div className="mt-5 text-muted">
-                <span> Don't have an account?</span>
-                <Link href={registerPath} className="fw-bold"> Create an Account  </Link>
-            </div>
+
+
         </>
     )
 }

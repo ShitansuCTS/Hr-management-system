@@ -41,16 +41,28 @@ model Organization {
 ///////////////////////////
 
 model User {
-  id         String      @id @default(uuid())
-  email      String      @unique
-  password   String
-  role       Role
-  status     UserStatus  @default(ACTIVE)
+  id            String      @id @default(uuid())
 
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  // Login & auth
+  email         String      @unique
+  password      String
+  role          Role
+  status        UserStatus  @default(ACTIVE)
 
-  // Relation to Organization
+  // Employee details
+  employeeId    String      // given by HR
+  fullName      String
+  phone         String
+  designation   String
+  dateOfJoining DateTime
+
+  // Relations
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([employeeId, organizationId]) // IMPORTANT
 }
+
