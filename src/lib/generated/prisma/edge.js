@@ -167,6 +167,10 @@ const config = {
         "fromEnvVar": null,
         "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -174,7 +178,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../../../.env",
     "schemaEnvPath": "../../../../.env"
   },
   "relativePath": "../../../../prisma",
@@ -184,6 +188,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -192,8 +197,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n///////////////////////////\n// ENUMS\n///////////////////////////\n\nenum Role {\n  ADMIN\n  EMPLOYEE\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\n///////////////////////////\n// ORGANIZATION\n///////////////////////////\n\nmodel Organization {\n  id        String   @id @default(uuid())\n  name      String\n  domain    String? // optional, e.g., company email domain\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  users User[] // 1:N relation to Users\n}\n\n///////////////////////////\n// USER\n///////////////////////////\n\nmodel User {\n  id String @id @default(uuid())\n\n  // Login & auth\n  email    String     @unique\n  password String\n  role     Role\n  status   UserStatus @default(ACTIVE)\n\n  // Employee details\n  employeeId    String // given by HR\n  fullName      String\n  phone         String\n  designation   String\n  dateOfJoining DateTime\n\n  // Relations\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  organizationId String\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([employeeId, organizationId]) // IMPORTANT\n}\n",
-  "inlineSchemaHash": "cfbe45f24a855f1dab86086e4ad4062b0f6b9998a1908cd8889a1378bf0a9489",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/lib/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n///////////////////////////\n// ENUMS\n///////////////////////////\n\nenum Role {\n  ADMIN\n  EMPLOYEE\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\n///////////////////////////\n// ORGANIZATION\n///////////////////////////\n\nmodel Organization {\n  id        String   @id @default(uuid())\n  name      String\n  domain    String? // optional, e.g., company email domain\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  users User[] // 1:N relation to Users\n}\n\n///////////////////////////\n// USER\n///////////////////////////\n\nmodel User {\n  id String @id @default(uuid())\n\n  // Login & auth\n  email    String     @unique\n  password String\n  role     Role\n  status   UserStatus @default(ACTIVE)\n\n  // Employee details\n  employeeId    String // given by HR\n  fullName      String\n  phone         String\n  designation   String\n  dateOfJoining DateTime\n\n  // Relations\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  organizationId String\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([employeeId, organizationId]) // IMPORTANT\n}\n",
+  "inlineSchemaHash": "c1aaa86293c1a26be5e07885f873100a807b4e07e88c35b7d0377cfbc215359c",
   "copyEngine": true
 }
 config.dirname = '/'
