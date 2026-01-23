@@ -65,6 +65,7 @@ const Menus = () => {
                             {dropdownMenu.map(({ id, name, path, subdropdownMenu, target }) => {
                                 const x = name;
                                 return (
+                                    // dropdown item
                                     <Fragment key={id}>
                                         {subdropdownMenu.length ? (
                                             <li

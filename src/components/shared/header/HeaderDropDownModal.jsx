@@ -142,7 +142,7 @@ const menuData = [
 
 const HeaderDropDownModal = () => {
     return (
-        <div className="dropdown nxl-h-item nxl-lavel-menu">
+        <div className="dropdown nxl-h-item nxl-lavel-menu " >
             <Link href="#" className="avatar-text avatar-md bg-primary text-white" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                 <FiPlus size={12} />
             </Link>

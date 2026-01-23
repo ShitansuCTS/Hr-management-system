@@ -7,7 +7,7 @@ export async function POST() {
     });
 
     // Remove JWT cookie
-    res.cookies.set("token", "", {
+    res.cookies.set("auth_token", "", {
         httpOnly: true,
         path: "/",
         expires: new Date(0), // 👈 immediately expire

@@ -161,22 +161,28 @@ export const menuList = [
         path: "#",
         icon: 'feather-users',
         dropdownMenu: [
+            // {
+            //     id: 1,
+            //     name: "Customers",
+            //     path: "/customers/list",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 2,
+            //     name: "Customers View",
+            //     path: "/customers/view",
+            //     subdropdownMenu: false
+            // },
+            // {
+            //     id: 3,
+            //     name: "Customers Create",
+            //     path: "/customers/create",
+            //     subdropdownMenu: false
+            // },
             {
-                id: 1,
-                name: "Customers",
+                id: 4,
+                name: "All Employee",
                 path: "/customers/list",
-                subdropdownMenu: false
-            },
-            {
-                id: 2,
-                name: "Customers View",
-                path: "/customers/view",
-                subdropdownMenu: false
-            },
-            {
-                id: 3,
-                name: "Customers Create",
-                path: "/customers/create",
                 subdropdownMenu: false
             }
         ]
@@ -507,7 +513,7 @@ export const menuList = [
                 id: 1,
                 name: "Support",
                 path: "https://wrapbootstrap.com/user/theme_ocean",
-                target:"_blank",
+                target: "_blank",
                 subdropdownMenu: false
             },
             {
@@ -520,10 +526,10 @@ export const menuList = [
                 id: 3,
                 name: "Documentations",
                 path: "https://duralux-next-doc.vercel.app/",
-                target:"_blank",
+                target: "_blank",
                 subdropdownMenu: false
             }
         ]
     },
-    
+
 ]

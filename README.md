@@ -34,10 +34,14 @@ the mail is - http://localhost:3000/authentication/login/minimal
 
 Manages employees within an organization.
 
+
+
 ### 📌 Features
 - View all employees related to the **same organization**
 - Organization-based access control
 - Data fetched securely via API
 
-### 🔗 API Endpoint
+http://localhost:3000/customers/list
 
+### 🔗 API Endpoint
+/api/users

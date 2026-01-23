@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient, Role } from '../../../lib/generated/prisma';
 import bcrypt from 'bcryptjs';
+import { verifyToken } from "@/lib/jwt";
+
+
 
 const prisma = new PrismaClient();
 
@@ -64,19 +67,43 @@ export async function POST(request) {
 
 export async function GET(request) {
     try {
-        // Fetch all users with their organization info
+
+        // 1️⃣ Validate token
+        const token = request.cookies.get("auth_token")?.value;
+        if (!token)
+            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+        const decoded = verifyToken(token);
+        if (!decoded)
+            return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+
+
+
+
+
+
         const users = await prisma.user.findMany({
             include: {
                 organization: true,
             },
         });
 
-        return NextResponse.json({ success: true, users: users });
+        return NextResponse.json({
+            success: true,
+            users: users,
+        });
     } catch (error) {
         console.error("Error fetching users:", error);
         return new Response(
-            JSON.stringify({ success: false, error: "Failed to fetch users" }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
+            JSON.stringify({
+                success: false,
+                error: "Failed to fetch users",
+            }),
+            {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            }
         );
     }
 }
+
