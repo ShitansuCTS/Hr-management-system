@@ -19,5 +19,9 @@ export function middleware(req) {
 }
 
 export const config = {
-    matcher: ["/", "/admin/:path*", "/employee/:path*"],
+    // matcher: ["/", "/admin/:path*", "/employee/:path*"],
+    matcher: [
+        "/((?!api|_next/static|_next/image|images|favicon.ico|authentication/login/minimal).*)",
+    ],
+
 };
