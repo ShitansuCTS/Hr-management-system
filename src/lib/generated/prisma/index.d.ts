@@ -43,6 +43,25 @@ export const UserStatus: {
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
 
+
+export const Gender: {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
+};
+
+export type Gender = (typeof Gender)[keyof typeof Gender]
+
+
+export const EmploymentType: {
+  FULL_TIME: 'FULL_TIME',
+  PART_TIME: 'PART_TIME',
+  CONTRACT: 'CONTRACT',
+  INTERN: 'INTERN'
+};
+
+export type EmploymentType = (typeof EmploymentType)[keyof typeof EmploymentType]
+
 }
 
 export type Role = $Enums.Role
@@ -52,6 +71,14 @@ export const Role: typeof $Enums.Role
 export type UserStatus = $Enums.UserStatus
 
 export const UserStatus: typeof $Enums.UserStatus
+
+export type Gender = $Enums.Gender
+
+export const Gender: typeof $Enums.Gender
+
+export type EmploymentType = $Enums.EmploymentType
+
+export const EmploymentType: typeof $Enums.EmploymentType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2097,12 +2124,33 @@ export namespace Prisma {
     password: string | null
     role: $Enums.Role | null
     status: $Enums.UserStatus | null
+    lastLoginAt: Date | null
     employeeId: string | null
     fullName: string | null
     phone: string | null
     designation: string | null
+    department: string | null
+    employmentType: $Enums.EmploymentType | null
+    workLocation: string | null
     dateOfJoining: Date | null
+    profileImageUrl: string | null
+    gender: $Enums.Gender | null
+    dateOfBirth: Date | null
+    fatherName: string | null
+    motherName: string | null
+    currentAddress: string | null
+    permanentAddress: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    pincode: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    reportingManagerName: string | null
     organizationId: string | null
+    isDeleted: boolean | null
+    deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2113,12 +2161,33 @@ export namespace Prisma {
     password: string | null
     role: $Enums.Role | null
     status: $Enums.UserStatus | null
+    lastLoginAt: Date | null
     employeeId: string | null
     fullName: string | null
     phone: string | null
     designation: string | null
+    department: string | null
+    employmentType: $Enums.EmploymentType | null
+    workLocation: string | null
     dateOfJoining: Date | null
+    profileImageUrl: string | null
+    gender: $Enums.Gender | null
+    dateOfBirth: Date | null
+    fatherName: string | null
+    motherName: string | null
+    currentAddress: string | null
+    permanentAddress: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    pincode: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    reportingManagerName: string | null
     organizationId: string | null
+    isDeleted: boolean | null
+    deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2129,12 +2198,33 @@ export namespace Prisma {
     password: number
     role: number
     status: number
+    lastLoginAt: number
     employeeId: number
     fullName: number
     phone: number
     designation: number
+    department: number
+    employmentType: number
+    workLocation: number
     dateOfJoining: number
+    profileImageUrl: number
+    gender: number
+    dateOfBirth: number
+    fatherName: number
+    motherName: number
+    currentAddress: number
+    permanentAddress: number
+    city: number
+    state: number
+    country: number
+    pincode: number
+    emergencyContactName: number
+    emergencyContactPhone: number
+    emergencyContactRelation: number
+    reportingManagerName: number
     organizationId: number
+    isDeleted: number
+    deletedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2147,12 +2237,33 @@ export namespace Prisma {
     password?: true
     role?: true
     status?: true
+    lastLoginAt?: true
     employeeId?: true
     fullName?: true
     phone?: true
     designation?: true
+    department?: true
+    employmentType?: true
+    workLocation?: true
     dateOfJoining?: true
+    profileImageUrl?: true
+    gender?: true
+    dateOfBirth?: true
+    fatherName?: true
+    motherName?: true
+    currentAddress?: true
+    permanentAddress?: true
+    city?: true
+    state?: true
+    country?: true
+    pincode?: true
+    emergencyContactName?: true
+    emergencyContactPhone?: true
+    emergencyContactRelation?: true
+    reportingManagerName?: true
     organizationId?: true
+    isDeleted?: true
+    deletedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2163,12 +2274,33 @@ export namespace Prisma {
     password?: true
     role?: true
     status?: true
+    lastLoginAt?: true
     employeeId?: true
     fullName?: true
     phone?: true
     designation?: true
+    department?: true
+    employmentType?: true
+    workLocation?: true
     dateOfJoining?: true
+    profileImageUrl?: true
+    gender?: true
+    dateOfBirth?: true
+    fatherName?: true
+    motherName?: true
+    currentAddress?: true
+    permanentAddress?: true
+    city?: true
+    state?: true
+    country?: true
+    pincode?: true
+    emergencyContactName?: true
+    emergencyContactPhone?: true
+    emergencyContactRelation?: true
+    reportingManagerName?: true
     organizationId?: true
+    isDeleted?: true
+    deletedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2179,12 +2311,33 @@ export namespace Prisma {
     password?: true
     role?: true
     status?: true
+    lastLoginAt?: true
     employeeId?: true
     fullName?: true
     phone?: true
     designation?: true
+    department?: true
+    employmentType?: true
+    workLocation?: true
     dateOfJoining?: true
+    profileImageUrl?: true
+    gender?: true
+    dateOfBirth?: true
+    fatherName?: true
+    motherName?: true
+    currentAddress?: true
+    permanentAddress?: true
+    city?: true
+    state?: true
+    country?: true
+    pincode?: true
+    emergencyContactName?: true
+    emergencyContactPhone?: true
+    emergencyContactRelation?: true
+    reportingManagerName?: true
     organizationId?: true
+    isDeleted?: true
+    deletedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2268,12 +2421,33 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status: $Enums.UserStatus
+    lastLoginAt: Date | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department: string | null
+    employmentType: $Enums.EmploymentType | null
+    workLocation: string | null
     dateOfJoining: Date
+    profileImageUrl: string | null
+    gender: $Enums.Gender | null
+    dateOfBirth: Date | null
+    fatherName: string | null
+    motherName: string | null
+    currentAddress: string | null
+    permanentAddress: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    pincode: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    reportingManagerName: string | null
     organizationId: string
+    isDeleted: boolean
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2301,12 +2475,33 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    lastLoginAt?: boolean
     employeeId?: boolean
     fullName?: boolean
     phone?: boolean
     designation?: boolean
+    department?: boolean
+    employmentType?: boolean
+    workLocation?: boolean
     dateOfJoining?: boolean
+    profileImageUrl?: boolean
+    gender?: boolean
+    dateOfBirth?: boolean
+    fatherName?: boolean
+    motherName?: boolean
+    currentAddress?: boolean
+    permanentAddress?: boolean
+    city?: boolean
+    state?: boolean
+    country?: boolean
+    pincode?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    reportingManagerName?: boolean
     organizationId?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -2318,12 +2513,33 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    lastLoginAt?: boolean
     employeeId?: boolean
     fullName?: boolean
     phone?: boolean
     designation?: boolean
+    department?: boolean
+    employmentType?: boolean
+    workLocation?: boolean
     dateOfJoining?: boolean
+    profileImageUrl?: boolean
+    gender?: boolean
+    dateOfBirth?: boolean
+    fatherName?: boolean
+    motherName?: boolean
+    currentAddress?: boolean
+    permanentAddress?: boolean
+    city?: boolean
+    state?: boolean
+    country?: boolean
+    pincode?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    reportingManagerName?: boolean
     organizationId?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -2335,12 +2551,33 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    lastLoginAt?: boolean
     employeeId?: boolean
     fullName?: boolean
     phone?: boolean
     designation?: boolean
+    department?: boolean
+    employmentType?: boolean
+    workLocation?: boolean
     dateOfJoining?: boolean
+    profileImageUrl?: boolean
+    gender?: boolean
+    dateOfBirth?: boolean
+    fatherName?: boolean
+    motherName?: boolean
+    currentAddress?: boolean
+    permanentAddress?: boolean
+    city?: boolean
+    state?: boolean
+    country?: boolean
+    pincode?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    reportingManagerName?: boolean
     organizationId?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
@@ -2352,17 +2589,38 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     status?: boolean
+    lastLoginAt?: boolean
     employeeId?: boolean
     fullName?: boolean
     phone?: boolean
     designation?: boolean
+    department?: boolean
+    employmentType?: boolean
+    workLocation?: boolean
     dateOfJoining?: boolean
+    profileImageUrl?: boolean
+    gender?: boolean
+    dateOfBirth?: boolean
+    fatherName?: boolean
+    motherName?: boolean
+    currentAddress?: boolean
+    permanentAddress?: boolean
+    city?: boolean
+    state?: boolean
+    country?: boolean
+    pincode?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    reportingManagerName?: boolean
     organizationId?: boolean
+    isDeleted?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "status" | "employeeId" | "fullName" | "phone" | "designation" | "dateOfJoining" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "status" | "lastLoginAt" | "employeeId" | "fullName" | "phone" | "designation" | "department" | "employmentType" | "workLocation" | "dateOfJoining" | "profileImageUrl" | "gender" | "dateOfBirth" | "fatherName" | "motherName" | "currentAddress" | "permanentAddress" | "city" | "state" | "country" | "pincode" | "emergencyContactName" | "emergencyContactPhone" | "emergencyContactRelation" | "reportingManagerName" | "organizationId" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     organization?: boolean | OrganizationDefaultArgs<ExtArgs>
   }
@@ -2384,12 +2642,33 @@ export namespace Prisma {
       password: string
       role: $Enums.Role
       status: $Enums.UserStatus
+      lastLoginAt: Date | null
       employeeId: string
       fullName: string
       phone: string
       designation: string
+      department: string | null
+      employmentType: $Enums.EmploymentType | null
+      workLocation: string | null
       dateOfJoining: Date
+      profileImageUrl: string | null
+      gender: $Enums.Gender | null
+      dateOfBirth: Date | null
+      fatherName: string | null
+      motherName: string | null
+      currentAddress: string | null
+      permanentAddress: string | null
+      city: string | null
+      state: string | null
+      country: string | null
+      pincode: string | null
+      emergencyContactName: string | null
+      emergencyContactPhone: string | null
+      emergencyContactRelation: string | null
+      reportingManagerName: string | null
       organizationId: string
+      isDeleted: boolean
+      deletedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2821,12 +3100,33 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
     readonly status: FieldRef<"User", 'UserStatus'>
+    readonly lastLoginAt: FieldRef<"User", 'DateTime'>
     readonly employeeId: FieldRef<"User", 'String'>
     readonly fullName: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
     readonly designation: FieldRef<"User", 'String'>
+    readonly department: FieldRef<"User", 'String'>
+    readonly employmentType: FieldRef<"User", 'EmploymentType'>
+    readonly workLocation: FieldRef<"User", 'String'>
     readonly dateOfJoining: FieldRef<"User", 'DateTime'>
+    readonly profileImageUrl: FieldRef<"User", 'String'>
+    readonly gender: FieldRef<"User", 'Gender'>
+    readonly dateOfBirth: FieldRef<"User", 'DateTime'>
+    readonly fatherName: FieldRef<"User", 'String'>
+    readonly motherName: FieldRef<"User", 'String'>
+    readonly currentAddress: FieldRef<"User", 'String'>
+    readonly permanentAddress: FieldRef<"User", 'String'>
+    readonly city: FieldRef<"User", 'String'>
+    readonly state: FieldRef<"User", 'String'>
+    readonly country: FieldRef<"User", 'String'>
+    readonly pincode: FieldRef<"User", 'String'>
+    readonly emergencyContactName: FieldRef<"User", 'String'>
+    readonly emergencyContactPhone: FieldRef<"User", 'String'>
+    readonly emergencyContactRelation: FieldRef<"User", 'String'>
+    readonly reportingManagerName: FieldRef<"User", 'String'>
     readonly organizationId: FieldRef<"User", 'String'>
+    readonly isDeleted: FieldRef<"User", 'Boolean'>
+    readonly deletedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -3274,12 +3574,33 @@ export namespace Prisma {
     password: 'password',
     role: 'role',
     status: 'status',
+    lastLoginAt: 'lastLoginAt',
     employeeId: 'employeeId',
     fullName: 'fullName',
     phone: 'phone',
     designation: 'designation',
+    department: 'department',
+    employmentType: 'employmentType',
+    workLocation: 'workLocation',
     dateOfJoining: 'dateOfJoining',
+    profileImageUrl: 'profileImageUrl',
+    gender: 'gender',
+    dateOfBirth: 'dateOfBirth',
+    fatherName: 'fatherName',
+    motherName: 'motherName',
+    currentAddress: 'currentAddress',
+    permanentAddress: 'permanentAddress',
+    city: 'city',
+    state: 'state',
+    country: 'country',
+    pincode: 'pincode',
+    emergencyContactName: 'emergencyContactName',
+    emergencyContactPhone: 'emergencyContactPhone',
+    emergencyContactRelation: 'emergencyContactRelation',
+    reportingManagerName: 'reportingManagerName',
     organizationId: 'organizationId',
+    isDeleted: 'isDeleted',
+    deletedAt: 'deletedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -3373,6 +3694,41 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'EmploymentType'
+   */
+  export type EnumEmploymentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmploymentType'>
+    
+
+
+  /**
+   * Reference to a field of type 'EmploymentType[]'
+   */
+  export type ListEnumEmploymentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmploymentType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Gender'
+   */
+  export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
+    
+
+
+  /**
+   * Reference to a field of type 'Gender[]'
+   */
+  export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -3453,12 +3809,33 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
     employeeId?: StringFilter<"User"> | string
     fullName?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     designation?: StringFilter<"User"> | string
+    department?: StringNullableFilter<"User"> | string | null
+    employmentType?: EnumEmploymentTypeNullableFilter<"User"> | $Enums.EmploymentType | null
+    workLocation?: StringNullableFilter<"User"> | string | null
     dateOfJoining?: DateTimeFilter<"User"> | Date | string
+    profileImageUrl?: StringNullableFilter<"User"> | string | null
+    gender?: EnumGenderNullableFilter<"User"> | $Enums.Gender | null
+    dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
+    fatherName?: StringNullableFilter<"User"> | string | null
+    motherName?: StringNullableFilter<"User"> | string | null
+    currentAddress?: StringNullableFilter<"User"> | string | null
+    permanentAddress?: StringNullableFilter<"User"> | string | null
+    city?: StringNullableFilter<"User"> | string | null
+    state?: StringNullableFilter<"User"> | string | null
+    country?: StringNullableFilter<"User"> | string | null
+    pincode?: StringNullableFilter<"User"> | string | null
+    emergencyContactName?: StringNullableFilter<"User"> | string | null
+    emergencyContactPhone?: StringNullableFilter<"User"> | string | null
+    emergencyContactRelation?: StringNullableFilter<"User"> | string | null
+    reportingManagerName?: StringNullableFilter<"User"> | string | null
     organizationId?: StringFilter<"User"> | string
+    isDeleted?: BoolFilter<"User"> | boolean
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -3470,12 +3847,33 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
     employeeId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     designation?: SortOrder
+    department?: SortOrderInput | SortOrder
+    employmentType?: SortOrderInput | SortOrder
+    workLocation?: SortOrderInput | SortOrder
     dateOfJoining?: SortOrder
+    profileImageUrl?: SortOrderInput | SortOrder
+    gender?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    fatherName?: SortOrderInput | SortOrder
+    motherName?: SortOrderInput | SortOrder
+    currentAddress?: SortOrderInput | SortOrder
+    permanentAddress?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
+    pincode?: SortOrderInput | SortOrder
+    emergencyContactName?: SortOrderInput | SortOrder
+    emergencyContactPhone?: SortOrderInput | SortOrder
+    emergencyContactRelation?: SortOrderInput | SortOrder
+    reportingManagerName?: SortOrderInput | SortOrder
     organizationId?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     organization?: OrganizationOrderByWithRelationInput
@@ -3491,12 +3889,33 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
     employeeId?: StringFilter<"User"> | string
     fullName?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     designation?: StringFilter<"User"> | string
+    department?: StringNullableFilter<"User"> | string | null
+    employmentType?: EnumEmploymentTypeNullableFilter<"User"> | $Enums.EmploymentType | null
+    workLocation?: StringNullableFilter<"User"> | string | null
     dateOfJoining?: DateTimeFilter<"User"> | Date | string
+    profileImageUrl?: StringNullableFilter<"User"> | string | null
+    gender?: EnumGenderNullableFilter<"User"> | $Enums.Gender | null
+    dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
+    fatherName?: StringNullableFilter<"User"> | string | null
+    motherName?: StringNullableFilter<"User"> | string | null
+    currentAddress?: StringNullableFilter<"User"> | string | null
+    permanentAddress?: StringNullableFilter<"User"> | string | null
+    city?: StringNullableFilter<"User"> | string | null
+    state?: StringNullableFilter<"User"> | string | null
+    country?: StringNullableFilter<"User"> | string | null
+    pincode?: StringNullableFilter<"User"> | string | null
+    emergencyContactName?: StringNullableFilter<"User"> | string | null
+    emergencyContactPhone?: StringNullableFilter<"User"> | string | null
+    emergencyContactRelation?: StringNullableFilter<"User"> | string | null
+    reportingManagerName?: StringNullableFilter<"User"> | string | null
     organizationId?: StringFilter<"User"> | string
+    isDeleted?: BoolFilter<"User"> | boolean
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
@@ -3508,12 +3927,33 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
     employeeId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     designation?: SortOrder
+    department?: SortOrderInput | SortOrder
+    employmentType?: SortOrderInput | SortOrder
+    workLocation?: SortOrderInput | SortOrder
     dateOfJoining?: SortOrder
+    profileImageUrl?: SortOrderInput | SortOrder
+    gender?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    fatherName?: SortOrderInput | SortOrder
+    motherName?: SortOrderInput | SortOrder
+    currentAddress?: SortOrderInput | SortOrder
+    permanentAddress?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    state?: SortOrderInput | SortOrder
+    country?: SortOrderInput | SortOrder
+    pincode?: SortOrderInput | SortOrder
+    emergencyContactName?: SortOrderInput | SortOrder
+    emergencyContactPhone?: SortOrderInput | SortOrder
+    emergencyContactRelation?: SortOrderInput | SortOrder
+    reportingManagerName?: SortOrderInput | SortOrder
     organizationId?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -3530,12 +3970,33 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     status?: EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+    lastLoginAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     employeeId?: StringWithAggregatesFilter<"User"> | string
     fullName?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
     designation?: StringWithAggregatesFilter<"User"> | string
+    department?: StringNullableWithAggregatesFilter<"User"> | string | null
+    employmentType?: EnumEmploymentTypeNullableWithAggregatesFilter<"User"> | $Enums.EmploymentType | null
+    workLocation?: StringNullableWithAggregatesFilter<"User"> | string | null
     dateOfJoining?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    profileImageUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
+    gender?: EnumGenderNullableWithAggregatesFilter<"User"> | $Enums.Gender | null
+    dateOfBirth?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    fatherName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    motherName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    currentAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
+    permanentAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
+    city?: StringNullableWithAggregatesFilter<"User"> | string | null
+    state?: StringNullableWithAggregatesFilter<"User"> | string | null
+    country?: StringNullableWithAggregatesFilter<"User"> | string | null
+    pincode?: StringNullableWithAggregatesFilter<"User"> | string | null
+    emergencyContactName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    emergencyContactPhone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    emergencyContactRelation?: StringNullableWithAggregatesFilter<"User"> | string | null
+    reportingManagerName?: StringNullableWithAggregatesFilter<"User"> | string | null
     organizationId?: StringWithAggregatesFilter<"User"> | string
+    isDeleted?: BoolWithAggregatesFilter<"User"> | boolean
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -3606,11 +4067,32 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department?: string | null
+    employmentType?: $Enums.EmploymentType | null
+    workLocation?: string | null
     dateOfJoining: Date | string
+    profileImageUrl?: string | null
+    gender?: $Enums.Gender | null
+    dateOfBirth?: Date | string | null
+    fatherName?: string | null
+    motherName?: string | null
+    currentAddress?: string | null
+    permanentAddress?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    pincode?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    reportingManagerName?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     organization: OrganizationCreateNestedOneWithoutUsersInput
@@ -3622,12 +4104,33 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department?: string | null
+    employmentType?: $Enums.EmploymentType | null
+    workLocation?: string | null
     dateOfJoining: Date | string
+    profileImageUrl?: string | null
+    gender?: $Enums.Gender | null
+    dateOfBirth?: Date | string | null
+    fatherName?: string | null
+    motherName?: string | null
+    currentAddress?: string | null
+    permanentAddress?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    pincode?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    reportingManagerName?: string | null
     organizationId: string
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3638,11 +4141,32 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     organization?: OrganizationUpdateOneRequiredWithoutUsersNestedInput
@@ -3654,12 +4178,33 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3670,12 +4215,33 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department?: string | null
+    employmentType?: $Enums.EmploymentType | null
+    workLocation?: string | null
     dateOfJoining: Date | string
+    profileImageUrl?: string | null
+    gender?: $Enums.Gender | null
+    dateOfBirth?: Date | string | null
+    fatherName?: string | null
+    motherName?: string | null
+    currentAddress?: string | null
+    permanentAddress?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    pincode?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    reportingManagerName?: string | null
     organizationId: string
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3686,11 +4252,32 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3701,12 +4288,33 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
     organizationId?: StringFieldUpdateOperationsInput | string
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3855,6 +4463,36 @@ export namespace Prisma {
     not?: NestedEnumUserStatusFilter<$PrismaModel> | $Enums.UserStatus
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumEmploymentTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmploymentType | EnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEmploymentTypeNullableFilter<$PrismaModel> | $Enums.EmploymentType | null
+  }
+
+  export type EnumGenderNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGenderNullableFilter<$PrismaModel> | $Enums.Gender | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type OrganizationScalarRelationFilter = {
     is?: OrganizationWhereInput
     isNot?: OrganizationWhereInput
@@ -3871,12 +4509,33 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    lastLoginAt?: SortOrder
     employeeId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     designation?: SortOrder
+    department?: SortOrder
+    employmentType?: SortOrder
+    workLocation?: SortOrder
     dateOfJoining?: SortOrder
+    profileImageUrl?: SortOrder
+    gender?: SortOrder
+    dateOfBirth?: SortOrder
+    fatherName?: SortOrder
+    motherName?: SortOrder
+    currentAddress?: SortOrder
+    permanentAddress?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    pincode?: SortOrder
+    emergencyContactName?: SortOrder
+    emergencyContactPhone?: SortOrder
+    emergencyContactRelation?: SortOrder
+    reportingManagerName?: SortOrder
     organizationId?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3887,12 +4546,33 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    lastLoginAt?: SortOrder
     employeeId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     designation?: SortOrder
+    department?: SortOrder
+    employmentType?: SortOrder
+    workLocation?: SortOrder
     dateOfJoining?: SortOrder
+    profileImageUrl?: SortOrder
+    gender?: SortOrder
+    dateOfBirth?: SortOrder
+    fatherName?: SortOrder
+    motherName?: SortOrder
+    currentAddress?: SortOrder
+    permanentAddress?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    pincode?: SortOrder
+    emergencyContactName?: SortOrder
+    emergencyContactPhone?: SortOrder
+    emergencyContactRelation?: SortOrder
+    reportingManagerName?: SortOrder
     organizationId?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3903,12 +4583,33 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     status?: SortOrder
+    lastLoginAt?: SortOrder
     employeeId?: SortOrder
     fullName?: SortOrder
     phone?: SortOrder
     designation?: SortOrder
+    department?: SortOrder
+    employmentType?: SortOrder
+    workLocation?: SortOrder
     dateOfJoining?: SortOrder
+    profileImageUrl?: SortOrder
+    gender?: SortOrder
+    dateOfBirth?: SortOrder
+    fatherName?: SortOrder
+    motherName?: SortOrder
+    currentAddress?: SortOrder
+    permanentAddress?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    pincode?: SortOrder
+    emergencyContactName?: SortOrder
+    emergencyContactPhone?: SortOrder
+    emergencyContactRelation?: SortOrder
+    reportingManagerName?: SortOrder
     organizationId?: SortOrder
+    isDeleted?: SortOrder
+    deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -3931,6 +4632,48 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumUserStatusFilter<$PrismaModel>
     _max?: NestedEnumUserStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumEmploymentTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmploymentType | EnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEmploymentTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.EmploymentType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumEmploymentTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumEmploymentTypeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumGenderNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGenderNullableWithAggregatesFilter<$PrismaModel> | $Enums.Gender | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumGenderNullableFilter<$PrismaModel>
+    _max?: NestedEnumGenderNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type UserCreateNestedManyWithoutOrganizationInput = {
@@ -3999,6 +4742,22 @@ export namespace Prisma {
 
   export type EnumUserStatusFieldUpdateOperationsInput = {
     set?: $Enums.UserStatus
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type NullableEnumEmploymentTypeFieldUpdateOperationsInput = {
+    set?: $Enums.EmploymentType | null
+  }
+
+  export type NullableEnumGenderFieldUpdateOperationsInput = {
+    set?: $Enums.Gender | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type OrganizationUpdateOneRequiredWithoutUsersNestedInput = {
@@ -4132,6 +4891,36 @@ export namespace Prisma {
     not?: NestedEnumUserStatusFilter<$PrismaModel> | $Enums.UserStatus
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumEmploymentTypeNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmploymentType | EnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEmploymentTypeNullableFilter<$PrismaModel> | $Enums.EmploymentType | null
+  }
+
+  export type NestedEnumGenderNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGenderNullableFilter<$PrismaModel> | $Enums.Gender | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
@@ -4152,17 +4941,80 @@ export namespace Prisma {
     _max?: NestedEnumUserStatusFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumEmploymentTypeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmploymentType | EnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    in?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.EmploymentType[] | ListEnumEmploymentTypeFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumEmploymentTypeNullableWithAggregatesFilter<$PrismaModel> | $Enums.EmploymentType | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumEmploymentTypeNullableFilter<$PrismaModel>
+    _max?: NestedEnumEmploymentTypeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumGenderNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumGenderNullableWithAggregatesFilter<$PrismaModel> | $Enums.Gender | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumGenderNullableFilter<$PrismaModel>
+    _max?: NestedEnumGenderNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutOrganizationInput = {
     id?: string
     email: string
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department?: string | null
+    employmentType?: $Enums.EmploymentType | null
+    workLocation?: string | null
     dateOfJoining: Date | string
+    profileImageUrl?: string | null
+    gender?: $Enums.Gender | null
+    dateOfBirth?: Date | string | null
+    fatherName?: string | null
+    motherName?: string | null
+    currentAddress?: string | null
+    permanentAddress?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    pincode?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    reportingManagerName?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4173,11 +5025,32 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department?: string | null
+    employmentType?: $Enums.EmploymentType | null
+    workLocation?: string | null
     dateOfJoining: Date | string
+    profileImageUrl?: string | null
+    gender?: $Enums.Gender | null
+    dateOfBirth?: Date | string | null
+    fatherName?: string | null
+    motherName?: string | null
+    currentAddress?: string | null
+    permanentAddress?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    pincode?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    reportingManagerName?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4217,12 +5090,33 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     status?: EnumUserStatusFilter<"User"> | $Enums.UserStatus
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
     employeeId?: StringFilter<"User"> | string
     fullName?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     designation?: StringFilter<"User"> | string
+    department?: StringNullableFilter<"User"> | string | null
+    employmentType?: EnumEmploymentTypeNullableFilter<"User"> | $Enums.EmploymentType | null
+    workLocation?: StringNullableFilter<"User"> | string | null
     dateOfJoining?: DateTimeFilter<"User"> | Date | string
+    profileImageUrl?: StringNullableFilter<"User"> | string | null
+    gender?: EnumGenderNullableFilter<"User"> | $Enums.Gender | null
+    dateOfBirth?: DateTimeNullableFilter<"User"> | Date | string | null
+    fatherName?: StringNullableFilter<"User"> | string | null
+    motherName?: StringNullableFilter<"User"> | string | null
+    currentAddress?: StringNullableFilter<"User"> | string | null
+    permanentAddress?: StringNullableFilter<"User"> | string | null
+    city?: StringNullableFilter<"User"> | string | null
+    state?: StringNullableFilter<"User"> | string | null
+    country?: StringNullableFilter<"User"> | string | null
+    pincode?: StringNullableFilter<"User"> | string | null
+    emergencyContactName?: StringNullableFilter<"User"> | string | null
+    emergencyContactPhone?: StringNullableFilter<"User"> | string | null
+    emergencyContactRelation?: StringNullableFilter<"User"> | string | null
+    reportingManagerName?: StringNullableFilter<"User"> | string | null
     organizationId?: StringFilter<"User"> | string
+    isDeleted?: BoolFilter<"User"> | boolean
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
   }
@@ -4281,11 +5175,32 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     status?: $Enums.UserStatus
+    lastLoginAt?: Date | string | null
     employeeId: string
     fullName: string
     phone: string
     designation: string
+    department?: string | null
+    employmentType?: $Enums.EmploymentType | null
+    workLocation?: string | null
     dateOfJoining: Date | string
+    profileImageUrl?: string | null
+    gender?: $Enums.Gender | null
+    dateOfBirth?: Date | string | null
+    fatherName?: string | null
+    motherName?: string | null
+    currentAddress?: string | null
+    permanentAddress?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    pincode?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    reportingManagerName?: string | null
+    isDeleted?: boolean
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4296,11 +5211,32 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4311,11 +5247,32 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4326,11 +5283,32 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: StringFieldUpdateOperationsInput | string
     fullName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     designation?: StringFieldUpdateOperationsInput | string
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    employmentType?: NullableEnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType | null
+    workLocation?: NullableStringFieldUpdateOperationsInput | string | null
     dateOfJoining?: DateTimeFieldUpdateOperationsInput | Date | string
+    profileImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableEnumGenderFieldUpdateOperationsInput | $Enums.Gender | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fatherName?: NullableStringFieldUpdateOperationsInput | string | null
+    motherName?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    pincode?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    reportingManagerName?: NullableStringFieldUpdateOperationsInput | string | null
+    isDeleted?: BoolFieldUpdateOperationsInput | boolean
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

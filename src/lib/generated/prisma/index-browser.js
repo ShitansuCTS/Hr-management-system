@@ -135,12 +135,33 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   status: 'status',
+  lastLoginAt: 'lastLoginAt',
   employeeId: 'employeeId',
   fullName: 'fullName',
   phone: 'phone',
   designation: 'designation',
+  department: 'department',
+  employmentType: 'employmentType',
+  workLocation: 'workLocation',
   dateOfJoining: 'dateOfJoining',
+  profileImageUrl: 'profileImageUrl',
+  gender: 'gender',
+  dateOfBirth: 'dateOfBirth',
+  fatherName: 'fatherName',
+  motherName: 'motherName',
+  currentAddress: 'currentAddress',
+  permanentAddress: 'permanentAddress',
+  city: 'city',
+  state: 'state',
+  country: 'country',
+  pincode: 'pincode',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  emergencyContactRelation: 'emergencyContactRelation',
+  reportingManagerName: 'reportingManagerName',
   organizationId: 'organizationId',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -167,6 +188,19 @@ exports.Role = exports.$Enums.Role = {
 exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE'
+};
+
+exports.EmploymentType = exports.$Enums.EmploymentType = {
+  FULL_TIME: 'FULL_TIME',
+  PART_TIME: 'PART_TIME',
+  CONTRACT: 'CONTRACT',
+  INTERN: 'INTERN'
+};
+
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
 };
 
 exports.Prisma.ModelName = {

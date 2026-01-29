@@ -23,6 +23,19 @@ enum UserStatus {
   INACTIVE
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
 ///////////////////////////
 // ORGANIZATION
 ///////////////////////////
@@ -44,25 +57,72 @@ model Organization {
 model User {
   id String @id @default(uuid())
 
-  // Login & auth
-  email    String     @unique
-  password String
-  role     Role
-  status   UserStatus @default(ACTIVE)
+  // =========================
+  // Login & Auth
+  // =========================
+  email       String     @unique
+  password    String
+  role        Role
+  status      UserStatus @default(ACTIVE)
+  lastLoginAt DateTime?
 
-  // Employee details
-  employeeId    String // given by HR
-  fullName      String
-  phone         String
-  designation   String
-  dateOfJoining DateTime
+  // =========================
+  // Employee Core Details
+  // =========================
+  employeeId     String // given by HR
+  fullName       String
+  phone          String
+  designation    String
+  department     String?
+  employmentType EmploymentType?
+  workLocation   String?
+  dateOfJoining  DateTime
 
-  // Relations
+  // =========================
+  // Personal Details
+  // =========================
+  profileImageUrl String?
+  gender          Gender?
+  dateOfBirth     DateTime?
+  fatherName      String?
+  motherName      String?
+
+  // =========================
+  // Address Details
+  // =========================
+  currentAddress   String?
+  permanentAddress String?
+  city             String?
+  state            String?
+  country          String?
+  pincode          String?
+
+  // =========================
+  // Emergency Contact
+  // =========================
+  emergencyContactName     String?
+  emergencyContactPhone    String?
+  emergencyContactRelation String?
+
+  // =========================
+  // Reporting Manager (Simple)
+  // =========================
+  reportingManagerName String?
+
+  // =========================
+  // Organization Relation
+  // =========================
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
+
+  // =========================
+  // System & Safety
+  // =========================
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([employeeId, organizationId]) // IMPORTANT
+  @@unique([employeeId, organizationId])
 }

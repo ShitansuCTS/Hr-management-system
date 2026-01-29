@@ -1,0 +1,2 @@
+####Supabase connection issue
+Always uses the "aws-1-ap-south-1.pooler.supabase.com:5432/postgres" String in the dev env for connetiong withe supabase.

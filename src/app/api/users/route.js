@@ -9,52 +9,118 @@ const prisma = new PrismaClient();
 
 
 
-
-
 // POST request: receive form data and log it
+// import { NextResponse } from "next/server";
+// import { prisma } from "@/lib/prisma";
+// import bcrypt from "bcryptjs";
+// import { Role } from "@prisma/client";
+
 export async function POST(request) {
     try {
-        const data = await request.json(); // Get JSON body from frontend
+        const data = await request.json();
 
-        console.log("Received new user data:", data);
+        console.log("Received user data:", data);
 
-        const joiningDate = new Date(data.dateOfJoining);
-        const organizationId = "ctsl_2026";
-
-        // Hash password (recommended)
+        // 🔐 Default password
         const hashedPassword = await bcrypt.hash("1111", 10);
 
-        // Build the object to match Prisma User model
-        const newUserData = {
-            email: data.email,
-            password: hashedPassword,           // default password
-            role: Role.EMPLOYEE,        // enum Role
-            employeeId: data.employeeId,
-            fullName: data.name,        // map frontend "name" to fullName
-            phone: data.phone,
-            designation: data.designation,
-            dateOfJoining: joiningDate,
-            organizationId,             // required
-        };
-
-        // Create user
         const newUser = await prisma.user.create({
-            data: newUserData,
+            data: {
+                // =====================
+                // Auth
+                // =====================
+                email: data.email,
+                password: hashedPassword,
+                role: Role.EMPLOYEE,
+
+                // =====================
+                // Employee Core
+                // =====================
+                employeeId: data.employeeId,
+                fullName: data.fullName,
+                phone: data.phone,
+                designation: data.designation,
+                department: data.department || null,
+                employmentType: data.employmentType || null,
+                workLocation: data.workLocation || null,
+                dateOfJoining: new Date(data.dateOfJoining),
+
+                // =====================
+                // Personal Details
+                // =====================
+                gender: data.gender || null,
+                dateOfBirth: data.dateOfBirth
+                    ? new Date(data.dateOfBirth)
+                    : null,
+                fatherName: data.fatherName || null,
+                motherName: data.motherName || null,
+
+                // =====================
+                // Address
+                // =====================
+                currentAddress: data.currentAddress || null,
+                permanentAddress: data.permanentAddress || null,
+                city: data.city || null,
+                state: data.state || null,
+                country: data.country || null,
+                pincode: data.pincode || null,
+
+                // =====================
+                // Emergency Contact
+                // =====================
+                emergencyContactName: data.emergencyContactName || null,
+                emergencyContactPhone: data.emergencyContactPhone || null,
+                emergencyContactRelation: data.emergencyContactRelation || null,
+
+                // =====================
+                // Reporting Manager
+                // =====================
+                reportingManagerName: data.reportingManagerName || null,
+
+                // =====================
+                // Organization
+                // =====================
+                organizationId: "ctsl_2026",
+            },
         });
+
+        console.log("New user created:", newUser);
 
         return NextResponse.json({
             success: true,
-            message: "User data received",
-            newUser, // echo back the data
+            message: "User created successfully",
+            userId: newUser.id,
         });
     } catch (error) {
-        console.error("Error handling POST request:", error);
+        console.error("Create user error:", error);
+
+        // Prisma unique constraint error
+        if (error.code === "P2002") {
+            const target = error.meta?.target || [];
+
+            let message = "Duplicate entry";
+
+            if (target.includes("email")) {
+                message = "Email already exists";
+            } else if (target.includes("employeeId")) {
+                message = "Employee ID already exists";
+            } else if (target.includes("employeeId") && target.includes("organizationId")) {
+                message = "Employee ID already exists in this organization";
+            }
+
+            return NextResponse.json(
+                { success: false, message },
+                { status: 409 }
+            );
+        }
+
         return NextResponse.json(
-            { success: false, error: "Failed to receive user data" },
+            { success: false, message: error.message || "Failed to create user" },
             { status: 500 }
         );
     }
 }
+
 
 
 

@@ -107,12 +107,33 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   status: 'status',
+  lastLoginAt: 'lastLoginAt',
   employeeId: 'employeeId',
   fullName: 'fullName',
   phone: 'phone',
   designation: 'designation',
+  department: 'department',
+  employmentType: 'employmentType',
+  workLocation: 'workLocation',
   dateOfJoining: 'dateOfJoining',
+  profileImageUrl: 'profileImageUrl',
+  gender: 'gender',
+  dateOfBirth: 'dateOfBirth',
+  fatherName: 'fatherName',
+  motherName: 'motherName',
+  currentAddress: 'currentAddress',
+  permanentAddress: 'permanentAddress',
+  city: 'city',
+  state: 'state',
+  country: 'country',
+  pincode: 'pincode',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  emergencyContactRelation: 'emergencyContactRelation',
+  reportingManagerName: 'reportingManagerName',
   organizationId: 'organizationId',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -139,6 +160,19 @@ exports.Role = exports.$Enums.Role = {
 exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE'
+};
+
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
+};
+
+exports.EmploymentType = exports.$Enums.EmploymentType = {
+  FULL_TIME: 'FULL_TIME',
+  PART_TIME: 'PART_TIME',
+  CONTRACT: 'CONTRACT',
+  INTERN: 'INTERN'
 };
 
 exports.Prisma.ModelName = {
@@ -178,7 +212,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../../.env"
   },
   "relativePath": "../../../../prisma",
@@ -197,13 +231,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/lib/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n///////////////////////////\n// ENUMS\n///////////////////////////\n\nenum Role {\n  ADMIN\n  EMPLOYEE\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\n///////////////////////////\n// ORGANIZATION\n///////////////////////////\n\nmodel Organization {\n  id        String   @id @default(uuid())\n  name      String\n  domain    String? // optional, e.g., company email domain\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  users User[] // 1:N relation to Users\n}\n\n///////////////////////////\n// USER\n///////////////////////////\n\nmodel User {\n  id String @id @default(uuid())\n\n  // Login & auth\n  email    String     @unique\n  password String\n  role     Role\n  status   UserStatus @default(ACTIVE)\n\n  // Employee details\n  employeeId    String // given by HR\n  fullName      String\n  phone         String\n  designation   String\n  dateOfJoining DateTime\n\n  // Relations\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  organizationId String\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([employeeId, organizationId]) // IMPORTANT\n}\n",
-  "inlineSchemaHash": "c1aaa86293c1a26be5e07885f873100a807b4e07e88c35b7d0377cfbc215359c",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/lib/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n///////////////////////////\n// ENUMS\n///////////////////////////\n\nenum Role {\n  ADMIN\n  EMPLOYEE\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\nenum Gender {\n  MALE\n  FEMALE\n  OTHER\n}\n\nenum EmploymentType {\n  FULL_TIME\n  PART_TIME\n  CONTRACT\n  INTERN\n}\n\n///////////////////////////\n// ORGANIZATION\n///////////////////////////\n\nmodel Organization {\n  id        String   @id @default(uuid())\n  name      String\n  domain    String? // optional, e.g., company email domain\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  users User[] // 1:N relation to Users\n}\n\n///////////////////////////\n// USER\n///////////////////////////\n\nmodel User {\n  id String @id @default(uuid())\n\n  // =========================\n  // Login & Auth\n  // =========================\n  email       String     @unique\n  password    String\n  role        Role\n  status      UserStatus @default(ACTIVE)\n  lastLoginAt DateTime?\n\n  // =========================\n  // Employee Core Details\n  // =========================\n  employeeId     String // given by HR\n  fullName       String\n  phone          String\n  designation    String\n  department     String?\n  employmentType EmploymentType?\n  workLocation   String?\n  dateOfJoining  DateTime\n\n  // =========================\n  // Personal Details\n  // =========================\n  profileImageUrl String?\n  gender          Gender?\n  dateOfBirth     DateTime?\n  fatherName      String?\n  motherName      String?\n\n  // =========================\n  // Address Details\n  // =========================\n  currentAddress   String?\n  permanentAddress String?\n  city             String?\n  state            String?\n  country          String?\n  pincode          String?\n\n  // =========================\n  // Emergency Contact\n  // =========================\n  emergencyContactName     String?\n  emergencyContactPhone    String?\n  emergencyContactRelation String?\n\n  // =========================\n  // Reporting Manager (Simple)\n  // =========================\n  reportingManagerName String?\n\n  // =========================\n  // Organization Relation\n  // =========================\n  organization   Organization @relation(fields: [organizationId], references: [id])\n  organizationId String\n\n  // =========================\n  // System & Safety\n  // =========================\n  isDeleted Boolean   @default(false)\n  deletedAt DateTime?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([employeeId, organizationId])\n}\n",
+  "inlineSchemaHash": "ccd3910a689827de69ffdcf1a262a6d50b2926c0656d948851d281399593132a",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrganizationToUser\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"employeeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"designation\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfJoining\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToUser\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Organization\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"domain\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"OrganizationToUser\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"UserStatus\"},{\"name\":\"lastLoginAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"employeeId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fullName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"designation\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"department\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"employmentType\",\"kind\":\"enum\",\"type\":\"EmploymentType\"},{\"name\":\"workLocation\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"dateOfJoining\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"profileImageUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"gender\",\"kind\":\"enum\",\"type\":\"Gender\"},{\"name\":\"dateOfBirth\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"fatherName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"motherName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"currentAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"permanentAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"city\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"state\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"country\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pincode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactPhone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emergencyContactRelation\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"reportingManagerName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"organization\",\"kind\":\"object\",\"type\":\"Organization\",\"relationName\":\"OrganizationToUser\"},{\"name\":\"organizationId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isDeleted\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

@@ -20,7 +20,7 @@ const PageHeader = ({ children }) => {
         <div className="page-header">
             <div className="page-header-left d-flex align-items-center">
                 <div className="page-header-title">
-                    <h5 className="m-b-10 text-capitalize">{folderName}</h5>
+                    <h5 className="m-b-10 text-capitalize">Employee </h5>
                 </div>
                 <ul className="breadcrumb">
                     <li className="breadcrumb-item"><Link href="/">Home</Link></li>
