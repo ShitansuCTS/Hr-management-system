@@ -8,13 +8,6 @@ import { verifyToken } from "@/lib/jwt";
 const prisma = new PrismaClient();
 
 
-
-// POST request: receive form data and log it
-// import { NextResponse } from "next/server";
-// import { prisma } from "@/lib/prisma";
-// import bcrypt from "bcryptjs";
-// import { Role } from "@prisma/client";
-
 export async function POST(request) {
     try {
         const data = await request.json();

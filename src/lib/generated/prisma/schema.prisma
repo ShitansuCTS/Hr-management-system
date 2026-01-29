@@ -36,10 +36,15 @@ enum EmploymentType {
   INTERN
 }
 
+enum HolidayType {
+  NATIONAL
+  FESTIVAL
+  COMPANY
+}
+
 ///////////////////////////
 // ORGANIZATION
 ///////////////////////////
-
 model Organization {
   id        String   @id @default(uuid())
   name      String
@@ -47,13 +52,13 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users User[] // 1:N relation to Users
+  users    User[] // 1:N relation to Users
+  holidays Holiday[]
 }
 
 ///////////////////////////
 // USER
 ///////////////////////////
-
 model User {
   id String @id @default(uuid())
 
@@ -125,4 +130,30 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@unique([employeeId, organizationId])
+}
+
+///////////////////////////
+// HOLIDAY
+///////////////////////////
+model Holiday {
+  id String @id @default(uuid())
+
+  name String // Ganesh Puja
+  date DateTime // 2026-09-19
+  day  String // Friday (store for fast UI)
+  year Int // 2026
+
+  type        HolidayType
+  description String?
+
+  // Optional: if later multiple orgs
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+
+  isDeleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, organizationId])
 }

@@ -16,9 +16,21 @@ export const menuList = [
                 name: "Analytics",
                 path: "/dashboards/analytics",
                 subdropdownMenu: false
+            },
+            {
+                id: 3,
+                name: "Holidays",
+                path: "/holidays",
+                subdropdownMenu: false
             }
         ]
     },
+
+
+
+
+
+
     {
         id: 1,
         name: "reports",
@@ -180,9 +192,15 @@ export const menuList = [
             //     subdropdownMenu: false
             // },
             {
-                id: 4,
+                id: 1,
                 name: "All Employee",
                 path: "/customers/list",
+                subdropdownMenu: false
+            },
+            {
+                id: 2,
+                name: "Add Employee",
+                path: "/customers/create",
                 subdropdownMenu: false
             }
         ]
@@ -527,6 +545,32 @@ export const menuList = [
                 name: "Documentations",
                 path: "https://duralux-next-doc.vercel.app/",
                 target: "_blank",
+                subdropdownMenu: false
+            }
+        ]
+    },
+    {
+        id: 12,
+        name: "Company Calendar",
+        path: "#",
+        icon: 'feather-layout',
+        dropdownMenu: [
+            {
+                id: 1,
+                name: "Holidays",
+                path: "/holidays/list",
+                subdropdownMenu: false
+            },
+            {
+                id: 2,
+                name: "Calender",
+                path: "/holidays/calender",
+                subdropdownMenu: false
+            },
+            {
+                id: 3,
+                name: "Add Holidays",
+                path: "/holidays/create",
                 subdropdownMenu: false
             }
         ]

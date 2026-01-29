@@ -166,6 +166,20 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.HolidayScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  date: 'date',
+  day: 'day',
+  year: 'year',
+  type: 'type',
+  description: 'description',
+  organizationId: 'organizationId',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -203,9 +217,16 @@ exports.Gender = exports.$Enums.Gender = {
   OTHER: 'OTHER'
 };
 
+exports.HolidayType = exports.$Enums.HolidayType = {
+  NATIONAL: 'NATIONAL',
+  FESTIVAL: 'FESTIVAL',
+  COMPANY: 'COMPANY'
+};
+
 exports.Prisma.ModelName = {
   Organization: 'Organization',
-  User: 'User'
+  User: 'User',
+  Holiday: 'Holiday'
 };
 
 /**

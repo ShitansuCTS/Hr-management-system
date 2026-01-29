@@ -45,3 +45,17 @@ http://localhost:3000/customers/list
 
 ### 🔗 API Endpoint
 /api/users
+
+
+
+### 📌Holidays module 
+Holidays for the emoployee
+this is in the under the proposal/properosal create /
+have one form wheree the hr will add the data to the system.
+http://localhost:3000/proposal/create
+read 
+calaneder module 
+
+
+
+

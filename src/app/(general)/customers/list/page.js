@@ -8,7 +8,7 @@ const page = () => {
     return (
         <>
             <PageHeader>
-                <CustomersHeader />
+                <h5 className="m-b-10 text-capitalize">All our employee !!</h5>
             </PageHeader>
             <div className='main-content'>
                 <div className='row'>
