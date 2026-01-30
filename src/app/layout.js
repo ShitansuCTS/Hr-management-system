@@ -7,11 +7,16 @@ import NavigationProvider from "@/contentApi/navigationProvider";
 import SettingSideBarProvider from "@/contentApi/settingSideBarProvider";
 import ThemeCustomizer from "@/components/shared/ThemeCustomizer";
 import { Toaster } from "react-hot-toast";
-
+import "./globals.css";
 
 export const metadata = {
   title: "Duralux | Dashboard",
   description: "Duralux is a admin Dashboard create for multipurpose,",
+  icons: {
+    icon: "/logo.JPG",                // default favicon
+    shortcut: "/logo.JPG",      // small icon
+    apple: "/logo.JPG",      // iOS icon
+  },
 };
 
 export default function RootLayout({ children }) {

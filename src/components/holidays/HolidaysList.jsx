@@ -83,38 +83,50 @@ const HolidaysList = () => {
                                             </td>
 
                                             <td>
-  <span
-    className="badge bg-soft-primary text-dark"
-    style={{
-      padding: "0.4em 0.8em",
-      fontSize: "0.85em",
-      borderRadius: "0.5rem",
-      display: "inline-block",
-    }}
-  >
-    {holiday.date ? new Date(holiday.date).toLocaleDateString() : ""}
-  </span>
-</td>
+                                                <span
+                                                    className="badge"
+                                                    style={{
+                                                        padding: "0.4em 0.8em",
+                                                        fontSize: "0.85em",
+                                                        borderRadius: "9999px", // makes it a classic pill shape
+                                                        display: "inline-block",
+                                                        backgroundColor: "#3454d1", // primary color
+                                                        color: "#fff",
+                                                        cursor: "pointer",         // makes it clickable
+                                                        transition: "all 0.2s ease", // smooth hover effect
+                                                        boxShadow: "0 2px 5px rgba(0,0,0,0.15)", // subtle shadow
+                                                        userSelect: "none",        // prevent text selection on click
+                                                    }}
+                                                >
+                                                    {holiday.date ? new Date(holiday.date).toLocaleDateString() : ""}
+                                                </span>
+
+                                            </td>
 
                                             <td className="fw-bold">{holiday.day}</td>
-                                          <td>
-  {holiday.type && (
-    <span
-      className="badge"
-      style={{
-        backgroundColor: "#3454d1",
-        color: "#fff",
-        padding: "0.4em 0.8em",
-        fontSize: "0.85em",
-        borderRadius: "0.5rem",
-        textTransform: "capitalize",
-        display: "inline-block",
-      }}
-    >
-      {holiday.type}
-    </span>
-  )}
-</td>
+                                            <td>
+                                                {holiday.type && (
+                                                    <span
+                                                        className="badge"
+                                                        style={{
+                                                            backgroundColor:
+                                                                holiday.type === "NATIONAL" ? "#f59e0b" : // yellow/orange for public holidays
+                                                                    holiday.type === "FESTIVAL" ? "#60a5fa" : // blue for optional holidays
+                                                                        holiday.type === "COMPANY" ? "#ef4444" : // red for restricted
+                                                                            "#3454d1", // default color
+                                                            color: "#fff",
+                                                            padding: "0.4em 0.8em",
+                                                            fontSize: "0.85em",
+                                                            borderRadius: "0.5rem",
+                                                            textTransform: "capitalize",
+                                                            display: "inline-block",
+                                                        }}
+                                                    >
+                                                        {holiday.type}
+                                                    </span>
+                                                )}
+
+                                            </td>
 
 
 
