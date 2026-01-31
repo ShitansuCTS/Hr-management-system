@@ -7,6 +7,7 @@ import NavigationProvider from "@/contentApi/navigationProvider";
 import SettingSideBarProvider from "@/contentApi/settingSideBarProvider";
 import ThemeCustomizer from "@/components/shared/ThemeCustomizer";
 import { Toaster } from "react-hot-toast";
+import 'react-loading-skeleton/dist/skeleton.css';
 import "./globals.css";
 
 export const metadata = {

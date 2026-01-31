@@ -33,6 +33,8 @@ the mail is - http://localhost:3000/authentication/login/minimal
 ## 👥 Users Module
 
 Manages employees within an organization.
+1. Having one Form where the hr /admin will add the poper for thier org
+2.A page having whree we get the data /api/users and displays in the webite.
 
 
 
@@ -57,5 +59,10 @@ read
 calaneder module 
 
 
+### 📌Calander Module sync with the holidayss in the company which is provided by the hr and admin 
+This is a calender View module 
+1.Calander si sync with the Previous 
+2.Adding the Leaves Values with the Hr
+3.Showing All the Leaves for Users
 
 
