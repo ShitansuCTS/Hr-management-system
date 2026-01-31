@@ -180,6 +180,26 @@ exports.Prisma.HolidayScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LeaveBalanceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  leaveType: 'leaveType',
+  total: 'total',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LeaveApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  leaveType: 'leaveType',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  reason: 'reason',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -223,10 +243,28 @@ exports.HolidayType = exports.$Enums.HolidayType = {
   COMPANY: 'COMPANY'
 };
 
+exports.LeaveType = exports.$Enums.LeaveType = {
+  PAID_LEAVE: 'PAID_LEAVE',
+  SICK_LEAVE: 'SICK_LEAVE',
+  CASUAL_LEAVE: 'CASUAL_LEAVE',
+  MATERNITY_LEAVE: 'MATERNITY_LEAVE',
+  PATERNITY_LEAVE: 'PATERNITY_LEAVE',
+  BEREAVEMENT_LEAVE: 'BEREAVEMENT_LEAVE',
+  OPTIONAL_LEAVE: 'OPTIONAL_LEAVE'
+};
+
+exports.LeaveStatus = exports.$Enums.LeaveStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   Organization: 'Organization',
   User: 'User',
-  Holiday: 'Holiday'
+  Holiday: 'Holiday',
+  LeaveBalance: 'LeaveBalance',
+  LeaveApplication: 'LeaveApplication'
 };
 
 /**

@@ -198,6 +198,15 @@ const projectRoalOptions = [
     { value: "owner", label: "Owner", color: "#ffa21d" },
     { value: "customer", label: "Customer", color: "#17c666" }
 ]
+const leaveTypeOptions = [
+    { label: "Paid Leave", value: "PAID_LEAVE", color: "#17c666" },
+    { label: "Sick Leave", value: "SICK_LEAVE", color: "#ea4d4d" },
+    { label: "Casual Leave", value: "CASUAL_LEAVE", color: "#3454d1" },
+    { label: "Maternity Leave", value: "MATERNITY_LEAVE", color: "#41b2c4" },
+    { label: "Paternity Leave", value: "PATERNITY_LEAVE", color: "#ffa21d" },
+    { label: "Optional Leave", value: "OPTIONAL_LEAVE", color: "#6610f2" },
+];
+
 export {
     propsalRelatedOptions,
     propsalDiscountOptions,
@@ -219,5 +228,6 @@ export {
     projectBillingOptions,
     projectNotificationsOptions,
     projectRoalOptions,
-    taskTypeOptions
+    taskTypeOptions,
+    leaveTypeOptions
 }
