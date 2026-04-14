@@ -1,252 +1,166 @@
 "use client";
-import React, { useEffect, useState, useMemo, memo } from "react";
-import {
-  FiAlertOctagon,
-  FiArchive,
-  FiClock,
-  FiEdit3,
-  FiEye,
-  FiMoreHorizontal,
-  FiPrinter,
-  FiTrash2,
-} from "react-icons/fi";
-import Dropdown from "@/components/shared/Dropdown";
-import SelectDropdown from "@/components/shared/SelectDropdown";
-import { paymentTableData } from "@/utils/fackData/paymentTableData";
-import Table from "@/components/shared/table/Table";
-import Link from "next/link";
-import dayjs from "dayjs";
-import getIcon from "@/utils/getIcon";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import React, { useEffect, useState } from "react";
 
-const actions = [
-  { label: "Edit", icon: <FiEdit3 /> },
-  { label: "Print", icon: <FiPrinter /> },
-  { label: "Remind", icon: <FiClock /> },
-  { type: "divider" },
-  { label: "Archive", icon: <FiArchive /> },
-  { label: "Report Spam", icon: <FiAlertOctagon /> },
-  { type: "divider" },
-  { label: "Delete", icon: <FiTrash2 /> },
-];
-
-const EmployeesTable = () => {
-  const router = useRouter();
-
-  //colums of the table
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "fullName",
-        id: "employee",
-        header: "Employee Name",
-        cell: ({ row }) => {
-          const user = row.original;
-
-          return (
-            <div className="d-flex align-items-center gap-3 position-relative">
-              {/* ✅ Status Vertical Bar */}
-              <div
-                style={{
-                  width: "4px",
-                  height: "40px",
-                  borderRadius: "4px",
-                  backgroundColor: "#3454d1",
-                }}
-              />
-
-              {/* ✅ Avatar */}
-              <div className="avatar-image avatar-md">
-                <img
-                  src={user?.profileImageUrl || "/default-avatar.png"}
-                  alt={user?.fullName}
-                  className="img-fluid"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                />
-              </div>
-
-              {/* ✅ Info */}
-              <div>
-                <span className="fw-bold">{user?.fullName}</span>
-                <small className="fs-12 fw-normal text-muted d-block">{user?.email}</small>
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        header: "Employee ID",
-        meta: {
-          className: "fw-bold text-dark",
-        },
-        cell: ({ row }) => (
-          <span className="badge border border-dashed text-primary border-primary">
-            {row.original.employeeId || "—"}
-          </span>
-        ),
-      },
-      {
-        header: "Contact Info",
-        cell: ({ row }) => (
-          <div className="hstack gap-2">
-            <div className="avatar-text avatar-sm">{getIcon("feather-phone")}</div>
-            <a href="#">{row.original.phone}</a>
-          </div>
-        ),
-      },
-      {
-        header: "Department",
-        cell: ({ row }) => (
-          <span className="badge border border-dashed text-danger border-danger">
-            {row.original.department?.name || "—"}
-          </span>
-        ),
-      },
-      {
-        id: "lastLogin",
-        header: "Last Login",
-        meta: {
-          className: "fw-bold text-dark",
-        },
-        cell: ({ row }) => {
-          const lastLogin = row.original.lastLoginAt;
-
-          return (
-            <span className="badge border border-dashed text-success border-success">
-              {lastLogin ? dayjs(lastLogin).format("DD MMM YYYY, hh:mm A") : "Never"}
-            </span>
-          );
-        },
-      },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => (
-          <div className="hstack gap-2 justify-content-end">
-            <button
-              className="avatar-text avatar-md"
-              onClick={() => router.push(`/employees/${row.original.employeeId.trim()}`)}
-            >
-              <FiEye />
-            </button>
-          </div>
-        ),
-      },
-    ],
-    []
-  );
-  //colums of the table
-
-  // function to fetch and set the data to the tabel
+export default function SalaryStructurePage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [departments, setDepartments] = useState([]);
 
-  const fetchUsersInfo = async (deptId = "") => {
-    try {
-      setLoading(true);
+  const [formData, setFormData] = useState({
+    userId: "",
+    basic: "",
+    hra: "",
+    medicalAllowance: "",
+    specialAllowance: "",
+    incentive: "",
+    providentFund: "",
+    professionTax: "",
+    esic: "",
+  });
 
-      const url = deptId
-        ? `/api/users/all-users-details?departmentId=${deptId}`
-        : `/api/users/all-users-details`;
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      setUsers(data.users);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to fetch users");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchDepartments = async () => {
-    try {
-      const res = await fetch("/api/departments");
+  // 🔹 Fetch Users
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await fetch("/api/users/all-users-details"); // make sure this exists
       const data = await res.json();
 
-      const formatted = [
-        { label: "All Departments", value: "" },
-        ...data.departments.map((dept) => ({
-          label: dept.name,
-          value: dept.id,
-        })),
-      ];
+      console.log("The response is ,", data.users);
+      setUsers(data.users || []);
+    };
+    fetchUsers();
+  }, []);
 
-      setDepartments(formatted);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to fetch departments");
+  // 🔹 Fetch Salary when user changes
+  const fetchSalary = async (userId) => {
+    if (!userId) return;
+
+    const res = await fetch(`/api/payroll/salary-structure?userId=${userId}`);
+    const data = await res.json();
+
+    if (data.data) {
+      setFormData({
+        userId,
+        basic: data.data.basic || "",
+        hra: data.data.hra || "",
+        medicalAllowance: data.data.medicalAllowance || "",
+        specialAllowance: data.data.specialAllowance || "",
+        incentive: data.data.incentive || "",
+        providentFund: data.data.providentFund || "",
+        professionTax: data.data.professionTax || "",
+        esic: data.data.esic || "",
+      });
+    } else {
+      // reset if no salary exists
+      setFormData((prev) => ({
+        ...prev,
+        userId,
+        basic: "",
+        hra: "",
+        medicalAllowance: "",
+        specialAllowance: "",
+        incentive: "",
+        providentFund: "",
+        professionTax: "",
+        esic: "",
+      }));
     }
   };
 
-  useEffect(() => {
-    fetchUsersInfo(selectedDepartment);
-  }, [selectedDepartment]);
+  // 🔹 Handle input
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
-  // function to fetch and set the data to the tabel
+  // 🔹 Submit
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    const res = await fetch("/api/payroll/salary-structure", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...formData,
+        basic: Number(formData.basic),
+        hra: Number(formData.hra),
+        medicalAllowance: Number(formData.medicalAllowance),
+        specialAllowance: Number(formData.specialAllowance),
+        incentive: Number(formData.incentive),
+        providentFund: Number(formData.providentFund),
+        professionTax: Number(formData.professionTax),
+        esic: Number(formData.esic),
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (data.success) {
+      alert("Salary saved successfully ✅");
+    } else {
+      alert("Error saving salary ❌");
+    }
+  };
 
   return (
-    <>
-      {/* Toolbar */}
-      <div
-        className="d-flex justify-content-between align-items-center mb-3 px-3 py-2"
-        style={{
-          background: "#3454d1",
-          borderRadius: "8px",
-          border: "1px solid rgba(255,255,255,0.05)",
-        }}
-      >
-        {/* Left Side */}
-        <div className="d-flex flex-column justify-content-center">
-          <h6 className="mb-0 fw-semibold text-white">Search Employees with Filters</h6>
-          <small className="text-white opacity-75">Filter employees by department</small>
+    <div className="p-6">
+      <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-2xl p-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+          Salary Structure
+        </h2>
+
+        {/* User Select */}
+        <select
+          className="w-full mb-4 p-2 border rounded bg-gray-50 dark:bg-gray-800 text-black dark:text-white"
+          value={formData.userId}
+          onChange={(e) => {
+            handleChange(e);
+            fetchSalary(e.target.value);
+          }}
+          name="userId"
+        >
+          <option value="">Select User</option>
+          {users.map((u) => (
+            <option key={u.id} value={u.id}>
+              {u.fullName}
+            </option>
+          ))}
+        </select>
+
+        {/* Inputs */}
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            "basic",
+            "hra",
+            "medicalAllowance",
+            "specialAllowance",
+            "incentive",
+            "providentFund",
+            "professionTax",
+            "esic",
+          ].map((field) => (
+            <input
+              key={field}
+              type="number"
+              name={field}
+              placeholder={field}
+              value={formData[field]}
+              onChange={handleChange}
+              className="p-2 border rounded bg-gray-50 dark:bg-gray-800 text-black dark:text-white"
+            />
+          ))}
         </div>
 
-        {/* Right Side */}
-        <div style={{ width: "250px" }}>
-          <select
-            className="form-select"
-            style={{
-              height: "45px",
-              borderRadius: "6px",
-              border: "none",
-            }}
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-          >
-            <option value="">All Departments</option>
-
-            {departments.map((dept) => (
-              <option key={dept.value} value={dept.value}>
-                {dept.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Submit */}
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
+        >
+          {loading ? "Saving..." : "Save Salary"}
+        </button>
       </div>
-
-      {/* Table */}
-      <Table
-        data={users}
-        columns={columns}
-        loading={loading}
-        searchPlaceholder="Search employees..."
-      />
-    </>
+    </div>
   );
-};
-
-export default EmployeesTable;
+}

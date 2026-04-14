@@ -70,12 +70,12 @@ const TabOverviewContent = ({ user }) => {
 
         <div className="row g-2 mb-2">
           <div className="col-sm-6 text-muted">Designation</div>
-          <div className="col-sm-6 fw-semibold">{user?.designation.name || "-"}</div>
+          <div className="col-sm-6 fw-semibold">{user?.designation?.name || "-"}</div>
         </div>
 
         <div className="row g-2 mb-2">
           <div className="col-sm-6 text-muted">Department</div>
-          <div className="col-sm-6 fw-semibold">{user?.department.name || "-"}</div>
+          <div className="col-sm-6 fw-semibold">{user?.department?.name || "-"}</div>
         </div>
 
         <div className="row g-2 mb-2">

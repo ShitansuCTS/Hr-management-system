@@ -308,6 +308,21 @@ exports.Prisma.DesignationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SalaryStructureScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  basic: 'basic',
+  hra: 'hra',
+  medicalAllowance: 'medicalAllowance',
+  specialAllowance: 'specialAllowance',
+  incentive: 'incentive',
+  providentFund: 'providentFund',
+  professionTax: 'professionTax',
+  esic: 'esic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -392,7 +407,8 @@ exports.Prisma.ModelName = {
   UserDocument: 'UserDocument',
   Attendance: 'Attendance',
   Department: 'Department',
-  Designation: 'Designation'
+  Designation: 'Designation',
+  SalaryStructure: 'SalaryStructure'
 };
 
 /**

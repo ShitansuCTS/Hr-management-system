@@ -11,6 +11,7 @@ import TabSecurity from "./TabSecurity";
 import Profile from "../widgetsList/Profile";
 import CustomerSocalFlower from "./CustomerSocalFlower";
 import { useState, useEffect } from "react";
+import PayrollSection from "../profile/PayrollSection";
 
 const CustomerContent = () => {
   const { employeeId } = useParams();
@@ -111,6 +112,17 @@ const CustomerContent = () => {
                   Activity
                 </a>
               </li>
+              <li className="nav-item flex-fill border-top" role="presentation">
+                <a
+                  href="#"
+                  className="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#payrollTab"
+                  role="tab"
+                >
+                  Payroll
+                </a>
+              </li>
 
               {/* <li className="nav-item flex-fill border-top" role="presentation">
                 <a
@@ -145,6 +157,9 @@ const CustomerContent = () => {
             <TabNotificationsContent employeeId={user?.employeeId} />
             <TabConnections />
             <TabSecurity />
+            <div className="tab-pane fade" id="payrollTab" role="tabpanel">
+              <PayrollSection user={user} />
+            </div>
           </div>
         </div>
       </div>

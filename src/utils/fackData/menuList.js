@@ -658,6 +658,20 @@ export const menuList = [
         roles: ["ADMIN"],
       },
     ],
-  }
-
+  },
+  {
+  id: 16,
+  name: "Payroll",
+  path: "#",
+  icon: "feather-dollar-sign", // good icon for salary
+  dropdownMenu: [
+    {
+      id: 1,
+      name: "Salary Structure",
+      path: "/payroll/salary-structure",
+      subdropdownMenu: false,
+      roles: ["ADMIN"],
+    },
+  ],
+}
 ];
