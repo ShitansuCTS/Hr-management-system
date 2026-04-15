@@ -18,9 +18,9 @@ const PaymentRecordChart = () => {
   const { charts, fetchDashboard, loading } = usehrdashboardStore();
 
   // Fetch data
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  // useEffect(() => {
+  //   fetchDashboard();
+  // }, []);
 
   // Normalize department names
   const normalizeDept = (name) => {

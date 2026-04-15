@@ -29,9 +29,9 @@ const LatestLeads = ({ title }) => {
 
   const data = birthdayinfo || [];
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  // useEffect(() => {
+  //   fetchDashboard();
+  // }, []);
 
 
 

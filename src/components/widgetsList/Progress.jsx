@@ -26,9 +26,9 @@ const Progress = ({ footerShow, title, btnFooter }) => {
 
   const data = anniversaryinfo || [];
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  // useEffect(() => {
+  //   fetchDashboard();
+  // }, []);
 
 
   const truncateText = (text, limit = 15) => {

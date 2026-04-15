@@ -64,7 +64,7 @@ export async function GET(req) {
     const userId = searchParams.get("userId");
 
 
-    console.log("The user id is " , userId)
+    // console.log("The user id is " , userId)
 
     if (!userId) {
       return NextResponse.json({ error: "UserId is required" }, { status: 400 });
@@ -74,7 +74,7 @@ export async function GET(req) {
       where: { userId },
     });
 
-    console.log("The salary sture is ", salary);
+    // console.log("The salary sture is ", salary);
 
     return NextResponse.json({
       success: true,

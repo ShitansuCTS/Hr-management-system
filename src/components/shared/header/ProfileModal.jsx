@@ -24,13 +24,12 @@ const subscriptionsList = [
   "Subscriptions",
 ];
 const ProfileModal = () => {
-
-  const { user, fetchUser, loading } = useUserStore();
+  const { user, loading } = useUserStore();
   const router = useRouter();
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  // useEffect(() => {
+  //   fetchUser();
+  // }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
@@ -42,34 +41,50 @@ const ProfileModal = () => {
     router.refresh(); // clears cached data
   };
 
-  if (loading) {
-    return <UserDropdownSkeleton />;
-  }
+  // if (loading) {
+  //   return <UserDropdownSkeleton />;
+  // }
 
   return (
     <div className="dropdown nxl-h-item">
       <a href="#" data-bs-toggle="dropdown" role="button" data-bs-auto-close="outside">
-        <img
-          src={user?.profileImageUrl || "/images/avatar/1.png"}
-          alt="user-image"
-          className="img-fluid user-avtar me-0"
-          style={{ width: "40px", height: "40px" }}
-        />
+        {loading ? (
+          <div
+            className="rounded-circle bg-secondary"
+            style={{
+              width: "40px",
+              height: "40px",
+              animation: "pulse 1.5s infinite",
+            }}
+          ></div>
+        ) : (
+          <img
+            src={user?.profileImageUrl || "/images/avatar/1.png"}
+            alt="user-image"
+            className="img-fluid user-avtar me-0"
+            style={{ width: "40px", height: "40px" }}
+          />
+        )}
       </a>
       <div className="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
         <div className="dropdown-header">
           <div className="d-flex align-items-center">
             <img
-              src={user?.profileImageUrl || "/images/avatar/1.png"}
+              src={
+                loading ? "/images/avatar/1.png" : user?.profileImageUrl || "/images/avatar/1.png"
+              }
               alt="user-image"
               className="img-fluid user-avtar"
               style={{ width: "40px", height: "40px" }}
             />
             <div>
               <h6 className="text-dark mb-0">
-                {user?.fullName || "Alexandra Della"}<span className="badge bg-soft-success text-success ms-1">PRO</span>
+                {user?.fullName || "Alexandra Della"}
+                <span className="badge bg-soft-success text-success ms-1">PRO</span>
               </h6>
-              <span className="fs-12 fw-medium text-muted">{user?.email || "alex.della@outlook.com"}</span>
+              <span className="fs-12 fw-medium text-muted">
+                {user?.email || "alex.della@outlook.com"}
+              </span>
             </div>
           </div>
         </div>

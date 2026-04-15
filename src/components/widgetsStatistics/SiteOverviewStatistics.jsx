@@ -12,9 +12,9 @@ const SiteOverviewStatistics = () => {
   const data = cardsinfo || {};
 
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  // useEffect(() => {
+  //   fetchDashboard();
+  // }, []);
 
   // const employeesData = employees || {};
   // const leavesData = leaves || {};

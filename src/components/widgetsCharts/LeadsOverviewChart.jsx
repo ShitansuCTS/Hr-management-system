@@ -17,9 +17,9 @@ const LeadsOverviewChart = ({ chartHeight = 280, isFooterShow }) => {
 
   if (isRemoved) return null;
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  // useEffect(() => {
+  //   fetchDashboard();
+  // }, []);
 
   // ✅ Format labels
   const formatLabel = (text) =>
