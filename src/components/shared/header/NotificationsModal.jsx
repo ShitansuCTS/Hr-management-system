@@ -3,41 +3,12 @@ import React, { useEffect } from "react";
 import { FiBell, FiCheck, FiX } from "react-icons/fi";
 import { useAnnouncementStore } from "@/store/announcementStore";
 
-const notificationsList = [
-  {
-    id: 1,
-    src: "/images/avatar/2.png",
-    time: "2",
-    titleFirst: "Malanie Hanvey",
-    titleSecond: "We should talk about that at lunch!",
-  },
-  {
-    id: 3,
-    src: "/images/avatar/3.png",
-    time: "36",
-    titleFirst: "Valentine Maton",
-    titleSecond: "You can download the latest invoices now.",
-  },
-  {
-    id: 4,
-    src: "/images/avatar/4.png",
-    time: "53",
-    titleFirst: "Archie Cantones",
-    titleSecond: "Don't forget to pickup Jeremy after school!",
-  },
-];
 const NotificationsModal = () => {
-
-
-  const { announcements, loading, fetchAnnouncements } = useAnnouncementStore()
+  const { announcements, loading, fetchAnnouncements } = useAnnouncementStore();
 
   useEffect(() => {
-    fetchAnnouncements()
-  }, [])
-
-
-
-
+    fetchAnnouncements();
+  }, []);
 
   return (
     <div className="dropdown nxl-h-item">
@@ -63,11 +34,18 @@ const NotificationsModal = () => {
             <span>Make as Read</span>
           </Link>
         </div>
-        {announcements.slice() // create copy (important to avoid mutating state)
+        {announcements
+          .slice() // create copy (important to avoid mutating state)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // latest first
           .slice(0, 3) // take only 3
           .map(({ id, createdBy, createdAt, title }) => (
-            < Card key={id} profileImage={createdBy?.profileImageUrl} time={createdAt} titleFirst={title} titleSecond="3 seconds" />
+            <Card
+              key={id}
+              profileImage={createdBy?.profileImageUrl}
+              time={createdAt}
+              titleFirst={title}
+              titleSecond="3 seconds"
+            />
           ))}
 
         <div className="text-center notifications-footer">
@@ -91,20 +69,16 @@ const Card = ({ src, time, titleFirst, titleSecond, profileImage }) => {
     if (seconds < 60) return "Just now";
 
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60)
-      return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
 
     const hours = Math.floor(minutes / 60);
-    if (hours < 24)
-      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
 
     const days = Math.floor(hours / 24);
-    if (days < 30)
-      return `${days} day${days > 1 ? "s" : ""} ago`;
+    if (days < 30) return `${days} day${days > 1 ? "s" : ""} ago`;
 
     const months = Math.floor(days / 30);
-    if (months < 12)
-      return `${months} month${months > 1 ? "s" : ""} ago`;
+    if (months < 12) return `${months} month${months > 1 ? "s" : ""} ago`;
 
     const years = Math.floor(months / 12);
     return `${years} year${years > 1 ? "s" : ""} ago`;

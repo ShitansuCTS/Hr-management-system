@@ -1,166 +1,183 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import Table from "@/components/shared/table/Table";
+import dayjs from "dayjs";
+import toast from "react-hot-toast";
+import { FiEye } from "react-icons/fi";
 
-export default function SalaryStructurePage() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+const AttendanceHistory = () => {
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [formData, setFormData] = useState({
-    userId: "",
-    basic: "",
-    hra: "",
-    medicalAllowance: "",
-    specialAllowance: "",
-    incentive: "",
-    providentFund: "",
-    professionTax: "",
-    esic: "",
-  });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedAttendance, setSelectedAttendance] = useState(null);
 
-  // 🔹 Fetch Users
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await fetch("/api/users/all-users-details"); // make sure this exists
+  // ✅ Fetch Attendance History
+  const fetchAttendanceHistory = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/attendance/history", {
+        method: "GET",
+        credentials: "include",
+      });
+
       const data = await res.json();
 
-      console.log("The response is ,", data.users);
-      setUsers(data.users || []);
-    };
-    fetchUsers();
+      if (data.success) {
+        setAttendanceData(data.data);
+      } else {
+        toast.error(data.message || "Failed to load attendance");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendanceHistory();
   }, []);
 
-  // 🔹 Fetch Salary when user changes
-  const fetchSalary = async (userId) => {
-    if (!userId) return;
+  // ✅ Table Columns
+  const columns = useMemo(
+    () => [
+      {
+        header: "Employee",
+        cell: ({ row }) => {
+          const user = row.original.user;
 
-    const res = await fetch(`/api/payroll/salary-structure?userId=${userId}`);
-    const data = await res.json();
-
-    if (data.data) {
-      setFormData({
-        userId,
-        basic: data.data.basic || "",
-        hra: data.data.hra || "",
-        medicalAllowance: data.data.medicalAllowance || "",
-        specialAllowance: data.data.specialAllowance || "",
-        incentive: data.data.incentive || "",
-        providentFund: data.data.providentFund || "",
-        professionTax: data.data.professionTax || "",
-        esic: data.data.esic || "",
-      });
-    } else {
-      // reset if no salary exists
-      setFormData((prev) => ({
-        ...prev,
-        userId,
-        basic: "",
-        hra: "",
-        medicalAllowance: "",
-        specialAllowance: "",
-        incentive: "",
-        providentFund: "",
-        professionTax: "",
-        esic: "",
-      }));
-    }
-  };
-
-  // 🔹 Handle input
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  // 🔹 Submit
-  const handleSubmit = async () => {
-    setLoading(true);
-
-    const res = await fetch("/api/payroll/salary-structure", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+          return (
+            <div className="hstack gap-3">
+              <img
+                src={user?.profileImageUrl || "https://i.pravatar.cc/150"}
+                alt="profile"
+                className="rounded-circle"
+                width={40}
+                height={40}
+              />
+              <div>
+                <div className="fw-bold">{user?.fullName}</div>
+                <small className="text-muted">{user?.email}</small>
+              </div>
+            </div>
+          );
+        },
       },
-      body: JSON.stringify({
-        ...formData,
-        basic: Number(formData.basic),
-        hra: Number(formData.hra),
-        medicalAllowance: Number(formData.medicalAllowance),
-        specialAllowance: Number(formData.specialAllowance),
-        incentive: Number(formData.incentive),
-        providentFund: Number(formData.providentFund),
-        professionTax: Number(formData.professionTax),
-        esic: Number(formData.esic),
-      }),
-    });
 
-    const data = await res.json();
-    setLoading(false);
+      {
+        header: "Date",
+        cell: ({ row }) => dayjs(row.original.date).format("DD MMM YYYY"),
+      },
 
-    if (data.success) {
-      alert("Salary saved successfully ✅");
-    } else {
-      alert("Error saving salary ❌");
-    }
-  };
+      {
+        header: "Punch In",
+        cell: ({ row }) =>
+          row.original.punchIn ? dayjs(row.original.punchIn).format("hh:mm A") : "-",
+      },
+
+      {
+        header: "Punch Out",
+        cell: ({ row }) =>
+          row.original.punchOut ? dayjs(row.original.punchOut).format("hh:mm A") : "-",
+      },
+
+      {
+        header: "Worked Hours",
+        cell: ({ row }) => {
+          const mins = row.original.totalMinutes || 0;
+          const hrs = (mins / 60).toFixed(2);
+
+          return `${hrs} hrs`;
+        },
+      },
+
+      {
+        header: "Status",
+        cell: ({ row }) => {
+          const status = row.original.status;
+
+          let color = "text-muted";
+
+          if (status === "PRESENT") color = "text-success";
+          if (status === "INCOMPLETE") color = "text-warning";
+          if (status === "ABSENT") color = "text-danger";
+
+          return <span className={color}>{status}</span>;
+        },
+      },
+
+      {
+        header: "Actions",
+        cell: ({ row }) => (
+          <button
+            className="avatar-text avatar-md"
+            onClick={() => {
+              setSelectedAttendance(row.original);
+              setSidebarOpen(true);
+            }}
+          >
+            <FiEye />
+          </button>
+        ),
+      },
+    ],
+    []
+  );
 
   return (
-    <div className="p-6">
-      <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 shadow-lg rounded-2xl p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-          Salary Structure
-        </h2>
+    <>
+      {/* TABLE */}
+      <Table
+        data={attendanceData}
+        columns={columns}
+        loading={loading}
+        searchPlaceholder="Search Attendance..."
+      />
 
-        {/* User Select */}
-        <select
-          className="w-full mb-4 p-2 border rounded bg-gray-50 dark:bg-gray-800 text-black dark:text-white"
-          value={formData.userId}
-          onChange={(e) => {
-            handleChange(e);
-            fetchSalary(e.target.value);
-          }}
-          name="userId"
-        >
-          <option value="">Select User</option>
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.fullName}
-            </option>
-          ))}
-        </select>
+      {/* SIDEBAR (optional detail view) */}
+      {sidebarOpen && selectedAttendance && (
+        <div className="sidebar">
+          <div className="p-3">
+            <h5>Attendance Details</h5>
 
-        {/* Inputs */}
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            "basic",
-            "hra",
-            "medicalAllowance",
-            "specialAllowance",
-            "incentive",
-            "providentFund",
-            "professionTax",
-            "esic",
-          ].map((field) => (
-            <input
-              key={field}
-              type="number"
-              name={field}
-              placeholder={field}
-              value={formData[field]}
-              onChange={handleChange}
-              className="p-2 border rounded bg-gray-50 dark:bg-gray-800 text-black dark:text-white"
-            />
-          ))}
+            <p>
+              <b>Name:</b> {selectedAttendance.user.fullName}
+            </p>
+            <p>
+              <b>Email:</b> {selectedAttendance.user.email}
+            </p>
+            <p>
+              <b>Date:</b> {dayjs(selectedAttendance.date).format("DD MMM YYYY")}
+            </p>
+            <p>
+              <b>Punch In:</b> {selectedAttendance.punchIn}
+            </p>
+            <p>
+              <b>Punch Out:</b> {selectedAttendance.punchOut}
+            </p>
+            <p>
+              <b>Total Minutes:</b> {selectedAttendance.totalMinutes}
+            </p>
+            <p>
+              <b>Status:</b> {selectedAttendance.status}
+            </p>
+
+            <button
+              className="btn btn-sm btn-secondary mt-3"
+              onClick={() => {
+                setSidebarOpen(false);
+                setSelectedAttendance(null);
+              }}
+            >
+              Close
+            </button>
+          </div>
         </div>
-
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
-        >
-          {loading ? "Saving..." : "Save Salary"}
-        </button>
-      </div>
-    </div>
+      )}
+    </>
   );
-}
+};
+
+export default AttendanceHistory;

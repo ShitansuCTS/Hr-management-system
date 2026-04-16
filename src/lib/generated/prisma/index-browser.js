@@ -323,6 +323,28 @@ exports.Prisma.SalaryStructureScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PayrollScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  month: 'month',
+  year: 'year',
+  basic: 'basic',
+  hra: 'hra',
+  medicalAllowance: 'medicalAllowance',
+  specialAllowance: 'specialAllowance',
+  incentive: 'incentive',
+  providentFund: 'providentFund',
+  professionTax: 'professionTax',
+  esic: 'esic',
+  totalWorkingDays: 'totalWorkingDays',
+  presentDays: 'presentDays',
+  absentDays: 'absentDays',
+  grossSalary: 'grossSalary',
+  totalDeductions: 'totalDeductions',
+  netSalary: 'netSalary',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -408,7 +430,8 @@ exports.Prisma.ModelName = {
   Attendance: 'Attendance',
   Department: 'Department',
   Designation: 'Designation',
-  SalaryStructure: 'SalaryStructure'
+  SalaryStructure: 'SalaryStructure',
+  Payroll: 'Payroll'
 };
 
 /**

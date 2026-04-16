@@ -82,8 +82,8 @@ model Organization {
   users         User[] // 1:N relation to Users
   holidays      Holiday[]
   announcements Announcement[]
-  documents UserDocument[]
-  attendances Attendance[]
+  documents     UserDocument[]
+  attendances   Attendance[]
 }
 
 ///////////////////////////
@@ -104,14 +104,14 @@ model User {
   // =========================
   // Employee Core Details
   // =========================
-  employeeId     String // given by HR
-  fullName       String
-  phone          String
+  employeeId    String // given by HR
+  fullName      String
+  phone         String
   designationId String?
   designation   Designation? @relation(fields: [designationId], references: [id])
 
-  departmentId String?
-  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId   String?
+  department     Department?     @relation(fields: [departmentId], references: [id])
   employmentType EmploymentType?
   workLocation   String?
   dateOfJoining  DateTime
@@ -194,6 +194,11 @@ model User {
   // Salary Structure 
   // =========================
   salaryStructure SalaryStructure?
+
+  // =========================
+  // Payroll Structure 
+  // =========================
+  payrolls Payroll[]
 
   // =========================
   // Reset and Forgot Token
@@ -417,12 +422,12 @@ model UserDocument {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
-  documentType String
-  documentName String
+  documentType   String
+  documentName   String
   documentNumber String?
-  fileUrl String
-  filePublicId String?
-  fileType String?
+  fileUrl        String
+  filePublicId   String?
+  fileType       String?
 
   isVerified Boolean @default(false)
 
@@ -433,7 +438,6 @@ model UserDocument {
   @@index([organizationId])
 }
 
-
 model Attendance {
   id String @id @default(uuid())
 
@@ -443,7 +447,7 @@ model Attendance {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String
 
-  date DateTime  // Store only date part (00:00:00 time)
+  date DateTime // Store only date part (00:00:00 time)
 
   punchIn  DateTime?
   punchOut DateTime?
@@ -460,15 +464,13 @@ model Attendance {
   @@index([userId])
 }
 
-
-
 ///////////////////////////
 // DEPARTMENT
 ///////////////////////////
 model Department {
-  id        String   @id @default(uuid())
-  name      String
-  isActive  Boolean  @default(true)
+  id       String  @id @default(uuid())
+  name     String
+  isActive Boolean @default(true)
 
   designations Designation[]
 
@@ -482,8 +484,8 @@ model Department {
 // DESIGNATION
 ///////////////////////////
 model Designation {
-  id           String   @id @default(uuid())
-  name         String 
+  id           String     @id @default(uuid())
+  name         String
   title        String
   department   Department @relation(fields: [departmentId], references: [id])
   departmentId String
@@ -494,11 +496,9 @@ model Designation {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@unique([name, departmentId]) 
+
+  @@unique([name, departmentId])
 }
-
-
-
 
 ///////////////////////////
 // SALARY STUCTURE 
@@ -523,4 +523,43 @@ model SalaryStructure {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+///////////////////////////
+// PAYROL STUCTURE 
+///////////////////////////
+model Payroll {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  month Int
+  year  Int
+
+  // Earnings snapshot
+  basic            Float
+  hra              Float
+  medicalAllowance Float
+  specialAllowance Float
+  incentive        Float
+
+  // Deductions snapshot
+  providentFund Float
+  professionTax Float
+  esic          Float
+
+  // Attendance impact
+  totalWorkingDays Int
+  presentDays      Int
+  absentDays       Int
+
+  // Final numbers
+  grossSalary     Float
+  totalDeductions Float
+  netSalary       Float
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, month, year])
 }

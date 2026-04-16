@@ -133,7 +133,7 @@ const TimesheetsModal = () => {
         </div>
 
         <div className="text-center timesheets-footer">
-          <Link href={"/attendance"} className="fs-13 fw-semibold text-dark">
+          <Link href={"/holidays/my-attendance"} className="fs-13 fw-semibold text-dark">
             View Attendance
           </Link>
         </div>
