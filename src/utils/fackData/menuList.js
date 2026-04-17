@@ -5,7 +5,6 @@ export const menuList = [
     path: "/",
     roles: ["ADMIN"],
     icon: "feather-airplay",
-
   },
 
   {
@@ -190,7 +189,6 @@ export const menuList = [
         path: "/customers/view",
         subdropdownMenu: false,
         hidden: true,
-
       },
       {
         id: 4,
@@ -660,18 +658,25 @@ export const menuList = [
     ],
   },
   {
-  id: 16,
-  name: "Payroll",
-  path: "#",
-  icon: "feather-dollar-sign", // good icon for salary
-  dropdownMenu: [
-    {
-      id: 1,
-      name: "Salary Structure",
-      path: "/payroll/salary-structure",
-      subdropdownMenu: false,
-      roles: ["ADMIN"],
-    },
-  ],
-}
+    id: 16,
+    name: "Payroll",
+    path: "#",
+    icon: "feather-dollar-sign", // good icon for salary
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "Salary Structure",
+        path: "/payroll/salary-structure",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+      {
+        id: 1,
+        name: "Calculate Salary",
+        path: "/payroll/calculate-salary",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+    ],
+  },
 ];
