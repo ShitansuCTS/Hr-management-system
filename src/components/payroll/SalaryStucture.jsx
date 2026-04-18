@@ -1,5 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useMemo, useState } from "react";
+import SelectDropdown from "@/components/shared/SelectDropdown";
 
 const emptySalary = {
   basic: "",
@@ -14,57 +16,88 @@ const emptySalary = {
 
 const SalaryStructurePage = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
 
+  const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({
     userId: "",
     ...emptySalary,
   });
 
+  const [saving, setSaving] = useState(false);
+  const [fetchingSalary, setFetchingSalary] = useState(false);
+
+  // 🔹 Memoized dropdown options (performance)
+  const userOptions = useMemo(
+    () =>
+      users.map((u) => ({
+        label: `${u.fullName} (${u.employeeId})`,
+        value: u.id,
+      })),
+    [users]
+  );
+
   // 🔹 Fetch Users
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await fetch("/api/users/all-users-details");
-      const data = await res.json();
-      setUsers(data.users || []);
+      try {
+        setUsersLoading(true);
+        const res = await fetch("/api/users/all-users-details");
+        const data = await res.json();
+        setUsers(data.users || []);
+      } catch (err) {
+        console.error("User fetch error:", err);
+      } finally {
+        setUsersLoading(false);
+      }
     };
+
     fetchUsers();
   }, []);
 
-  // 🔹 Fetch Salary (FIXED)
+  // 🔹 Fetch Salary
   const fetchSalary = async (userId) => {
     if (!userId) {
+      setSelectedUser(null);
       setFormData({ userId: "", ...emptySalary });
       return;
     }
 
     try {
+      setFetchingSalary(true);
+
       const res = await fetch(`/api/payroll/salary-structure?userId=${userId}`);
       const data = await res.json();
 
-      if (data.data) {
+      if (data?.data) {
         setFormData({
           userId,
-          basic: data.data.basic || "",
-          hra: data.data.hra || "",
-          medicalAllowance: data.data.medicalAllowance || "",
-          specialAllowance: data.data.specialAllowance || "",
-          incentive: data.data.incentive || "",
-          providentFund: data.data.providentFund || "",
-          professionTax: data.data.professionTax || "",
-          esic: data.data.esic || "",
+          basic: data.data.basic ?? "",
+          hra: data.data.hra ?? "",
+          medicalAllowance: data.data.medicalAllowance ?? "",
+          specialAllowance: data.data.specialAllowance ?? "",
+          incentive: data.data.incentive ?? "",
+          providentFund: data.data.providentFund ?? "",
+          professionTax: data.data.professionTax ?? "",
+          esic: data.data.esic ?? "",
         });
       } else {
         setFormData({ userId, ...emptySalary });
       }
     } catch (err) {
-      console.error(err);
+      console.error("Salary fetch error:", err);
+    } finally {
+      setFetchingSalary(false);
     }
   };
 
-  // 🔹 Handle Input Change (SAFE)
+  // 🔹 Handle Input
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // prevent negative values
+    if (Number(value) < 0) return;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -73,94 +106,102 @@ const SalaryStructurePage = () => {
 
   // 🔹 Submit
   const handleSubmit = async () => {
-    if (!formData.userId) {
-      alert("Please select user");
-      return;
+    if (!formData.userId) return alert("Select employee");
+
+    if (Number(formData.basic) <= 0) {
+      return alert("Basic salary must be greater than 0");
     }
 
-    setLoading(true);
-
     try {
+      setSaving(true);
+
       const res = await fetch("/api/payroll/salary-structure", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          basic: Number(formData.basic),
-          hra: Number(formData.hra),
-          medicalAllowance: Number(formData.medicalAllowance),
-          specialAllowance: Number(formData.specialAllowance),
-          incentive: Number(formData.incentive),
-          providentFund: Number(formData.providentFund),
-          professionTax: Number(formData.professionTax),
-          esic: Number(formData.esic),
+          basic: parseFloat(formData.basic) || 0,
+          hra: parseFloat(formData.hra) || 0,
+          medicalAllowance: parseFloat(formData.medicalAllowance) || 0,
+          specialAllowance: parseFloat(formData.specialAllowance) || 0,
+          incentive: parseFloat(formData.incentive) || 0,
+          providentFund: parseFloat(formData.providentFund) || 0,
+          professionTax: parseFloat(formData.professionTax) || 0,
+          esic: parseFloat(formData.esic) || 0,
         }),
       });
 
       const data = await res.json();
-      alert(data.success ? "Saved ✅" : "Error ❌");
+
+      if (!data.success) throw new Error("Save failed");
+
+      alert("Salary structure saved ✅");
     } catch (err) {
       console.error(err);
+      alert("Something went wrong ❌");
+    } finally {
+      setSaving(false);
     }
-
-    setLoading(false);
   };
 
   // 🔥 Calculations
-  const earnings =
-    Number(formData.basic || 0) +
-    Number(formData.hra || 0) +
-    Number(formData.medicalAllowance || 0) +
-    Number(formData.specialAllowance || 0) +
-    Number(formData.incentive || 0);
+  const earnings = useMemo(() => {
+    return (
+      parseFloat(formData.basic || 0) +
+      parseFloat(formData.hra || 0) +
+      parseFloat(formData.medicalAllowance || 0) +
+      parseFloat(formData.specialAllowance || 0) +
+      parseFloat(formData.incentive || 0)
+    );
+  }, [formData]);
 
-  const deductions =
-    Number(formData.providentFund || 0) +
-    Number(formData.professionTax || 0) +
-    Number(formData.esic || 0);
+  const deductions = useMemo(() => {
+    return (
+      parseFloat(formData.providentFund || 0) +
+      parseFloat(formData.professionTax || 0) +
+      parseFloat(formData.esic || 0)
+    );
+  }, [formData]);
 
-  const net = earnings - deductions;
+  const net = Math.max(0, earnings - deductions);
+
+  const isFormValid = formData.userId && parseFloat(formData.basic || 0) > 0;
 
   return (
-    <>
+    <div className="row">
       {/* LEFT */}
       <div className="col-xl-8">
-        <div className="card">
-          <div className="card-header">
-            <h5>Salary Structure</h5>
-          </div>
+        <div className="card shadow-sm">
+          <div className="card-header fw-bold">Salary Structure</div>
 
-          {/* 🔥 KEY ADDED */}
-          <div className="card-body" key={formData.userId}>
-            {/* Select User */}
-            <div className="form-group mb-4">
+          <div className="card-body">
+            {/* USER SELECT */}
+            <div className="mb-4">
               <label className="form-label">Select Employee</label>
-              <select
-                className="form-control"
-                value={formData.userId}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setFormData((prev) => ({
-                    ...prev,
-                    userId: value,
-                  }));
-                  fetchSalary(value);
-                }}
-              >
-                <option value="">Choose Employee</option>
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.fullName} ({u.employeeId})
-                  </option>
-                ))}
-              </select>
+
+              {usersLoading ? (
+                <p>Loading users...</p>
+              ) : (
+                <SelectDropdown
+                  options={userOptions}
+                  selectedOption={selectedUser}
+                  placeholder="Select Employee"
+                  onSelectOption={(option) => {
+                    setSelectedUser(option);
+                    setFormData((prev) => ({
+                      ...prev,
+                      userId: option.value,
+                    }));
+                    fetchSalary(option.value);
+                  }}
+                  searchable
+                />
+              )}
             </div>
 
             <hr />
 
-            {/* Earnings */}
+            {/* EARNINGS */}
             <h6 className="fw-bold mb-3">Earnings</h6>
 
             <div className="row">
@@ -172,24 +213,22 @@ const SalaryStructurePage = () => {
                 ["incentive", "Incentive"],
               ].map(([key, label]) => (
                 <div className="col-md-6" key={key}>
-                  <div className="form-group mb-3">
-                    <label>{label}</label>
-                    <input
-                      type="number"
-                      name={key}
-                      value={formData[key]}
-                      onChange={handleChange}
-                      className="form-control"
-                      disabled={!formData.userId}
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    name={key}
+                    placeholder={label}
+                    value={formData[key]}
+                    onChange={handleChange}
+                    className="form-control mb-3"
+                    disabled={!formData.userId || fetchingSalary}
+                  />
                 </div>
               ))}
             </div>
 
             <hr />
 
-            {/* Deductions */}
+            {/* DEDUCTIONS */}
             <h6 className="fw-bold mb-3">Deductions</h6>
 
             <div className="row">
@@ -199,27 +238,25 @@ const SalaryStructurePage = () => {
                 ["esic", "ESIC"],
               ].map(([key, label]) => (
                 <div className="col-md-6" key={key}>
-                  <div className="form-group mb-3">
-                    <label>{label}</label>
-                    <input
-                      type="number"
-                      name={key}
-                      value={formData[key]}
-                      onChange={handleChange}
-                      className="form-control"
-                      disabled={!formData.userId}
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    name={key}
+                    placeholder={label}
+                    value={formData[key]}
+                    onChange={handleChange}
+                    className="form-control mb-3"
+                    disabled={!formData.userId || fetchingSalary}
+                  />
                 </div>
               ))}
             </div>
 
             <button
               onClick={handleSubmit}
-              disabled={loading || !formData.userId}
+              disabled={!isFormValid || saving}
               className="btn btn-primary mt-3"
             >
-              {loading ? "Saving..." : "Save Salary"}
+              {saving ? "Saving..." : "Save Salary"}
             </button>
           </div>
         </div>
@@ -227,30 +264,30 @@ const SalaryStructurePage = () => {
 
       {/* RIGHT */}
       <div className="col-xl-4">
-        <div className="card">
+        <div className="card shadow-sm">
           <div className="card-body">
-            <h6 className="fw-bold mb-3">Salary Summary</h6>
+            <h6 className="fw-bold mb-3">{selectedUser?.label || "Salary Summary"}</h6>
 
             <table className="table table-bordered">
               <tbody>
                 <tr>
                   <th>Total Earnings</th>
-                  <td>₹ {earnings}</td>
+                  <td>₹ {earnings.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <th>Total Deductions</th>
-                  <td>₹ {deductions}</td>
+                  <td>₹ {deductions.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <th>Net Salary</th>
-                  <td className="fw-bold text-success">₹ {net}</td>
+                  <td className="fw-bold text-success">₹ {net.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

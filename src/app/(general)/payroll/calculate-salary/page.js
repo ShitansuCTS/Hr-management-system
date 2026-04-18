@@ -4,7 +4,7 @@ import PayrollTable from "@/components/payroll/PayrollTable";
 const page = () => {
     return (
         <>
-            <div className="main-content">
+            <div className="main-content" >
                 <div className="row">
                     <PayrollTable />
                 </div>
