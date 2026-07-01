@@ -659,7 +659,7 @@ export const menuList = [
   },
   {
     id: 16,
-    name: "Payroll",
+    name: "Payrolls",
     path: "#",
     icon: "feather-dollar-sign", // good icon for salary
     dropdownMenu: [
