@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.15",
@@ -48,6 +49,7 @@
     "react-select": "^5.9.0",
     "react-tooltip": "^5.28.0",
     "resend": "^6.9.1",
+    "sanitize-html": "^2.17.5",
     "sass": "^1.83.1",
     "sweetalert2": "^11.14.1",
     "sweetalert2-react-content": "^5.0.7",

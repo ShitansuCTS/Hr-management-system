@@ -1,4 +1,4 @@
-import { validateCreateDesignation } from "@/validations/designationValidation";
+import { validateCreateDesignation } from "@/validations/designation.validation";
 import {
   createDesignationService,
   getDesignationService,

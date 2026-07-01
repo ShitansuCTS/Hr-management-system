@@ -40,7 +40,8 @@ export async function requireAuth(
                     id: true,
                     fullName: true,
                     email: true,
-                    role: true
+                    role: true,
+                    organizationId: true
                 }
             });
 

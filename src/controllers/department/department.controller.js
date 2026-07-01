@@ -1,4 +1,4 @@
-import { validateCreateDepartment } from "@/validations/departmentValidation";
+import { validateCreateDepartment } from "@/validations/department.validation";
 import {
   createDepartmentService,
   getDepartmentService,
