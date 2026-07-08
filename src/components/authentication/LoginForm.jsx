@@ -53,11 +53,11 @@ const LoginForm = ({ registerPath, resetPath }) => {
 
   return (
     <>
-      <h2 className="fs-20 fw-bolder mb-4">Login</h2>
-      <h4 className="fs-13 fw-bold mb-2">Login to your accounts</h4>
+      <h2 className="fs-20 fw-bolder mb-4">Welcome Back</h2>
+      <h4 className="fs-13 fw-bold mb-2">Sign in to your Crusaders HRMS account</h4>
       <p className="fs-12 fw-medium text-muted">
-        Thank you for get back <strong>Nelel</strong> web applications, let's access our the best
-        recommendation for you.
+        Welcome to <strong>Crusaders HRMS</strong>. Sign in to manage your workforce from one
+        centralized platform.
       </p>
       <form className="w-100 mt-4 pt-2" onSubmit={handleLogin}>
         <div className="mb-4">
@@ -97,7 +97,7 @@ const LoginForm = ({ registerPath, resetPath }) => {
         </div>
         <div className="mt-5">
           <button type="submit" className="btn btn-lg btn-primary w-100" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Sign In"}
           </button>
         </div>
       </form>
