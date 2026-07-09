@@ -5,6 +5,7 @@ export async function getAllAnnouncementService(currentUser) {
   let allAnnouncements;
 
   if (currentUser.role === "ADMIN") {
+  
     //ADMIN → all allAnnouncements in org
     allAnnouncements = await prisma.announcement.findMany({
       where: {
