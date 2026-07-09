@@ -193,11 +193,11 @@ const AllLeavesData = () => {
   const fetchLeaves = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/leaves/all-employee-leaves");
+      const res = await fetch("/api/v1/leaves/all-employee-leaves");
       const data = await res.json();
 
-      console.log("Received leaves:", data.leaveApplications);
-      setData(data.leaveApplications || []);
+      console.log("Received leaves:", data.data);
+      setData(data.data || []);
     } catch (err) {
       console.error("Error fetching leaves:", err);
     } finally {
@@ -216,7 +216,7 @@ const AllLeavesData = () => {
     console.log("The requested Leave Id is :", leaveId);
 
     try {
-      const res = await fetch(`/api/leaves/${leaveId}/status`, {
+      const res = await fetch(`/api/v1/leaves/${leaveId}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

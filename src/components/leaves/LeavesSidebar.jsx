@@ -24,10 +24,7 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
   }, [onClose]);
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target)
-      ) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         onClose();
       }
     };
@@ -42,25 +39,25 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
   // =============================
   // Fetch Comments (GET)
   // =============================
-  useEffect(() => {
-    const fetchComments = async () => {
-      if (!data?.id) return;
+  const fetchComments = async () => {
+    if (!data?.id) return;
 
-      try {
-        const res = await fetch(`/api/leaves/${data.id}/comments`);
-        const result = await res.json();
+    try {
+      const res = await fetch(`/api/v1/leaves/${data.id}/comments`);
+      const result = await res.json();
 
-        if (res.ok) {
-          setComments(result.comments || []);
-          scrollToBottom();
-        } else {
-          console.error(result.message);
-        }
-      } catch (error) {
-        console.error("Error fetching comments:", error);
+      if (res.ok) {
+        setComments(result.data || []);
+        setTimeout(scrollToBottom, 0);
+      } else {
+        console.error(result.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchComments();
   }, [data?.id]);
 
@@ -71,12 +68,12 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
     if (!data?.id || !message.trim()) return;
 
     try {
-      const res = await fetch(`/api/leaves/${data.id}/comments`, {
+      const res = await fetch(`/api/v1/leaves/${data.id}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message: message.trim(), }),
       });
 
       const result = await res.json();
@@ -86,9 +83,9 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
       }
 
       // Add new comment instantly
-      setComments((prev) => [...prev, result.comment]);
+      setComments((prev) => [...prev, result.data]);
       setMessage("");
-      scrollToBottom();
+      setTimeout(scrollToBottom, 0);
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -100,8 +97,7 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
   const scrollToBottom = () => {
     setTimeout(() => {
       if (scrollRef.current) {
-        scrollRef.current.scrollTop =
-          scrollRef.current.scrollHeight;
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }, 100);
   };
@@ -112,7 +108,11 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
       <div className="sidebar-overlay" onClick={onClose}></div>
 
       {/* Sidebar */}
-      <div ref={sidebarRef} className="theme-customizer theme-customizer-open email-sidebar" style={{ width: "400px" }}>
+      <div
+        ref={sidebarRef}
+        className="theme-customizer theme-customizer-open email-sidebar"
+        style={{ width: "400px" }}
+      >
         <div className="customizer-sidebar-wrapper d-flex flex-column h-100">
           {/* Header */}
           <div className="p-4 border-bottom d-flex justify-content-between align-items-center">
@@ -136,11 +136,8 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
             }}
           >
             {comments.length === 0 && (
-              <p className="text-muted text-center mt-4">
-                No comments yet.
-              </p>
+              <p className="text-muted text-center mt-4">No comments yet.</p>
             )}
-
 
             {comments.map((item) => {
               const isReply = item.userId === currentUserId; // your logged-in user id
@@ -157,9 +154,6 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
                 />
               );
             })}
-
-
-
           </div>
 
           {/* Input */}
