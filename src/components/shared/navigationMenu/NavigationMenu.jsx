@@ -33,16 +33,16 @@ const NavigationManu = () => {
           <Link href="/" className="b-brand">
             {/* <!-- ========   change your logo hear   ============ --> */}
             <Image
-              width={140}
-              height={30}
-              src="/images/logo-full.png"
+              width={190}
+              height={50}
+              src="/full-logo.png"
               alt="logo"
               className="logo logo-lg"
             />
             <Image
               width={140}
               height={30}
-              src="/images/logo-abbr.png"
+              src="/images/logos.png"
               alt="logo"
               className="logo logo-sm"
             />
