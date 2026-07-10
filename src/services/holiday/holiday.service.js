@@ -6,22 +6,26 @@ export async function createHolidayService(holidayData, currentUser) {
   try {
     const { name, date, type, description } = holidayData;
 
-    const holidayDate = new Date(date);
+    const [year, month, day] = date.split("-").map(Number);
+
+    const holidayDate = new Date(year, month - 1, day);
 
     const safeDescription = sanitizeHtml(description ?? "", {
       allowedTags: [],
       allowedAttributes: {},
+    }).trim();
+
+    const holidayDay = holidayDate.toLocaleDateString("en-IN", {
+      weekday: "long",
     });
 
     const holiday = await prisma.holiday.create({
       data: {
-        name: name.trim(),
+        name: name,
 
         date: holidayDate,
 
-        day: holidayDate.toLocaleDateString("en-IN", {
-          weekday: "long",
-        }),
+        day: holidayDay,
 
         year: holidayDate.getFullYear(),
 
