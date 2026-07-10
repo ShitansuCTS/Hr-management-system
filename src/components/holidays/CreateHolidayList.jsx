@@ -15,19 +15,20 @@ const CreateHolidayList = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    setLoading(true);
     if (!holidayName || !holidayDate || !holidayType) {
       toast.error("Please fill all the fields");
       return;
     }
 
+    setLoading(true);
+
     const payload = {
-      name: holidayName,
-      date: holidayDate,
+      name: holidayName.trim(),
+      date: holidayDate.toLocaleDateString("en-CA"),
       day,
       year: Number(year),
       type: holidayType.value,
-      description,
+      description: description.trim(),
     };
 
     // console.log("The data is get : ", payload)
