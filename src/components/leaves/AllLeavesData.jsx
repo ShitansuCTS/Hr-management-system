@@ -17,6 +17,7 @@ import Table from "@/components/shared/table/Table";
 import Link from "next/link";
 import dayjs from "dayjs";
 import LeavesSidebar from "./LeavesSidebar";
+import { toast } from "react-hot-toast";
 
 const actions = [
   { label: "Edit", icon: <FiEdit3 /> },
@@ -30,9 +31,6 @@ const actions = [
 ];
 
 const AllLeavesData = () => {
-
-
-
   // helper functsions
   const toTitleCase = (text = "") =>
     text
@@ -88,107 +86,105 @@ const AllLeavesData = () => {
 
   // helper functsions
 
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "user.fullName",
+        id: "employee",
+        header: "Employee Name",
+        cell: ({ row }) => {
+          const user = row.original.user;
 
-
-
-  const columns = useMemo(() => [
-    {
-      accessorKey: "user.fullName",
-      id: "employee",
-      header: "Employee Name",
-      cell: ({ row }) => {
-        const user = row.original.user;
-
-        return (
-          <div className="hstack gap-3">
-            <div className="avatar-image avatar-md">
-              <img src={user.profileImageUrl} alt={user.profileImageUrl} className="img-fluid" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }} />
+          return (
+            <div className="hstack gap-3">
+              <div className="avatar-image avatar-md">
+                <img
+                  src={user.profileImageUrl}
+                  alt={user.profileImageUrl}
+                  className="img-fluid"
+                  style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
+                />
+              </div>
+              <div>
+                <span className="text-truncate-1-line fw-bold">{user.fullName}</span>
+                <small className="fs-12 fw-normal text-muted d-block">{user.email}</small>
+              </div>
             </div>
-            <div>
-              <span className="text-truncate-1-line fw-bold">{user.fullName}</span>
-              <small className="fs-12 fw-normal text-muted d-block">{user.email}</small>
-            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "leaveType",
+        header: "Leave Type",
+        meta: {
+          className: "fw-bold text-dark",
+        },
+        cell: ({ row }) => {
+          const leaveType = row.original.leaveType;
+
+          return (
+            <span className={`badge border border-dashed ${leaveTypeBadgeClass(leaveType)}`}>
+              {toTitleCase(leaveType?.replaceAll("_", " "))}
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: "startDate",
+        header: "Start Date",
+        cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM , YYYY"),
+      },
+      {
+        accessorKey: "endDate",
+        header: "End Date",
+        cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM , YYYY"),
+      },
+      {
+        accessorKey: "status",
+        header: () => "Status",
+        cell: ({ row }) => {
+          const leave = row.original;
+
+          return (
+            <SelectDropdown
+              options={STATUS_OPTIONS}
+              defaultSelect={leave.status} // ✅ STRING
+              onSelectOption={(option) => updateLeaveStatus(leave.id, option.value)}
+            />
+          );
+        },
+      },
+      {
+        accessorKey: "CreatedAt",
+        header: "Created At",
+        cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM , YYYY"),
+      },
+      {
+        accessorKey: "reason",
+        header: "Actions",
+        cell: ({ row }) => (
+          <div className="hstack gap-2 justify-content-end">
+            <button
+              className="avatar-text avatar-md"
+              onClick={() => {
+                setSelectedLeave(row.original);
+                setSidebarOpen(true);
+              }}
+            >
+              <FiEye />
+            </button>
           </div>
-        );
+        ),
       },
-    },
-    {
-      accessorKey: "leaveType",
-      header: "Leave Type",
-      meta: {
-        className: "fw-bold text-dark",
-      },
-      cell: ({ row }) => {
-        const leaveType = row.original.leaveType;
-
-        return (
-          <span
-            className={`badge border border-dashed ${leaveTypeBadgeClass(leaveType)}`}
-          >
-            {toTitleCase(leaveType?.replaceAll("_", " "))}
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: "startDate",
-      header: "Start Date",
-      cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "endDate",
-      header: "End Date",
-      cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "status",
-      header: () => "Status",
-      cell: ({ row }) => {
-        const leave = row.original;
-
-        return (
-          <SelectDropdown
-            options={STATUS_OPTIONS}
-            defaultSelect={leave.status}   // ✅ STRING
-            onSelectOption={(option) =>
-              updateLeaveStatus(leave.id, option.value)
-            }
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "CreatedAt",
-      header: "Created At",
-      cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "reason",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="hstack gap-2 justify-content-end">
-          <button
-            className="avatar-text avatar-md"
-            onClick={() => {
-              setSelectedLeave(row.original);
-              setSidebarOpen(true);
-            }}
-          >
-            <FiEye />
-          </button>
-        </div>
-      ),
-    },
-  ], []);
+    ],
+    []
+  );
 
   // function to fetch and set the data to the tabel
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedLeave, setSelectedLeave] = useState(null);
-
-
-
 
   const fetchLeaves = async () => {
     try {
@@ -206,12 +202,9 @@ const AllLeavesData = () => {
   };
 
   const updateLeaveStatus = async (leaveId, newStatus) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to mark this leave as ${newStatus}?`
-    );
+    const confirmed = window.confirm(`Are you sure you want to mark this leave as ${newStatus}?`);
 
     if (!confirmed) return;
-
 
     console.log("The requested Leave Id is :", leaveId);
 
@@ -227,18 +220,20 @@ const AllLeavesData = () => {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.message);
+        throw new Error(result.message || "Failed to update leave status");
       }
 
       // 🔥 Update Local State (No Refetch Needed)
       setData((prev) =>
-        prev.map((item) =>
-          item.id === leaveId ? { ...item, status: newStatus } : item
-        )
+        prev.map((item) => (item.id === leaveId ? { ...item, status: newStatus } : item))
       );
 
+      toast.success(
+        `Leave has been ${newStatus.toLowerCase()} successfully.` ||
+          "Leave status updated successfully"
+      );
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message || "Something went wrong");
     }
   };
 
@@ -249,7 +244,12 @@ const AllLeavesData = () => {
 
   return (
     <>
-      <Table data={data} columns={columns} loading={loading} searchPlaceholder="Search employees..." />
+      <Table
+        data={data}
+        columns={columns}
+        loading={loading}
+        searchPlaceholder="Search employees..."
+      />
 
       {sidebarOpen && selectedLeave && (
         <LeavesSidebar
