@@ -26,11 +26,11 @@ const HolidaysList = () => {
     const fetchHolidays = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/holidays");
-        const data = await res.json();
+        const res = await fetch("/api/v1/holidays");
+        const result = await res.json();
 
-        console.log("Received holidays:", data.holidaysList);
-        setHolidays(data.holidaysList); // assuming API returns an array of holidays
+        console.log("Received holidays:", result.data);
+        setHolidays(result.data || []); // assuming API returns an array of holidays
       } catch (err) {
         console.error("Error fetching holidays:", err);
       } finally {
