@@ -153,13 +153,13 @@ const EmployeesTable = () => {
       setLoading(true);
 
       const url = deptId
-        ? `/api/users/all-users-details?departmentId=${deptId}`
-        : `/api/users/all-users-details`;
+        ? `/api/v1/users/all-users-details?departmentId=${deptId}`
+        : `/api/v1/users/all-users-details`;
 
       const response = await fetch(url);
       const data = await response.json();
 
-      setUsers(data.users);
+      setUsers(data.data);
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch users");
@@ -170,12 +170,12 @@ const EmployeesTable = () => {
 
   const fetchDepartments = async () => {
     try {
-      const res = await fetch("/api/departments");
+      const res = await fetch("/api/v1/departments");
       const data = await res.json();
 
       const formatted = [
         { label: "All Departments", value: "" },
-        ...data.departments.map((dept) => ({
+        ...data.data.map((dept) => ({
           label: dept.name,
           value: dept.id,
         })),
