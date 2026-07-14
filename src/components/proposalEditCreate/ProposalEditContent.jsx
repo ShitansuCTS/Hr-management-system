@@ -251,14 +251,14 @@ const ProposalEditContent = () => {
 
   // Department and designation section
   const fetchDepartments = async () => {
-    const res = await fetch("/api/departments");
+    const res = await fetch("/api/v1/departments");
     const data = await res.json();
-    setDepartments(data.departments || []);
+    setDepartments(data.data || []);
   };
   const fetchDesignations = async () => {
-    const res = await fetch("/api/designations");
+    const res = await fetch("/api/v1/designations");
     const data = await res.json();
-    setDesignations(data.designations || []);
+    setDesignations(data.data || []);
   };
 
   useEffect(() => {
@@ -471,7 +471,7 @@ const ProposalEditContent = () => {
 
     try {
       const data = new FormData();
-      
+
       // Append all text fields
       Object.keys(formData).forEach((key) => {
         data.append(key, formData[key]);
@@ -485,7 +485,7 @@ const ProposalEditContent = () => {
         data.append("profileImage", profileImage);
       }
 
-      const res = await fetch("/api/users/all-users-details", {
+      const res = await fetch("/api/v1/users/all-users-details", {
         method: "POST",
         body: data,
       });
@@ -493,7 +493,10 @@ const ProposalEditContent = () => {
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.message || "Something went wrong");
+        const errorMessage =
+          Object.values(result.errors || {})[0] || result.message || "Something went wrong";
+
+        toast.error(errorMessage);
         return;
       }
 
