@@ -15,25 +15,26 @@ const CreateHolidayList = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    setLoading(true);
     if (!holidayName || !holidayDate || !holidayType) {
       toast.error("Please fill all the fields");
       return;
     }
 
+    setLoading(true);
+
     const payload = {
-      name: holidayName,
-      date: holidayDate,
+      name: holidayName.trim(),
+      date: holidayDate.toLocaleDateString("en-CA"),
       day,
       year: Number(year),
       type: holidayType.value,
-      description,
+      description: description.trim(),
     };
 
     // console.log("The data is get : ", payload)
 
     try {
-      const res = await fetch("/api/holidays", {
+      const res = await fetch("/api/v1/holidays", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,18 +43,26 @@ const CreateHolidayList = () => {
       });
 
       const data = await res.json();
-      console.log("Saved:", data);
-      if (res.ok) {
-        toast.success("Holiday created successfully");
-        // Reset form
-        setHolidayName("");
-        setHolidayDate(null);
-        setHolidayType(null);
-        setDescription("");
-        setYear("");
-        setDay("");
+
+      if (!res.ok) {
+        const errorMessage =
+          Object.values(data.errors || {})[0] || data.message || "Failed to create holiday";
+
+        toast.error(errorMessage);
         return;
       }
+
+      toast.success(data.message || "Holiday created successfully");
+
+      console.log("Saved:", data);
+
+      // Reset form
+      setHolidayName("");
+      setHolidayDate(null);
+      setHolidayType(null);
+      setDescription("");
+      setYear("");
+      setDay("");
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong");

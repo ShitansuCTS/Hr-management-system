@@ -174,11 +174,11 @@ const LeavesTables = () => {
     const fetchLeaves = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/leaves/myleaves");
+        const res = await fetch("/api/v1/leaves/myleaves");
         const data = await res.json();
 
-        console.log("Received leaves:", data.allLeaveApplictaions);
-        setData(data.allLeaveApplictaions || []);
+        console.log("Received leaves:", data.data);
+        setData(data.data || []);
       } catch (err) {
         console.error("Error fetching leaves:", err);
       } finally {
