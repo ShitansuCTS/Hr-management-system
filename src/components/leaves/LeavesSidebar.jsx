@@ -85,6 +85,7 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
   // =============================
   // Close on Outside Click
   // =============================
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
