@@ -1,90 +1,111 @@
 "use client";
-import React, { useEffect, useState, useMemo, memo } from "react";
-import {
-  FiAlertOctagon,
-  FiArchive,
-  FiClock,
-  FiEdit3,
-  FiEye,
-  FiMoreHorizontal,
-  FiPrinter,
-  FiTrash2,
-} from "react-icons/fi";
-import Dropdown from "@/components/shared/Dropdown";
-import SelectDropdown from "@/components/shared/SelectDropdown";
-import { paymentTableData } from "@/utils/fackData/paymentTableData";
-import Table from "@/components/shared/table/Table";
-import Link from "next/link";
-import dayjs from "dayjs";
-import LeavesSidebar from "./LeavesSidebar";
-import { toast } from "react-hot-toast";
 
-const actions = [
-  { label: "Edit", icon: <FiEdit3 /> },
-  { label: "Print", icon: <FiPrinter /> },
-  { label: "Remind", icon: <FiClock /> },
-  { type: "divider" },
-  { label: "Archive", icon: <FiArchive /> },
-  { label: "Report Spam", icon: <FiAlertOctagon /> },
-  { type: "divider" },
-  { label: "Delete", icon: <FiTrash2 /> },
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { FiEye } from "react-icons/fi";
+import dayjs from "dayjs";
+
+import SelectDropdown from "@/components/shared/SelectDropdown";
+import Table from "@/components/shared/table/Table";
+import LeavesSidebar from "./LeavesSidebar";
+import { useLeaveStore } from "@/store/useLeaveStore";
+
+const STATUS_OPTIONS = [
+  {
+    label: "Pending",
+    value: "PENDING",
+    color: "#f59e0b",
+  },
+  {
+    label: "Approved",
+    value: "APPROVED",
+    color: "#22c55e",
+  },
+  {
+    label: "Rejected",
+    value: "REJECTED",
+    color: "#ef4444",
+  },
 ];
 
+const toTitleCase = (text = "") =>
+  text
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+const leaveTypeBadgeClass = (leaveType) => {
+  switch (leaveType) {
+    case "CASUAL_LEAVE":
+      return "text-primary border-primary";
+
+    case "PAID_LEAVE":
+      return "text-success border-success";
+
+    case "SICK_LEAVE":
+      return "text-danger border-danger";
+
+    case "MATERNITY_LEAVE":
+      return "text-warning border-warning";
+
+    case "PATERNITY_LEAVE":
+      return "text-info border-info";
+
+    case "BEREAVEMENT_LEAVE":
+      return "text-dark border-dark";
+
+    case "OPTIONAL_LEAVE":
+      return "text-danger border-danger";
+
+    default:
+      return "text-secondary border-secondary";
+  }
+};
+
 const AllLeavesData = () => {
-  // helper functsions
-  const toTitleCase = (text = "") =>
-    text
-      .toLowerCase()
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
 
-  const STATUS_OPTIONS = [
-    {
-      label: "Pending",
-      value: "PENDING",
-      color: "#f59e0b", // yellow
+  const {
+    allEmployeeLeaves,
+    allEmployeeLeavesLoading,
+    fetchAllEmployeeLeaves,
+    updateLeaveStatus: updateLeaveStatusFromStore,
+  } = useLeaveStore();
+
+  // Fetch once. Zustand prevents duplicate calls.
+  useEffect(() => {
+    fetchAllEmployeeLeaves().catch((error) => {
+      console.error("Failed to fetch employee leaves:", error);
+    });
+  }, [fetchAllEmployeeLeaves]);
+
+  const handleStatusUpdate = useCallback(
+    async (leaveId, newStatus) => {
+      const confirmed = window.confirm(
+        `Are you sure you want to mark this leave as ${toTitleCase(newStatus)}?`
+      );
+
+      if (!confirmed) return;
+
+      const success = await updateLeaveStatusFromStore(leaveId, newStatus);
+
+      if (!success) return;
+
+      // Keep the opened sidebar data synchronized.
+      setSelectedLeave((currentLeave) => {
+        if (!currentLeave || currentLeave.id !== leaveId) {
+          return currentLeave;
+        }
+
+        return {
+          ...currentLeave,
+          status: newStatus,
+        };
+      });
     },
-    {
-      label: "Approved",
-      value: "APPROVED",
-      color: "#22c55e", // green
-    },
-    {
-      label: "Rejected",
-      value: "REJECTED",
-      color: "#ef4444", // red
-    },
-  ];
-  const leaveTypeBadgeClass = (leaveType) => {
-    switch (leaveType) {
-      case "CASUAL_LEAVE":
-        return "text-primary border-primary";
-
-      case "PAID_LEAVE":
-        return "text-success border-success";
-
-      case "SICK_LEAVE":
-        return "text-danger border-danger";
-
-      case "MATERNITY_LEAVE":
-        return "text-warning border-warning";
-
-      case "PATERNITY_LEAVE":
-        return "text-info border-info";
-
-      case "BEREAVEMENT_LEAVE":
-        return "text-dark border-dark";
-
-      case "OPTIONAL_LEAVE":
-        return "text-danger border-danger";
-
-      default:
-        return "text-secondary border-secondary";
-    }
-  };
-
-  // helper functsions
+    [updateLeaveStatusFromStore]
+  );
 
   const columns = useMemo(
     () => [
@@ -92,6 +113,7 @@ const AllLeavesData = () => {
         accessorKey: "user.fullName",
         id: "employee",
         header: "Employee Name",
+
         cell: ({ row }) => {
           const user = row.original.user;
 
@@ -99,73 +121,99 @@ const AllLeavesData = () => {
             <div className="hstack gap-3">
               <div className="avatar-image avatar-md">
                 <img
-                  src={user.profileImageUrl}
-                  alt={user.profileImageUrl}
+                  src={user?.profileImageUrl || "/images/avatar/default-avatar.png"}
+                  alt={user?.fullName || "Employee"}
                   className="img-fluid"
-                  style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
                 />
               </div>
+
               <div>
-                <span className="text-truncate-1-line fw-bold">{user.fullName}</span>
-                <small className="fs-12 fw-normal text-muted d-block">{user.email}</small>
+                <span className="text-truncate-1-line fw-bold">
+                  {user?.fullName || "Unknown Employee"}
+                </span>
+
+                <small className="fs-12 fw-normal text-muted d-block">
+                  {user?.email || "No email"}
+                </small>
               </div>
             </div>
           );
         },
       },
+
       {
         accessorKey: "leaveType",
         header: "Leave Type",
+
         meta: {
           className: "fw-bold text-dark",
         },
+
         cell: ({ row }) => {
           const leaveType = row.original.leaveType;
 
           return (
             <span className={`badge border border-dashed ${leaveTypeBadgeClass(leaveType)}`}>
-              {toTitleCase(leaveType?.replaceAll("_", " "))}
+              {toTitleCase(leaveType)}
             </span>
           );
         },
       },
+
       {
         accessorKey: "startDate",
         header: "Start Date",
-        cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM , YYYY"),
+
+        cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM, YYYY"),
       },
+
       {
         accessorKey: "endDate",
         header: "End Date",
-        cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM , YYYY"),
+
+        cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM, YYYY"),
       },
+
       {
         accessorKey: "status",
-        header: () => "Status",
+        header: "Status",
+
         cell: ({ row }) => {
           const leave = row.original;
 
           return (
             <SelectDropdown
               options={STATUS_OPTIONS}
-              defaultSelect={leave.status} // ✅ STRING
-              onSelectOption={(option) => updateLeaveStatus(leave.id, option.value)}
+              defaultSelect={leave.status}
+              onSelectOption={(option) => handleStatusUpdate(leave.id, option.value)}
             />
           );
         },
       },
+
       {
-        accessorKey: "CreatedAt",
+        accessorKey: "createdAt",
         header: "Created At",
-        cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM , YYYY"),
+
+        cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM, YYYY"),
       },
+
       {
-        accessorKey: "reason",
+        id: "actions",
         header: "Actions",
+
         cell: ({ row }) => (
           <div className="hstack gap-2 justify-content-end">
             <button
+              type="button"
               className="avatar-text avatar-md"
+              aria-label="View leave details"
               onClick={() => {
                 setSelectedLeave(row.original);
                 setSidebarOpen(true);
@@ -177,77 +225,15 @@ const AllLeavesData = () => {
         ),
       },
     ],
-    []
+    [handleStatusUpdate]
   );
-
-  // function to fetch and set the data to the tabel
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState(null);
-
-  const fetchLeaves = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/v1/leaves/all-employee-leaves");
-      const data = await res.json();
-
-      console.log("Received leaves:", data.data);
-      setData(data.data || []);
-    } catch (err) {
-      console.error("Error fetching leaves:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateLeaveStatus = async (leaveId, newStatus) => {
-    const confirmed = window.confirm(`Are you sure you want to mark this leave as ${newStatus}?`);
-
-    if (!confirmed) return;
-
-    console.log("The requested Leave Id is :", leaveId);
-
-    try {
-      const res = await fetch(`/api/v1/leaves/${leaveId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message || "Failed to update leave status");
-      }
-
-      // 🔥 Update Local State (No Refetch Needed)
-      setData((prev) =>
-        prev.map((item) => (item.id === leaveId ? { ...item, status: newStatus } : item))
-      );
-
-      toast.success(
-        `Leave has been ${newStatus.toLowerCase()} successfully.` ||
-          "Leave status updated successfully"
-      );
-    } catch (err) {
-      toast.error(err.message || "Something went wrong");
-    }
-  };
-
-  useEffect(() => {
-    fetchLeaves();
-  }, []);
-  // function to fetch and set the data to the tabel
 
   return (
     <>
       <Table
-        data={data}
+        data={allEmployeeLeaves}
         columns={columns}
-        loading={loading}
+        loading={allEmployeeLeavesLoading}
         searchPlaceholder="Search employees..."
       />
 
@@ -258,7 +244,9 @@ const AllLeavesData = () => {
             setSidebarOpen(false);
             setSelectedLeave(null);
           }}
-          onStatusUpdated={fetchLeaves}
+          onStatusUpdated={(newStatus) => {
+            handleStatusUpdate(selectedLeave.id, newStatus);
+          }}
         />
       )}
     </>

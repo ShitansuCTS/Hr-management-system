@@ -48,7 +48,7 @@ const ResetForm = ({ path }) => {
 
   return (
     <>
-      <h2 className="fs-20 fw-bolder mb-4">Reset</h2>
+      <h2 className="fs-20 fw-bolder mb-4">Forgot Password</h2>
       <h4 className="fs-13 fw-bold mb-2">Reset to your username/password</h4>
       <p className="fs-12 fw-medium text-muted">
         Enter your email and a reset link will sent to you, let's access our the best recommendation
@@ -66,21 +66,20 @@ const ResetForm = ({ path }) => {
         </div>
         <div className="mt-5">
           <button type="submit" className="btn btn-lg btn-primary w-100" disabled={loading}>
-            {loading ? "Loading..." : "Reset"}
+            {loading ? "Loading..." : "Submit Now"}
           </button>
         </div>
       </form>
-      <div className="mt-5 text-muted">
-        <span> Don't have an account?</span>
-        <Link href="#" className="fw-bold" onClick={createAccount}>
-          {" "}
-          Create an Account
-        </Link>{" "}
-        ,
-        <Link href="/authentication/login/minimal" className="fw-bold">
-          {" "}
-          Login
-        </Link>
+      <div className="mt-5 text-center text-muted fs-13">
+        <p className="mb-0">
+          Already have an account?{" "}
+          <Link
+            href="/authentication/login/minimal"
+            className="fw-bold text-primary text-decoration-none"
+          >
+            Login
+          </Link>
+        </p>
       </div>
     </>
   );
