@@ -34,7 +34,7 @@ const LoginForm = ({ registerPath, resetPath }) => {
       }
 
       toast.success("Login successful");
-
+      router.refresh();
       const role = data.user.role;
       if (role === "ADMIN") {
         router.push("/dashboard/admin");

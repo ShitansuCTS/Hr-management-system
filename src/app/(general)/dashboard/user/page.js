@@ -12,6 +12,7 @@ import LatestLeads from "@/components/widgetsTables/LatestLeads";
 import TeamProgress from "@/components/widgetsList/Progress";
 import { projectsDataTwo } from "@/utils/fackData/projectsDataTwo";
 import DuplicateLayout from "@/app/duplicateLayout";
+import CustomersTable from "@/components/customers/CustomersTable";
 // import { useRouter } from "next/navigation";
 // import { useState } from "react";
 // import { useEffect } from "react";
@@ -55,17 +56,7 @@ const Home = () => {
 
         <div className="main-content">
             <div className="row">
-                {/* <SiteOverviewStatistics />
-                <LeadsOverviewChart chartHeight={315} />
-                <PaymentRecordChart />
-                <LatestLeads title={"Upcoming Birthdays"} />
-                <TeamProgress title={"Upcoming Anniversaries"} footerShow={true} /> */}
-                {/* <SalesMiscellaneous isFooterShow={true} dataList={projectsDataTwo} />
-          <TasksOverviewChart />
-          <Schedule title={"Upcoming Schedule"} />
-          <Project cardYSpaceClass="hrozintioal-card" borderShow={true} title="Project Status" /> */}
-
-          <h1>This is User Dahsbaord !!!!</h1>
+                <CustomersTable />
             </div>
         </div>
 
