@@ -90,13 +90,8 @@ const LeavesSidebar = ({ data, onClose, currentUserId }) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         onClose();
       }
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    }
-  };
-
+    };
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
