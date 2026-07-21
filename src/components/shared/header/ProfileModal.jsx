@@ -1,5 +1,4 @@
-import Image from "next/image";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import {
   FiActivity,
   FiBell,
@@ -10,7 +9,7 @@ import {
   FiUser,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/store/authStore";
 import UserDropdownSkeleton from "@/components/loaders/UserDropdownSkeletonHeader";
 import Link from "next/link";
 
@@ -24,25 +23,29 @@ const subscriptionsList = [
   "Subscriptions",
 ];
 const ProfileModal = () => {
-
-  const { user, fetchUser, loading } = useUserStore();
   const router = useRouter();
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  const user = useAuthStore((state) => state.user);
+  const initialized = useAuthStore((state) => state.initialized);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-    });
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
 
-    // Redirect to login
-    router.push("/authentication/login/minimal");
-    router.refresh(); // clears cached data
+      // Clear Zustand immediately
+      clearAuth();
+
+      router.replace("/authentication/login/minimal");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
-  if (loading) {
+  if (!initialized) {
     return <UserDropdownSkeleton />;
   }
 
@@ -53,7 +56,7 @@ const ProfileModal = () => {
           src={user?.profileImageUrl || "/images/avatar/1.png"}
           alt="user-image"
           className="img-fluid user-avtar me-0"
-          style={{ width: "40px", height: "40px" }}
+          style={{ width: "40px", height: "40px", }}
         />
       </a>
       <div className="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
@@ -67,9 +70,12 @@ const ProfileModal = () => {
             />
             <div>
               <h6 className="text-dark mb-0">
-                {user?.fullName || "Alexandra Della"}<span className="badge bg-soft-success text-success ms-1">PRO</span>
+                {user?.fullName || "Alexandra Della"}
+                <span className="badge bg-soft-success text-success ms-1">PRO</span>
               </h6>
-              <span className="fs-12 fw-medium text-muted">{user?.email || "alex.della@outlook.com"}</span>
+              <span className="fs-12 fw-medium text-muted">
+                {user?.email || "alex.della@outlook.com"}
+              </span>
             </div>
           </div>
         </div>
