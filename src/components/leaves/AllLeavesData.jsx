@@ -69,6 +69,7 @@ const AllLeavesData = () => {
   const {
     allEmployeeLeaves,
     allEmployeeLeavesLoading,
+    leaveStatusLoadingById,
     fetchAllEmployeeLeaves,
     updateLeaveStatus: updateLeaveStatusFromStore,
   } = useLeaveStore();
@@ -82,29 +83,44 @@ const AllLeavesData = () => {
 
   const handleStatusUpdate = useCallback(
     async (leaveId, newStatus) => {
+      const currentLeave = allEmployeeLeaves.find((leave) => leave.id === leaveId);
+
+      if (!currentLeave) return false;
+
+      // Do nothing if the same status is selected
+      if (currentLeave.status === newStatus) {
+        return false;
+      }
+
       const confirmed = window.confirm(
         `Are you sure you want to mark this leave as ${toTitleCase(newStatus)}?`
       );
 
-      if (!confirmed) return;
+      if (!confirmed) {
+        return false;
+      }
 
-      const success = await updateLeaveStatusFromStore(leaveId, newStatus);
+      const result = await updateLeaveStatusFromStore(leaveId, newStatus);
 
-      if (!success) return;
+      if (!result.success) {
+        return false;
+      }
 
-      // Keep the opened sidebar data synchronized.
-      setSelectedLeave((currentLeave) => {
-        if (!currentLeave || currentLeave.id !== leaveId) {
-          return currentLeave;
+      // Synchronize sidebar using backend response
+      setSelectedLeave((openedLeave) => {
+        if (!openedLeave || openedLeave.id !== leaveId) {
+          return openedLeave;
         }
 
         return {
-          ...currentLeave,
-          status: newStatus,
+          ...openedLeave,
+          ...result.leave,
         };
       });
+
+      return true;
     },
-    [updateLeaveStatusFromStore]
+    [allEmployeeLeaves, updateLeaveStatusFromStore]
   );
 
   const columns = useMemo(
@@ -186,13 +202,39 @@ const AllLeavesData = () => {
 
         cell: ({ row }) => {
           const leave = row.original;
+          const isUpdating = leaveStatusLoadingById?.[leave.id] || false;
 
           return (
-            <SelectDropdown
-              options={STATUS_OPTIONS}
-              defaultSelect={leave.status}
-              onSelectOption={(option) => handleStatusUpdate(leave.id, option.value)}
-            />
+            <div
+              style={{
+                minWidth: "150px",
+                position: "relative",
+                opacity: isUpdating ? 0.65 : 1,
+                pointerEvents: isUpdating ? "none" : "auto",
+              }}
+            >
+              <SelectDropdown
+                key={`${leave.id}-${leave.status}`}
+                options={STATUS_OPTIONS}
+                defaultSelect={leave.status}
+                onSelectOption={(option) => handleStatusUpdate(leave.id, option.value)}
+                disabled={isUpdating}
+              />
+
+              {isUpdating && (
+                <div
+                  className="spinner-border spinner-border-sm text-primary"
+                  role="status"
+                  style={{
+                    position: "absolute",
+                    right: "-25px",
+                    top: "10px",
+                  }}
+                >
+                  <span className="visually-hidden">Updating...</span>
+                </div>
+              )}
+            </div>
           );
         },
       },
@@ -225,7 +267,7 @@ const AllLeavesData = () => {
         ),
       },
     ],
-    [handleStatusUpdate]
+    [handleStatusUpdate, leaveStatusLoadingById]
   );
 
   return (

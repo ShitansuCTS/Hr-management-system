@@ -1,6 +1,17 @@
 import { create } from "zustand";
 import { toast } from "react-hot-toast";
 
+const toTitleCaseStore = (text = "") =>
+    text
+        .toLowerCase()
+        .split("_")
+        .map(
+            (word) =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+        )
+        .join(" ");
+
+
 export const useLeaveStore = create((set, get) => ({
     // =====================================
     // Employee Leave Balance
@@ -22,6 +33,7 @@ export const useLeaveStore = create((set, get) => ({
     allEmployeeLeaves: [],
     allEmployeeLeavesLoading: false,
     hasFetchedAllEmployeeLeaves: false,
+    leaveStatusLoadingById: {},
 
     // =====================================
     // Leave Comments
@@ -196,8 +208,17 @@ export const useLeaveStore = create((set, get) => ({
     // Update Leave Status - Admin
     // =====================================
     updateLeaveStatus: async (leaveId, newStatus) => {
+        const previousLeave = get().allEmployeeLeaves.find(
+            (leave) => leave.id === leaveId
+        );
+
         try {
-            set({ leaveActionLoading: true });
+            set((state) => ({
+                leaveStatusLoadingById: {
+                    ...state.leaveStatusLoadingById,
+                    [leaveId]: true,
+                },
+            }));
 
             const res = await fetch(`/api/v1/leaves/${leaveId}/status`, {
                 method: "PATCH",
@@ -212,35 +233,77 @@ export const useLeaveStore = create((set, get) => ({
 
             const data = await res.json();
 
-            if (!res.ok) {
-                throw new Error(data.message || "Failed to update leave status");
+            // Also check data.success
+            if (!res.ok || data.success === false) {
+                throw new Error(
+                    data.message || "Failed to update leave status"
+                );
             }
 
-            const updatedLeave = data.leaveApplication || data.data;
+            const updatedLeave =
+                data.leaveApplication ||
+                data.data ||
+                null;
+
+            if (!updatedLeave) {
+                throw new Error(
+                    "The server did not return the updated leave details"
+                );
+            }
 
             set((state) => ({
                 allEmployeeLeaves: state.allEmployeeLeaves.map((leave) =>
                     leave.id === leaveId
                         ? {
                             ...leave,
-                            ...(updatedLeave || {}),
-                            status: newStatus,
+                            ...updatedLeave,
+
+                            // Always trust the backend status
+                            status: updatedLeave.status,
                         }
                         : leave
                 ),
 
-                leaveActionLoading: false,
+                leaveStatusLoadingById: {
+                    ...state.leaveStatusLoadingById,
+                    [leaveId]: false,
+                },
             }));
 
-            toast.success(data.message || `Leave marked as ${newStatus.toLowerCase()}`);
+            toast.success(
+                data.message ||
+                `Leave marked as ${toTitleCaseStore(updatedLeave.status)}`
+            );
 
-            return true;
+            return {
+                success: true,
+                leave: updatedLeave,
+            };
         } catch (error) {
-            set({ leaveActionLoading: false });
+            console.error("Failed to update leave status:", error);
 
-            toast.error(error.message || "Failed to update leave status");
+            // Keep or restore previous leave data
+            set((state) => ({
+                allEmployeeLeaves: state.allEmployeeLeaves.map((leave) =>
+                    leave.id === leaveId && previousLeave
+                        ? previousLeave
+                        : leave
+                ),
 
-            return false;
+                leaveStatusLoadingById: {
+                    ...state.leaveStatusLoadingById,
+                    [leaveId]: false,
+                },
+            }));
+
+            toast.error(
+                error.message || "Failed to update leave status"
+            );
+
+            return {
+                success: false,
+                leave: previousLeave,
+            };
         }
     },
 
@@ -391,6 +454,7 @@ export const useLeaveStore = create((set, get) => ({
             commentsByLeaveId: {},
             commentsLoadingByLeaveId: {},
             hasFetchedCommentsByLeaveId: {},
+            leaveStatusLoadingById: {},
 
             leaveBalancesLoading: false,
             myLeavesLoading: false,

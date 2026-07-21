@@ -5,50 +5,35 @@ import React from "react";
 import { FiFacebook, FiGithub, FiTwitter } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuthStore } from "@/store/authStore";
+
 import toast from "react-hot-toast";
 
 const LoginForm = ({ registerPath, resetPath }) => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { login, loading } = useAuthStore();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const result = await login(email, password);
 
-      const data = await res.json();
-
-      console.log("The login data from the backend: ", data);
-
-      if (!res.ok) {
-        toast.error(data.message || "Something went wrong");
-        return;
-      }
-
-      toast.success("Login successful");
-      router.refresh();
-      const role = data.user.role;
-      if (role === "ADMIN") {
-        router.push("/dashboard/admin");
-      } else {
-        router.push("/dashboard/user");
-      }
-
-      // router.push("/");
-    } catch (error) {
-      console.error(error);
-      toast.error("Login failed");
-    } finally {
-      setLoading(false);
+    if (!result.success) {
+      toast.error(result.message);
+      return;
     }
+
+    toast.success("Login successful");
+
+    if (result.user.role === "ADMIN") {
+      router.replace("/dashboard/admin");
+    } else {
+      router.replace("/dashboard/user");
+    }
+
+    router.refresh();
   };
 
   return (

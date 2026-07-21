@@ -81,88 +81,94 @@ const LeavesTables = () => {
 
   // helper functsions
 
-  const columns = useMemo(() => [
-    {
-      id: "employee",
-      header: "Employee",
-      cell: ({ row }) => {
-        const user = row.original.user;
+  const columns = useMemo(
+    () => [
+      {
+        id: "employee",
+        header: "Employee",
+        cell: ({ row }) => {
+          const user = row.original.user;
 
-        return (
-          <div className="hstack gap-3">
-            <div className="avatar-image avatar-md">
-              <img
-                src={row.original.user?.profileImageUrl || "/avatar.png"}
-                alt="profile"
-                style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
-              />            </div>
-            <div>
-              <span className="text-truncate-1-line fw-bold">{row.original.user.fullName}</span>
-              <small className="fs-12 fw-normal text-muted d-block">{row.original.user.email}</small>
+          return (
+            <div className="hstack gap-3">
+              <div className="avatar-image avatar-md">
+                <img
+                  src={row.original.user?.profileImageUrl || "/avatar.png"}
+                  alt="profile"
+                  style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
+                />{" "}
+              </div>
+              <div>
+                <span className="text-truncate-1-line fw-bold">{row.original.user.fullName}</span>
+                <small className="fs-12 fw-normal text-muted d-block">
+                  {row.original.user.email}
+                </small>
+              </div>
             </div>
-          </div>
-        );
+          );
+        },
       },
-    },
-    {
-      accessorKey: "leaveType",
-      header: "Leave Type",
-      meta: {
-        className: "fw-bold text-dark",
+      {
+        accessorKey: "leaveType",
+        header: "Leave Type",
+        meta: {
+          className: "fw-bold text-dark",
+        },
+        cell: ({ row }) => {
+          const leaveType = row.original.leaveType;
+          return (
+            <span className={`badge border border-dashed ${leaveTypeBadgeClass(leaveType)}`}>
+              {toTitleCase(leaveType.replaceAll("_", " "))}
+            </span>
+          );
+        },
       },
-      cell: ({ row }) => {
-        const leaveType = row.original.leaveType;
-        return (
-          <span className={`badge border border-dashed ${leaveTypeBadgeClass(leaveType)}`}>
-            {toTitleCase(leaveType.replaceAll("_", " "))}
-          </span>
-        );
+      {
+        accessorKey: "startDate",
+        header: "Start Date",
+        cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM , YYYY"),
       },
-    },
-    {
-      accessorKey: "startDate",
-      header: "Start Date",
-      cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "endDate",
-      header: "End Date",
-      cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "status",
-      id: "status",
-      header: () => "Status",
-      cell: ({ row }) => {
-        const status = row.original.status;
-        const badge = LEAVE_STATUS_MAP[status];
+      {
+        accessorKey: "endDate",
+        header: "End Date",
+        cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM , YYYY"),
+      },
+      {
+        accessorKey: "status",
+        id: "status",
+        header: () => "Status",
+        cell: ({ row }) => {
+          const status = row.original.status;
+          const badge = LEAVE_STATUS_MAP[status];
 
-        return <div className={`badge ${badge?.color}`}>{badge?.content}</div>;
+          return <div className={`badge ${badge?.color}`}>{badge?.content}</div>;
+        },
       },
-    },
-    {
-      accessorKey: "CreatedAt",
-      header: "Created At",
-      cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "reason",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="hstack gap-2 justify-content-end">
-          <button
-            className="avatar-text avatar-md"
-            onClick={() => {
-              setSelectedLeave(row.original);
-              setSidebarOpen(true);
-            }}
-          >
-            <FiEye />
-          </button>
-        </div>
-      ),
-    },
-  ], []);
+      {
+        accessorKey: "CreatedAt",
+        header: "Created At",
+        cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM , YYYY"),
+      },
+      {
+        accessorKey: "reason",
+        header: "Actions",
+        cell: ({ row }) => (
+          <div className="hstack gap-2 justify-content-end">
+            <button
+              className="avatar-text avatar-md"
+              onClick={() => {
+                setSelectedLeave(row.original);
+                setSidebarOpen(true);
+              }}
+            >
+              <FiEye />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
 
   // function to fetch and set the data to the tabel
   const [data, setData] = useState([]);
