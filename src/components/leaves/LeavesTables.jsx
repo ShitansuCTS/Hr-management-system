@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState, useMemo } from "react";
 import {
   FiAlertOctagon,
@@ -6,17 +7,14 @@ import {
   FiClock,
   FiEdit3,
   FiEye,
-  FiMoreHorizontal,
   FiPrinter,
   FiTrash2,
 } from "react-icons/fi";
-import Dropdown from "@/components/shared/Dropdown";
-import { paymentTableData } from "@/utils/fackData/paymentTableData";
-import Table from "@/components/shared/table/Table";
-import Link from "next/link";
 import dayjs from "dayjs";
-import LeaveApplicationLoaders from "@/components/loaders/LeaveApplicationLoaders";
+
+import Table from "@/components/shared/table/Table";
 import LeavesSidebar from "./LeavesSidebar";
+import { useLeaveStore } from "@/store/useLeaveStore";
 
 const actions = [
   { label: "Edit", icon: <FiEdit3 /> },
@@ -30,13 +28,36 @@ const actions = [
 ];
 
 const LeavesTables = () => {
-  // helper functsions
+  // ===========================
+  // Zustand Store
+  // ===========================
+  const myLeaves = useLeaveStore((state) => state.myLeaves);
+  const loading = useLeaveStore((state) => state.myLeavesLoading);
+  const fetchMyLeaves = useLeaveStore((state) => state.fetchMyLeaves);
+
+  // ===========================
+  // Local State
+  // ===========================
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedLeave, setSelectedLeave] = useState(null);
+
+  // ===========================
+  // Fetch Once
+  // ===========================
+  useEffect(() => {
+    fetchMyLeaves();
+  }, [fetchMyLeaves]);
+
+  // ===========================
+  // Helpers
+  // ===========================
   const toTitleCase = (text = "") =>
     text
       .toLowerCase()
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+
   const LEAVE_STATUS_MAP = {
     PENDING: {
       content: "Pending",
@@ -51,6 +72,7 @@ const LeavesTables = () => {
       color: "bg-soft-danger text-danger",
     },
   };
+
   const leaveTypeBadgeClass = (leaveType) => {
     switch (leaveType) {
       case "CASUAL_LEAVE":
@@ -79,125 +101,112 @@ const LeavesTables = () => {
     }
   };
 
-  // helper functsions
-
-  const columns = useMemo(() => [
-    {
-      id: "employee",
-      header: "Employee",
-      cell: ({ row }) => {
-        const user = row.original.user;
-
-        return (
+  // ===========================
+  // Table Columns
+  // ===========================
+  const columns = useMemo(
+    () => [
+      {
+        id: "employee",
+        header: "Employee",
+        cell: ({ row }) => (
           <div className="hstack gap-3">
             <div className="avatar-image avatar-md">
               <img
                 src={row.original.user?.profileImageUrl || "/avatar.png"}
                 alt="profile"
-                style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
-              />            </div>
+                style={{
+                  width: 40,
+                  height: 40,
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
+            </div>
+
             <div>
               <span className="text-truncate-1-line fw-bold">{row.original.user.fullName}</span>
-              <small className="fs-12 fw-normal text-muted d-block">{row.original.user.email}</small>
+
+              <small className="fs-12 fw-normal text-muted d-block">
+                {row.original.user.email}
+              </small>
             </div>
           </div>
-        );
+        ),
       },
-    },
-    {
-      accessorKey: "leaveType",
-      header: "Leave Type",
-      meta: {
-        className: "fw-bold text-dark",
-      },
-      cell: ({ row }) => {
-        const leaveType = row.original.leaveType;
-        return (
-          <span className={`badge border border-dashed ${leaveTypeBadgeClass(leaveType)}`}>
-            {toTitleCase(leaveType.replaceAll("_", " "))}
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: "startDate",
-      header: "Start Date",
-      cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "endDate",
-      header: "End Date",
-      cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "status",
-      id: "status",
-      header: () => "Status",
-      cell: ({ row }) => {
-        const status = row.original.status;
-        const badge = LEAVE_STATUS_MAP[status];
 
-        return <div className={`badge ${badge?.color}`}>{badge?.content}</div>;
-      },
-    },
-    {
-      accessorKey: "CreatedAt",
-      header: "Created At",
-      cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM , YYYY"),
-    },
-    {
-      accessorKey: "reason",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="hstack gap-2 justify-content-end">
-          <button
-            className="avatar-text avatar-md"
-            onClick={() => {
-              setSelectedLeave(row.original);
-              setSidebarOpen(true);
-            }}
+      {
+        accessorKey: "leaveType",
+        header: "Leave Type",
+        meta: {
+          className: "fw-bold text-dark",
+        },
+        cell: ({ row }) => (
+          <span
+            className={`badge border border-dashed ${leaveTypeBadgeClass(row.original.leaveType)}`}
           >
-            <FiEye />
-          </button>
-        </div>
-      ),
-    },
-  ], []);
+            {toTitleCase(row.original.leaveType.replaceAll("_", " "))}
+          </span>
+        ),
+      },
 
-  // function to fetch and set the data to the tabel
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState(null);
+      {
+        accessorKey: "startDate",
+        header: "Start Date",
+        cell: ({ row }) => dayjs(row.original.startDate).format("DD MMM, YYYY"),
+      },
 
-  useEffect(() => {
-    const fetchLeaves = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/leaves/myleaves");
-        const data = await res.json();
+      {
+        accessorKey: "endDate",
+        header: "End Date",
+        cell: ({ row }) => dayjs(row.original.endDate).format("DD MMM, YYYY"),
+      },
 
-        console.log("Received leaves:", data.allLeaveApplictaions);
-        setData(data.allLeaveApplictaions || []);
-      } catch (err) {
-        console.error("Error fetching leaves:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+          const badge = LEAVE_STATUS_MAP[row.original.status];
 
-    fetchLeaves();
-  }, []);
-  // function to fetch and set the data to the tabel
+          return <div className={`badge ${badge?.color}`}>{badge?.content}</div>;
+        },
+      },
+
+      {
+        accessorKey: "createdAt",
+        header: "Created At",
+        cell: ({ row }) => dayjs(row.original.createdAt).format("DD MMM, YYYY"),
+      },
+
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <div className="hstack gap-2 justify-content-end">
+            <button
+              className="avatar-text avatar-md"
+              onClick={() => {
+                setSelectedLeave(row.original);
+                setSidebarOpen(true);
+              }}
+            >
+              <FiEye />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <>
-      <Table data={data} columns={columns} loading={loading} />
+      <Table data={myLeaves} columns={columns} loading={loading} />
 
       {sidebarOpen && selectedLeave && (
         <LeavesSidebar
           data={selectedLeave}
-          currentUserId={selectedLeave?.user?.id}
+          currentUserId={selectedLeave.user?.id}
           onClose={() => {
             setSidebarOpen(false);
             setSelectedLeave(null);

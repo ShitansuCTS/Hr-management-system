@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Role } from "@/lib/generated/prisma";
+import { Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { verifyToken } from "@/lib/jwt";
 import { Resend } from "resend";

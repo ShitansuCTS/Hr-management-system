@@ -8,6 +8,7 @@ import SettingSideBarProvider from "@/contentApi/settingSideBarProvider";
 import ThemeCustomizer from "@/components/shared/ThemeCustomizer";
 import { Toaster } from "react-hot-toast";
 import "react-loading-skeleton/dist/skeleton.css";
+import AuthProvider from "@/providers/AuthProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -24,9 +25,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <SettingSideBarProvider>
-          <NavigationProvider>{children}</NavigationProvider>
-        </SettingSideBarProvider>
+        <AuthProvider>
+          <SettingSideBarProvider>
+            <NavigationProvider>{children}</NavigationProvider>
+          </SettingSideBarProvider>
+        </AuthProvider>
         <ThemeCustomizer />
         <Toaster
           position="top-right"

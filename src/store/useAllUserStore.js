@@ -12,7 +12,7 @@ export const useAllUsersStore = create((set, get) => ({
         set({ loading: true });
 
         try {
-            const response = await fetch("/api/users/all-users-details");
+            const response = await fetch("/api/v1/users/all-users-details");
 
             if (!response.ok) {
                 throw new Error("Failed to fetch users");
@@ -24,7 +24,7 @@ export const useAllUsersStore = create((set, get) => ({
             // toast.success(data.message || "Data fetched successfully");
 
             set({
-                users: data.users,
+                users: data.data,
                 loading: false,
                 hasFetched: true,
             });

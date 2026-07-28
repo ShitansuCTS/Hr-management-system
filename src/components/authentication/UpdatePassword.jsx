@@ -57,7 +57,7 @@ const UpdatePassword = ({ path }) => {
 
   return (
     <>
-      <h2 className="fs-20 fw-bolder mb-4">Reset to your password</h2>
+      <h2 className="fs-20 fw-bolder mb-4">Reset Your Password</h2>
       <p className="fs-12 fw-medium text-muted">
         Update your password and begine setting up your profile.{" "}
       </p>
@@ -82,16 +82,20 @@ const UpdatePassword = ({ path }) => {
         </div>
         <div className="mt-5">
           <button type="submit" className="btn btn-lg btn-primary w-100" disabled={loading}>
-            {loading ? "Loading..." : "Reset"}
+            {loading ? "Loading..." : "Reset Now"}
           </button>
         </div>
       </form>
-      <div className="mt-5 text-muted">
-        <span> Don't have an account?</span>
-        <Link href="#" className="fw-bold" onClick={createAccount}>
-          {" "}
-          Create an Account
-        </Link>
+      <div className="mt-5 text-center text-muted fs-13">
+        <p className="mb-0">
+          Remember your password?{" "}
+          <Link
+            href="/authentication/login/minimal"
+            className="fw-bold text-primary text-decoration-none"
+          >
+            Login
+          </Link>
+        </p>
       </div>
     </>
   );

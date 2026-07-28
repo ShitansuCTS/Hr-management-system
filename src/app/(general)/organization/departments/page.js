@@ -1,5 +1,3 @@
-import CustomersTable from "@/components/customers/CustomersTable";
-import Footer from "@/components/shared/Footer";
 import DepartmentSection from "@/components/departments/DepartmentSection";
 import React from "react";
 

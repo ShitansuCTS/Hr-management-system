@@ -68,7 +68,7 @@ export const useAnnouncementFormStore = create((set, get) => ({
                 emails: sendToAll ? [] : [selectedEmail.value],
             };
 
-            const res = await fetch("/api/announcements", {
+            const res = await fetch("/api/v1/announcements", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

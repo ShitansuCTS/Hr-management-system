@@ -23,11 +23,11 @@ export const useAnnouncementStore = create((set, get) => ({
         try {
             set({ loading: true });
 
-            const res = await fetch("/api/users/all-announcements");
+            const res = await fetch("/api/v1/announcements/all-announcements");
             const data = await res.json();
 
             set({
-                announcements: data.announcements || [],
+                announcements: data.data || [],
                 loading: false,
                 hasFetched: true, // ✅ mark as fetched
             });
@@ -56,11 +56,11 @@ export const useAnnouncementStore = create((set, get) => ({
         try {
             set({ loading: true });
 
-            const res = await fetch("/api/announcements");
+            const res = await fetch("/api/v1/announcements");
             const data = await res.json();
 
             set({
-                recentAnnouncements: data.announcements || [],
+                recentAnnouncements: data.data || [],
                 loading: false,
                 hasFetchedRecent: true,
             });

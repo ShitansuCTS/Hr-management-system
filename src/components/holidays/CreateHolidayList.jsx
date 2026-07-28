@@ -1,65 +1,57 @@
 "use client";
+
 import React, { useState } from "react";
 import SelectDropdown from "@/components/shared/SelectDropdown";
 import DatePicker from "react-datepicker";
 import EventCalendarSmall from "@/components/EventCalendarSmall";
 import toast from "react-hot-toast";
+import { useCompanyCalendarStore } from "@/store/companyCalendarStore";
 
 const CreateHolidayList = () => {
+  const createHoliday = useCompanyCalendarStore((state) => state.createHoliday);
+  const loading = useCompanyCalendarStore((state) => state.loading);
+
   const [holidayName, setHolidayName] = useState("");
   const [holidayDate, setHolidayDate] = useState(null);
   const [holidayType, setHolidayType] = useState(null);
   const [description, setDescription] = useState("");
   const [year, setYear] = useState("");
   const [day, setDay] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const resetForm = () => {
+    setHolidayName("");
+    setHolidayDate(null);
+    setHolidayType(null);
+    setDescription("");
+    setYear("");
+    setDay("");
+  };
 
   const handleSubmit = async () => {
-    setLoading(true);
     if (!holidayName || !holidayDate || !holidayType) {
       toast.error("Please fill all the fields");
       return;
     }
 
     const payload = {
-      name: holidayName,
-      date: holidayDate,
+      name: holidayName.trim(),
+      date: holidayDate.toLocaleDateString("en-CA"),
       day,
       year: Number(year),
       type: holidayType.value,
-      description,
+      description: description.trim(),
     };
 
-    // console.log("The data is get : ", payload)
+    const result = await createHoliday(payload);
 
-    try {
-      const res = await fetch("/api/holidays", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      console.log("Saved:", data);
-      if (res.ok) {
-        toast.success("Holiday created successfully");
-        // Reset form
-        setHolidayName("");
-        setHolidayDate(null);
-        setHolidayType(null);
-        setDescription("");
-        setYear("");
-        setDay("");
-        return;
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
+    if (!result.success) {
+      toast.error(result.message);
+      return;
     }
+
+    toast.success(result.message || "Holiday created successfully");
+
+    resetForm();
   };
 
   return (
@@ -69,11 +61,11 @@ const CreateHolidayList = () => {
           <div className="card-body">
             <div className="row">
               <div className="col-md-4">
-                {/* Holiday Name */}
                 <div className="mb-4">
                   <label className="form-label">
                     Holiday Name <span className="text-danger">*</span>
                   </label>
+
                   <input
                     type="text"
                     className="form-control"
@@ -85,7 +77,6 @@ const CreateHolidayList = () => {
               </div>
 
               <div className="col-md-4">
-                {/* Holiday Date */}
                 <div className="mb-4">
                   <label className="form-label">
                     Holiday Date <span className="text-danger">*</span>
@@ -99,10 +90,11 @@ const CreateHolidayList = () => {
                       if (date) {
                         setYear(date.getFullYear());
 
-                        const dayName = date.toLocaleDateString("en-US", {
-                          weekday: "long",
-                        });
-                        setDay(dayName);
+                        setDay(
+                          date.toLocaleDateString("en-US", {
+                            weekday: "long",
+                          })
+                        );
                       }
                     }}
                     className="form-control"
@@ -112,7 +104,6 @@ const CreateHolidayList = () => {
               </div>
 
               <div className="col-md-4">
-                {/* Holiday Type */}
                 <div className="mb-4">
                   <label className="form-label">
                     Type <span className="text-danger">*</span>
@@ -120,38 +111,51 @@ const CreateHolidayList = () => {
 
                   <SelectDropdown
                     options={[
-                      { value: "NATIONAL", label: "National" },
-                      { value: "FESTIVAL", label: "Festival" },
-                      { value: "OPTIONAL", label: "Optional" },
-                      { value: "COMPANY", label: "Company" },
+                      {
+                        value: "NATIONAL",
+                        label: "National",
+                      },
+                      {
+                        value: "FESTIVAL",
+                        label: "Festival",
+                      },
+                      {
+                        value: "OPTIONAL",
+                        label: "Optional",
+                      },
+                      {
+                        value: "COMPANY",
+                        label: "Company",
+                      },
                     ]}
-                    onSelectOption={(option) => setHolidayType(option)}
+                    onSelectOption={setHolidayType}
                   />
                 </div>
               </div>
             </div>
+
             <div className="row">
               <div className="col-md-4">
-                {/* Holiday Color */}
                 <div className="mb-4">
                   <label className="form-label">
                     Year <span className="text-danger">*</span>
                   </label>
+
                   <input type="text" className="form-control bg-gray-200" value={year} readOnly />
                 </div>
               </div>
+
               <div className="col-md-4">
-                {/* Holiday Color */}
                 <div className="mb-4">
                   <label className="form-label">
                     Day <span className="text-danger">*</span>
                   </label>
+
                   <input type="text" className="form-control" value={day} readOnly />
                 </div>
               </div>
             </div>
 
-            {/* Description */}
             <div className="mb-4">
               <label className="form-label">Description</label>
 
@@ -164,13 +168,13 @@ const CreateHolidayList = () => {
               />
             </div>
 
-            {/* Save Button */}
             <button className="btn btn-primary w-100" onClick={handleSubmit} disabled={loading}>
               {loading ? "Saving..." : "Save"}
             </button>
           </div>
         </div>
       </div>
+
       <div className="col-xl-4">
         <div className="card stretch stretch-full">
           <EventCalendarSmall />
