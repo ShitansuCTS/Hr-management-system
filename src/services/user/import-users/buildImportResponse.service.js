@@ -14,7 +14,6 @@ export function buildImportResponse({
     skipped,
   };
 
-  // All rows imported successfully
   if (inserted === totalRows && failed === 0) {
     return {
       statusCode: 201,
@@ -28,7 +27,6 @@ export function buildImportResponse({
     };
   }
 
-  // Partial success
   if (inserted > 0 && failed > 0) {
     return {
       statusCode: 200,
@@ -43,7 +41,6 @@ export function buildImportResponse({
     };
   }
 
-  // Nothing imported
   if (inserted === 0) {
     return {
       statusCode: 400,
@@ -58,7 +55,6 @@ export function buildImportResponse({
     };
   }
 
-  // Fallback
   return {
     statusCode: 200,
     body: {

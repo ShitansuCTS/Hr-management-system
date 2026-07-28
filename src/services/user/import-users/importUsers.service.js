@@ -75,7 +75,7 @@ export async function importUsersService(file, currentUser) {
         failedRows.push({
           excelRow: rows[index].excelRow,
           originalRow: rows[index],
-          errors: [result.error],
+          errors: result.errors ?? [result.error],
         });
 
         continue;
@@ -136,12 +136,6 @@ export async function importUsersService(file, currentUser) {
 
     const folder = `organization-${currentUser.organizationId}/${year}/${month}`;
 
-    console.log({
-      envBucket: process.env.SUPABASE_IMPORT_REPORT_BUCKET,
-      folder,
-      fileName: report.fileName,
-    });
-
     const updloadedReport = await uploadFile({
       bucket: process.env.SUPABASE_IMPORT_REPORT_BUCKET,
 
@@ -184,8 +178,6 @@ export async function importUsersService(file, currentUser) {
 
     errorReport,
   });
-
-  console.log("Import Response:", response);
 
   return response;
 }

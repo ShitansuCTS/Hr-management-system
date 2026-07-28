@@ -61,15 +61,13 @@ export async function validateEmployeeRow(
     validatedEmployee = validateImportedUser(employee);
   } catch (error) {
     if (error instanceof ZodError) {
-      const firstIssue = error.issues[0];
-
       return {
         success: false,
-        error: {
+        errors: error.issues.map((issue) => ({
           row: excelRow,
-          field: firstIssue.path.join("."),
-          message: firstIssue.message,
-        },
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
       };
     }
 
@@ -87,10 +85,13 @@ export async function validateEmployeeRow(
   if (emailSet.has(email)) {
     return {
       success: false,
-      error: {
-        row: excelRow,
-        message: "Email already exists.",
-      },
+      errors: [
+        {
+          row: excelRow,
+          field: "email",
+          message: "Email already exists.",
+        },
+      ],
     };
   }
 
@@ -103,10 +104,13 @@ export async function validateEmployeeRow(
   if (importedEmailSet.has(email)) {
     return {
       success: false,
-      error: {
-        row: excelRow,
-        message: "Duplicate email found in uploaded Excel.",
-      },
+      errors: [
+        {
+          row: excelRow,
+          field: "email",
+          message: "Duplicate email found in uploaded Excel.",
+        },
+      ],
     };
   }
 
@@ -121,10 +125,13 @@ export async function validateEmployeeRow(
   if (employeeIdSet.has(validatedEmployee.employeeId)) {
     return {
       success: false,
-      error: {
-        row: excelRow,
-        message: "Employee ID already exists.",
-      },
+      errors: [
+        {
+          row: excelRow,
+          field: "employeeId",
+          message: "Employee ID already exists.",
+        },
+      ],
     };
   }
 
@@ -137,10 +144,13 @@ export async function validateEmployeeRow(
   if (importedEmployeeIdSet.has(validatedEmployee.employeeId)) {
     return {
       success: false,
-      error: {
-        row: excelRow,
-        message: "Duplicate Employee ID found in uploaded Excel.",
-      },
+      errors: [
+        {
+          row: excelRow,
+          field: "employeeId",
+          message: "Duplicate Employee ID found in uploaded Excel.",
+        },
+      ],
     };
   }
 
@@ -157,13 +167,15 @@ export async function validateEmployeeRow(
   if (!department) {
     return {
       success: false,
-      error: {
-        row: excelRow,
-        field: "department",
-        value: validatedEmployee.department,
+      errors: [
+        {
+          row: excelRow,
+          field: "department",
+          value: validatedEmployee.department,
 
-        message: "Department does not exist.",
-      },
+          message: "Department does not exist.",
+        },
+      ],
     };
   }
 
@@ -180,13 +192,15 @@ export async function validateEmployeeRow(
   if (!designation) {
     return {
       success: false,
-      error: {
-        row: excelRow,
-        field: "designation",
-        value: validatedEmployee.designation,
+      errors: [
+        {
+          row: excelRow,
+          field: "designation",
+          value: validatedEmployee.designation,
 
-        message: "Designation does not belong to selected department.",
-      },
+          message: "Designation does not belong to selected department.",
+        },
+      ],
     };
   }
 

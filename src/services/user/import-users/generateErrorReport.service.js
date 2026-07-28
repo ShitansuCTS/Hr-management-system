@@ -3,21 +3,9 @@ import { uploadFile } from "@/services/storage/uploadFile.service";
 
 export async function generateErrorReport({ headers, failedRows, organizationId }) {
   try {
-    /*
-    ==========================================
-        Create Workbook
-    ==========================================
-    */
-
     const workbook = new ExcelJS.Workbook();
 
     const worksheet = workbook.addWorksheet("Import Errors");
-
-    /*
-    ==========================================
-        Header Row
-    ==========================================
-    */
 
     worksheet.addRow([...headers, "Errors"]);
 
@@ -32,24 +20,12 @@ export async function generateErrorReport({ headers, failedRows, organizationId 
       horizontal: "center",
     };
 
-    /*
-    ==========================================
-        Freeze Header
-    ==========================================
-    */
-
     worksheet.views = [
       {
         state: "frozen",
         ySplit: 1,
       },
     ];
-
-    /*
-    ==========================================
-        Auto Filter
-    ==========================================
-    */
 
     worksheet.autoFilter = {
       from: {
@@ -62,28 +38,16 @@ export async function generateErrorReport({ headers, failedRows, organizationId 
       },
     };
 
-    /*
-    ==========================================
-        Failed Rows
-    ==========================================
-    */
-
     for (const failedRow of failedRows) {
       const values = headers.map((header) => {
         return failedRow.originalRow[header] ?? "";
       });
 
       const errorMessage = failedRow.errors
-        .map((error) => (error.field ? `${error.field}: ${error.message}` : error.message))
-        .join(" | ");
+        .map((error) => `${error.field}: ${error.message}`)
+        .join("\n");
       worksheet.addRow([...values, errorMessage]);
     }
-
-    /*
-    ==========================================
-        Auto Width
-    ==========================================
-    */
 
     worksheet.columns.forEach((column) => {
       let maxLength = 15;
@@ -102,12 +66,6 @@ export async function generateErrorReport({ headers, failedRows, organizationId 
       column.width = Math.min(maxLength, 40);
     });
 
-    /*
-    ==========================================
-        Wrap Error Column
-    ==========================================
-    */
-
     const errorColumn = worksheet.getColumn(headers.length + 1);
 
     errorColumn.alignment = {
@@ -115,19 +73,7 @@ export async function generateErrorReport({ headers, failedRows, organizationId 
       vertical: "top",
     };
 
-    /*
-    ==========================================
-        Workbook Buffer
-    ==========================================
-    */
-
     const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
-
-    /*
-    ==========================================
-        Upload
-    ==========================================
-    */
 
     const now = new Date();
 

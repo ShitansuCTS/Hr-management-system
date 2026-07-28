@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { buildDesignationKey } from "@/utils/import-users/buildDesignationKey";
 
 export async function buildLookupMaps(currentUser) {
-  // Load everything in parallel
   const [users, departments, designations] = await Promise.all([
     prisma.user.findMany({
       where: {
@@ -38,7 +37,7 @@ export async function buildLookupMaps(currentUser) {
     }),
   ]);
 
-  // Existing Users
+  
   const emailSet = new Set();
   const employeeIdSet = new Set();
 
@@ -52,7 +51,7 @@ export async function buildLookupMaps(currentUser) {
     }
   });
 
-  // Departments
+  
   const departmentMap = new Map();
 
   departments.forEach((department) => {
@@ -62,7 +61,7 @@ export async function buildLookupMaps(currentUser) {
     });
   });
 
-  // Designations
+  
   const designationMap = new Map();
 
   designations.forEach((designation) => {

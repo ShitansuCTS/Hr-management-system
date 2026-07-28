@@ -1,4 +1,5 @@
 import ExcelJS from "exceljs";
+import { EMPLOYEE_IMPORT_COLUMNS } from "@/config/employeeImport.config";
 
 export async function parseExcel(file) {
   try {
@@ -22,6 +23,10 @@ export async function parseExcel(file) {
 
     const headers = [];
 
+    const headerMap = Object.fromEntries(
+      Object.entries(EMPLOYEE_IMPORT_COLUMNS).map(([field, config]) => [config.header, field])
+    );
+
     headerRow.eachCell((cell) => {
       headers.push(String(cell.value ?? "").trim());
     });
@@ -36,15 +41,25 @@ export async function parseExcel(file) {
       let isEmpty = true;
 
       headers.forEach((header, index) => {
+        const field = headerMap[header];
+
+        if (!field) {
+          return;
+        }
+
         const cell = row.getCell(index + 1);
 
         let value = cell.value;
 
-        if (value && typeof value === "object") {
+        if (value instanceof Date) {
+          // Keep Date object
+        } else if (value && typeof value === "object") {
           if ("text" in value) {
             value = value.text;
           } else if ("result" in value) {
             value = value.result;
+          } else if ("richText" in value) {
+            value = value.richText.map((item) => item.text).join("");
           }
         }
 
@@ -56,7 +71,7 @@ export async function parseExcel(file) {
           isEmpty = false;
         }
 
-        rowObject[header] = value;
+        rowObject[field] = value;
       });
 
       if (!isEmpty) {
@@ -69,6 +84,7 @@ export async function parseExcel(file) {
 
     return {
       headers,
+      headerMap,
       rows,
     };
   } catch (error) {

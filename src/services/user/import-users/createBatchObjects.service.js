@@ -8,12 +8,6 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
 
   const hashedPassword = await bcrypt.hash(process.env.DEFAULT_USER_PASSWORD, 10);
 
-  /*
-  ==========================================
-      User
-  ==========================================
-  */
-
   const user = {
     id: userId,
 
@@ -76,12 +70,6 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
     status: UserStatus.ACTIVE,
   };
 
-  /*
-  ==========================================
-      Financial Details
-  ==========================================
-  */
-
   const financial = {
     id: randomUUID(),
 
@@ -99,12 +87,6 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
 
     esicNo: employee.esicNo,
   };
-
-  /*
-  ==========================================
-      Leave Balances
-  ==========================================
-  */
 
   const leaveBalances = DEFAULT_LEAVE_BALANCES.map((leave) => ({
     id: randomUUID(),
