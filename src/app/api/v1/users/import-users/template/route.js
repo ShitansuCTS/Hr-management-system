@@ -1,8 +1,10 @@
-import { requireAuth } from "@/auth/requireAuth";
-import { NextResponse } from "next/server";
-import { importUsersController } from "@/controllers/user/importUsers.controller";
+export const dynamic = "force-dynamic";
 
-export async function POST(request) {
+import { NextResponse } from "next/server";
+import { requireAuth } from "@/auth/requireAuth";
+import { downloadEmployeeTemplateController } from "@/controllers/user/downloadEmployeeTemplate.controller";
+
+export async function GET(request) {
   try {
     const auth = await requireAuth(request, ["ADMIN"]);
 
@@ -18,18 +20,14 @@ export async function POST(request) {
       );
     }
 
-    const result = await importUsersController(request, auth.user);
-
-    return NextResponse.json(result, {
-      status: result.statusCode,
-    });
+    return await downloadEmployeeTemplateController();
   } catch (error) {
-    console.error("Import Route:", error);
+    console.error("Download Employee Template Route Error:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Internal Server Error",
+        message: error.message || "Failed to download employee template.",
         errors: error.errors || {},
       },
       {
