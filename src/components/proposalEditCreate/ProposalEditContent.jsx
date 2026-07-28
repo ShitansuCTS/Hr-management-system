@@ -21,6 +21,7 @@ import {
 } from "@/utils/options";
 import useLocationData from "@/hooks/useLocationData";
 import toast from "react-hot-toast";
+import Importexcel from "./Importexcel";
 
 // Options for dropdowns
 const employmentTypeOptions = [
@@ -521,6 +522,15 @@ const ProposalEditContent = () => {
         <div className="card stretch stretch-full">
           <div className="card-body">
             <h3 className="mb-4 fw-bold">Add Employee</h3>
+
+            <a
+              href="#"
+              className="btn btn-light-brand"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#importexcel"
+            >
+              <span>Save & Send</span>
+            </a>
 
             <form onSubmit={handleSubmit}>
               <div className="row g-3">
@@ -1360,6 +1370,7 @@ const ProposalEditContent = () => {
           </div>
         </div>
       </div>
+      <Importexcel />
     </>
   );
 };
