@@ -8,12 +8,6 @@ export async function uploadFile({
   contentType,
   expiresIn = 3600,
 }) {
-
-  console.log({
-  bucket,
-  folder,
-  fileName,
-});
   try {
     const storagePath = `${folder}/${fileName}`;
 
@@ -57,8 +51,7 @@ export async function uploadFile({
   } catch (error) {
     console.error("Supabase Storage:", error);
 
-      console.error("Error message:", error.message);
-  console.error("Error stack:", error.stack);
+    console.error("Error message:", error.message);
     throw new Error("Failed to upload import report.");
   }
 }
