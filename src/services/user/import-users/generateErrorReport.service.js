@@ -1,7 +1,7 @@
 import ExcelJS from "exceljs";
-import { uploadFile } from "@/services/storage/uploadFile.service";
+import { EMPLOYEE_IMPORT_COLUMNS } from "@/config/employeeImport.config";
 
-export async function generateErrorReport({ headers, failedRows, organizationId }) {
+export async function generateErrorReport({ headers, failedRows }) {
   try {
     const workbook = new ExcelJS.Workbook();
 
@@ -38,13 +38,29 @@ export async function generateErrorReport({ headers, failedRows, organizationId 
       },
     };
 
+    const headerMap = Object.fromEntries(
+      Object.entries(EMPLOYEE_IMPORT_COLUMNS).map(([field, config]) => [config.header, field])
+    );
+
     for (const failedRow of failedRows) {
       const values = headers.map((header) => {
-        return failedRow.originalRow[header] ?? "";
+        const field = headerMap[header];
+
+        let value = failedRow.originalRow[field] ?? "";
+
+        if (value instanceof Date) {
+          const day = String(value.getDate()).padStart(2, "0");
+          const month = String(value.getMonth() + 1).padStart(2, "0");
+          const year = value.getFullYear();
+
+          value = `${day}-${month}-${year}`;
+        }
+
+        return value;
       });
 
       const errorMessage = failedRow.errors
-        .map((error) => `${error.field}: ${error.message}`)
+        .map((error) => (error.field ? `${error.field}: ${error.message}` : error.message))
         .join("\n");
       worksheet.addRow([...values, errorMessage]);
     }
@@ -74,14 +90,6 @@ export async function generateErrorReport({ headers, failedRows, organizationId 
     };
 
     const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
-
-    const now = new Date();
-
-    const year = now.getFullYear();
-
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-
-    const folder = `organization-${organizationId}/${year}/${month}`;
 
     const fileName = `employee-import-errors-${Date.now()}.xlsx`;
 
