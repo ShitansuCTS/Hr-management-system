@@ -10,6 +10,7 @@ import { currencyOptionsData } from "@/utils/fackData/currencyOptionsData";
 import useDatePicker from "@/hooks/useDatePicker";
 import { addDays } from "date-fns";
 import { timezonesData } from "@/utils/fackData/timeZonesData";
+import { FiLayers } from "react-icons/fi";
 import {
   propasalLeadOptions,
   propsalDiscountOptions,
@@ -521,16 +522,19 @@ const ProposalEditContent = () => {
       <div className="col-xl-12">
         <div className="card stretch stretch-full">
           <div className="card-body">
-            <h3 className="mb-4 fw-bold">Add Employee</h3>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h3 className="fw-bold mb-0">Add Employee</h3>
 
-            <a
-              href="#"
-              className="btn btn-light-brand"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#importexcel"
-            >
-              <span>Save & Send</span>
-            </a>
+              <a
+                href="#"
+                className="btn btn-light-brand btn-primary text-dark "
+                data-bs-toggle="offcanvas"
+                data-bs-target="#importexcel"
+              >
+                <FiLayers size={18} style={{ marginRight: "5px" }} />
+                <span>Import Excel</span>
+              </a>
+            </div>
 
             <form onSubmit={handleSubmit}>
               <div className="row g-3">
