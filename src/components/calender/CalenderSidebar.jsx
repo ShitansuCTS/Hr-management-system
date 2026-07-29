@@ -12,6 +12,7 @@ const CalenderSidebar = ({
   sidebarOpen,
   setSidebarOpen,
   handleEventBtnClick,
+  eventCategoryOptions,
 }) => {
   return (
     <div className={`content-sidebar content-sidebar-xl ${sidebarOpen ? "app-sidebar-open" : ""}`}>
@@ -56,27 +57,35 @@ const CalenderSidebar = ({
               </div>
             </div>
             <div id="calendarList" className="lnb-calendars-d1">
-              {Object.keys(selectedCategories).map((category) => (
-                <div key={category} className="filter-item">
-                  <div className="custom-control custom-checkbox" data-category={`${category}`}>
+              {eventCategoryOptions.map((category) => (
+                <div key={category.value} className="filter-item">
+                  <div className="custom-control custom-checkbox">
                     <input
                       type="checkbox"
                       className="custom-control-input"
-                      id={category}
-                      value="all"
-                      checked={selectedCategories[category]}
-                      onChange={() => handleCategoryChange(category)}
+                      id={category.value}
+                      checked={selectedCategories[category.value]}
+                      onChange={() => handleCategoryChange(category.value)}
                     />
-                    <label className="custom-control-label c-pointer" htmlFor={category}>
+
+                    <label
+                      className="custom-control-label c-pointer d-flex align-items-center"
+                      htmlFor={category.value}
+                    >
                       <span
-                        className="fs-13 fw-semibold lh-lg d-inline-block"
-                        style={{ marginTop: "-3px" }}
-                      >
-                        {category}
-                      </span>
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: "50%",
+                          backgroundColor: category.color,
+                          display: "inline-block",
+                          marginRight: 10,
+                        }}
+                      />
+
+                      <span className="fs-13 fw-semibold">{category.label}</span>
                     </label>
                   </div>
-                  {/* <Checkbox id={category} name={category} checked={selectedCategories[category]}  onChange={() => handleCategoryChange(category)} /> */}
                 </div>
               ))}
             </div>

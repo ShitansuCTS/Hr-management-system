@@ -16,70 +16,58 @@ import { initEvents } from "./initEvents";
 import EventDetails from "./EventDetails";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import Checkbox from "@/components/shared/Checkbox";
+import { useCompanyCalendarStore } from "@/store/companyCalendarStore";
+import toast from "react-hot-toast";
 
 const eventCategoryOptions = [
   {
-    label: "Office",
-    value: "Office",
+    label: "Meeting",
+    value: "MEETING",
     bgColor: "rgba(84,132,227,.15)",
     color: "#5485e4",
     icon: "fa-briefcase",
   },
   {
-    label: "Family",
-    value: "Family",
-    bgColor: "rgb(37, 184, 101, .15)",
-    color: "rgb(37, 184, 101)",
-    icon: "fa-home",
+    label: "Training",
+    value: "TRAINING",
+    bgColor: "rgba(37,184,101,.15)",
+    color: "rgb(37,184,101)",
+    icon: "fa-graduation-cap",
   },
   {
-    label: "Friend",
-    value: "Friend",
-    bgColor: "rgb(209, 59, 76, .15)",
-    color: "rgb(209, 59, 76)",
-    icon: "fa-users",
+    label: "Deadline",
+    value: "DEADLINE",
+    bgColor: "rgba(209,59,76,.15)",
+    color: "rgb(209,59,76)",
+    icon: "fa-calendar-times",
   },
   {
-    label: "Travel",
-    value: "Travel",
-    bgColor: "rgb(23, 162, 184, .15)",
-    color: "rgb(23, 162, 184)",
-    icon: "fa-plane",
+    label: "Task",
+    value: "TASK",
+    bgColor: "rgba(228,158,61,.15)",
+    color: "rgb(228,158,61)",
+    icon: "fa-tasks",
   },
   {
-    label: "Private",
-    value: "Private",
-    bgColor: "rgb(228, 158, 61, .15)",
-    color: "rgb(228, 158, 61)",
-    icon: "fa-lock",
+    label: "Reminder",
+    value: "REMINDER",
+    bgColor: "rgba(88,86,214,.15)",
+    color: "rgb(88,86,214)",
+    icon: "fa-bell",
   },
   {
-    label: "Holidays",
-    value: "Holidays",
-    bgColor: "rgb(88, 86, 214, .15)",
-    color: "rgb(88, 86, 214)",
-    icon: "fa-umbrella-beach",
-  },
-  {
-    label: "Company",
-    value: "Company",
-    bgColor: "rgb(61, 199, 190, .15)",
-    color: "rgb(61, 199, 190)",
-    icon: "fa-building",
-  },
-  {
-    label: "Birthdays",
-    value: "Birthdays",
-    bgColor: "rgb(71, 94, 119, .15)",
-    color: "rgb(71, 94, 119)",
-    icon: "fa-birthday-cake",
+    label: "Other",
+    value: "OTHER",
+    bgColor: "rgba(71,94,119,.15)",
+    color: "rgb(71,94,119)",
+    icon: "fa-calendar",
   },
 ];
 
 const initialState = {
   sidebarOpen: false,
   calenderFilter: { label: "Monthly", icon: "feather-grid" },
-  events: initEvents,
+  events: [],
   isWeekMonday: 0,
   showWeekends: true,
   currentMonth: "",
@@ -88,14 +76,12 @@ const initialState = {
   modalPosition: { top: 0, left: 0 },
   selectAll: true,
   selectedCategories: {
-    Office: true,
-    Family: true,
-    Friend: true,
-    Travel: true,
-    Private: true,
-    Holidays: true,
-    Company: true,
-    Birthdays: true,
+    MEETING: true,
+    TRAINING: true,
+    DEADLINE: true,
+    TASK: true,
+    REMINDER: true,
+    OTHER: true,
   },
 };
 
@@ -137,6 +123,15 @@ const CalenderContent = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const { events, loading, fetchEvents, createEvent } = useCompanyCalendarStore();
+
+  //fetch Events
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  console.log("STORE EVENTS:", events);
+
   // category toggle
   const handleCategoryChange = (category) => {
     const updatedCategories = {
@@ -171,8 +166,12 @@ const CalenderContent = () => {
     dispatch({ type: "SET_SELECT_ALL", payload: allSelected });
   }, []);
 
+  console.log("Selected Categories:", state.selectedCategories);
+  console.log("Event Category:", events[0]?.category);
   // Filter events based on selected categories
-  const filteredEvents = state.events.filter((event) => state.selectedCategories[event.category]);
+  const filteredEvents = events.filter((event) => {
+    return state.selectedCategories[event.category];
+  });
 
   const handleEventBtnClick = (e) => {
     e.preventDefault();
@@ -188,9 +187,16 @@ const CalenderContent = () => {
   };
 
   // event submit
-  const handleAddSubmit = (newEvent) => {
-    dispatch({ type: "SET_EVENTS", payload: [...state.events, newEvent] });
-    setIsAddModalOpen(false);
+  const handleAddSubmit = async (payload) => {
+    const result = await createEvent(payload);
+
+    if (result.success) {
+      toast.success("Event added Sucessufully.....")
+      setIsAddModalOpen(false);
+    } else {
+      toast.error("Unable to add the event....")
+      console.log(result.message);
+    }
   };
 
   // open modal and add new event click on week and day click date
@@ -359,7 +365,6 @@ const CalenderContent = () => {
       (cat) => cat.value === eventInfo.event.extendedProps.category
     );
     const eventStart = eventInfo.event.start;
-
     return (
       <span
         className="event-title-name"
@@ -372,6 +377,23 @@ const CalenderContent = () => {
     );
   };
 
+  console.log("STORE EVENTS:", events);
+  console.log("FILTERED EVENTS:", filteredEvents);
+
+  const calendarEvents = filteredEvents.map((event) => ({
+    id: event.id,
+    title: event.title,
+    start: event.startDate,
+    end: event.endDate,
+    allDay: event.allDay,
+    extendedProps: {
+      description: event.description,
+      category: event.category,
+      createdBy: event.createdBy,
+    },
+  }));
+
+  console.log("THE CALANDER EVENT IS :.............", calendarEvents);
   return (
     <>
       <CalenderSidebar
@@ -382,6 +404,7 @@ const CalenderContent = () => {
         selectAll={state.selectAll}
         sidebarOpen={state.sidebarOpen}
         setSidebarOpen={() => dispatch({ type: "TOGGLE_SIDEBAR" })}
+        eventCategoryOptions={eventCategoryOptions}
       />
       <div className="content-area">
         <PerfectScrollbar>
@@ -438,7 +461,7 @@ const CalenderContent = () => {
                 },
               }}
               headerToolbar={false}
-              events={filteredEvents}
+              events={calendarEvents}
               dateClick={handleDateClick}
               eventClick={handleEventClick}
               ref={calendarRef}

@@ -6,14 +6,12 @@ import { add, format, isValid } from "date-fns";
 import Datetime from "react-datetime";
 
 export const eventCategoryOptions = [
-  { label: "Office", value: "Office", color: "#5485e4" },
-  { label: "Family", value: "Family", color: "rgb(37, 184, 101)" },
-  { label: "Friend", value: "Friend", color: "rgb(209, 59, 76)" },
-  { label: "Travel", value: "Travel", color: "rgb(23, 162, 184)" },
-  { label: "Private", value: "Private", color: "rgb(228, 158, 61)" },
-  { label: "Holidays", value: "Holidays", color: "rgb(88, 86, 214)" },
-  { label: "Company", value: "Company", color: "rgb(61, 199, 190)" },
-  { label: "Birthdays", value: "Birthdays", color: "rgb(71, 94, 119)" },
+  { label: "Meeting", value: "MEETING", color: "#5485e4" },
+  { label: "Training", value: "TRAINING", color: "rgb(37, 184, 101)" },
+  { label: "Deadline", value: "DEADLINE", color: "rgb(209, 59, 76)" },
+  { label: "Task", value: "TASK", color: "rgb(23, 162, 184)" },
+  { label: "Reminder", value: "REMINDER", color: "rgb(228, 158, 61)" },
+  { label: "Other", value: "OTHER", color: "rgb(88, 86, 214)" },
 ];
 
 export const eventOptions = [
@@ -49,45 +47,48 @@ const AddEventForm = ({ eventDate, onSubmit }) => {
 
   useEffect(() => {
     const currentTime = new Date();
-    const convertStartDate = new Date(eventDate.start); // this eventDate.srtat is props eventDate
+
+    const convertStartDate = new Date(eventDate.start);
     const convertEndDate = new Date(eventDate.end);
 
     const handleDate = (date, setter, addOneHour = false) => {
-      if (isValid(date)) {
-        const { hours, minutes, seconds } = timeConverter(date);
-        if (hours === 0 && minutes === 0 && seconds === 0) {
-          const newDate = combineDateTime(date, currentTime);
-          setter(addOneHour ? new Date(newDate).setHours(newDate.getHours() + 1) : newDate);
-        } else {
-          setter(addOneHour ? new Date(date).setHours(date.getHours() + 1) : date);
-        }
+      if (!isValid(date)) return;
+
+      const { hours, minutes, seconds } = timeConverter(date);
+
+      let updatedDate;
+
+      if (hours === 0 && minutes === 0 && seconds === 0) {
+        updatedDate = combineDateTime(date, currentTime);
+      } else {
+        updatedDate = new Date(date);
       }
+
+      if (addOneHour) {
+        updatedDate.setHours(updatedDate.getHours() + 1);
+      }
+
+      setter(updatedDate);
     };
 
     handleDate(convertStartDate, setStartDate);
-    handleDate(convertEndDate, setEndDate, true); // Add one hour to the end date if time is midnight
+    handleDate(convertEndDate, setEndDate, true);
   }, [eventDate]);
 
   // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newEvent = {
-      id: Date.now().toString(),
-      title: title,
+    const payload = {
+      title,
+      description: details,
       category: selectedCategory.value,
-      start: format(startDate, "yyyy-MM-dd'T'HH:mm"),
-      end: format(allDay ? add(new Date(endDate), { days: 1 }) : endDate, "yyyy-MM-dd'T'HH:mm"),
-      details: {
-        location: location,
-        position: position.value,
-        details: details,
-        dotColor: selectedCategory.color,
-      },
-      allDay: allDay,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      allDay,
     };
 
-    onSubmit(newEvent);
+    onSubmit(payload);
   };
 
   const handleStarteDateChange = (date) => {
@@ -103,7 +104,7 @@ const AddEventForm = ({ eventDate, onSubmit }) => {
         <div className="d-flex flex-lg-row flex-column gap-lg-4 gap-3 mb-3">
           <SelectDropdown
             options={eventCategoryOptions}
-            defaultSelect={"Office"}
+            defaultSelect={"MEETING"}
             selectedOption={selectedCategory}
             onSelectOption={(option) => setSelectedCategory(option)}
             className={"w-100"}
