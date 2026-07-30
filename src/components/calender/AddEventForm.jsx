@@ -9,9 +9,9 @@ export const eventCategoryOptions = [
   { label: "Meeting", value: "MEETING", color: "#5485e4" },
   { label: "Training", value: "TRAINING", color: "rgb(37, 184, 101)" },
   { label: "Deadline", value: "DEADLINE", color: "rgb(209, 59, 76)" },
-  { label: "Task", value: "TASK", color: "rgb(23, 162, 184)" },
-  { label: "Reminder", value: "REMINDER", color: "rgb(228, 158, 61)" },
-  { label: "Other", value: "OTHER", color: "rgb(88, 86, 214)" },
+  { label: "Task", value: "TASK", color: "rgb(228, 158, 61)" },
+  { label: "Reminder", value: "REMINDER", color: "rgb(23, 162, 184)" },
+  { label: "Other", value: "OTHER", color: "rgb(4, 4, 10)" },
 ];
 
 export const eventOptions = [
@@ -19,9 +19,8 @@ export const eventOptions = [
   { label: "Busy", value: "busy" },
 ];
 
-const AddEventForm = ({ eventDate, onSubmit }) => {
+const AddEventForm = ({ eventDate, onSubmit, loading }) => {
   const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
   const [details, setDetails] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(eventCategoryOptions[0]);
   const [position, setPosition] = useState(eventOptions[0]);
@@ -133,20 +132,6 @@ const AddEventForm = ({ eventDate, onSubmit }) => {
           </div>
           {/* <div className='border  wd-40 d-flex align-items-center justify-content-center'> <CiLock size={16} /> </div> */}
         </div>
-        <div className="input-container d-flex gap-3 mb-3">
-          <div className="input-group border">
-            <div className="border-end h-100 wd-40 d-flex align-items-center justify-content-center">
-              <FiMapPin size={16} />
-            </div>
-            <input
-              type="text"
-              placeholder="Location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="form-control"
-            />
-          </div>
-        </div>
 
         <div className="w-100 mb-3">
           <textarea
@@ -193,8 +178,15 @@ const AddEventForm = ({ eventDate, onSubmit }) => {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-          Add Event
+        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          {loading ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+              Adding...
+            </>
+          ) : (
+            "Add Event"
+          )}
         </button>
       </form>
     </>

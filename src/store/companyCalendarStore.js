@@ -270,6 +270,56 @@ export const useCompanyCalendarStore = create((set, get) => ({
 
 
 
+    // =============================
+    // Delete Event
+    // =============================
+    deleteEvent: async (id) => {
+        try {
+            set({ loading: true });
+
+            const res = await fetch(
+                `/api/holidays/event-calender/${id}`,
+                {
+                    method: "DELETE",
+                    credentials: "include",
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                set({ loading: false });
+
+                return {
+                    success: false,
+                    message: data.message || "Failed to delete event",
+                };
+            }
+
+            set((state) => ({
+                events: state.events.filter(
+                    (event) => event.id !== id
+                ),
+                loading: false,
+            }));
+
+            return {
+                success: true,
+                message: data.message,
+            };
+
+        } catch (error) {
+            console.error(error);
+
+            set({ loading: false });
+
+            return {
+                success: false,
+                message: "Something went wrong",
+            };
+        }
+    },
+
 
     // =============================
     // Clear Store

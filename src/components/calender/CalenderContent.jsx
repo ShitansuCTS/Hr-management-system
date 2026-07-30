@@ -25,42 +25,42 @@ const eventCategoryOptions = [
     value: "MEETING",
     bgColor: "rgba(84,132,227,.15)",
     color: "#5485e4",
-    icon: "fa-briefcase",
+    icon: "feather-briefcase",
   },
   {
     label: "Training",
     value: "TRAINING",
     bgColor: "rgba(37,184,101,.15)",
     color: "rgb(37,184,101)",
-    icon: "fa-graduation-cap",
+    icon: "feather-award",
   },
   {
     label: "Deadline",
     value: "DEADLINE",
     bgColor: "rgba(209,59,76,.15)",
     color: "rgb(209,59,76)",
-    icon: "fa-calendar-times",
+    icon: "feather-clock",
   },
   {
     label: "Task",
     value: "TASK",
     bgColor: "rgba(228,158,61,.15)",
     color: "rgb(228,158,61)",
-    icon: "fa-tasks",
+    icon: "feather-check-circle",
   },
   {
     label: "Reminder",
     value: "REMINDER",
     bgColor: "rgba(88,86,214,.15)",
     color: "rgb(88,86,214)",
-    icon: "fa-bell",
+    icon: "feather-bell",
   },
   {
     label: "Other",
     value: "OTHER",
-    bgColor: "rgba(71,94,119,.15)",
+    bgColor: "rgba(66, 107, 20, 0.15)",
     color: "rgb(71,94,119)",
-    icon: "fa-calendar",
+    icon: "feather-grid",
   },
 ];
 
@@ -118,19 +118,16 @@ const CalenderContent = () => {
   const calendarRef = useRef(null);
   const calenderModalRef = useRef(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  const { events, loading, fetchEvents, createEvent } = useCompanyCalendarStore();
+  const { events, loading, fetchEvents, createEvent, deleteEvent } = useCompanyCalendarStore();
 
   //fetch Events
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
-
-  console.log("STORE EVENTS:", events);
 
   // category toggle
   const handleCategoryChange = (category) => {
@@ -166,8 +163,6 @@ const CalenderContent = () => {
     dispatch({ type: "SET_SELECT_ALL", payload: allSelected });
   }, []);
 
-  console.log("Selected Categories:", state.selectedCategories);
-  console.log("Event Category:", events[0]?.category);
   // Filter events based on selected categories
   const filteredEvents = events.filter((event) => {
     return state.selectedCategories[event.category];
@@ -188,14 +183,23 @@ const CalenderContent = () => {
 
   // event submit
   const handleAddSubmit = async (payload) => {
-    const result = await createEvent(payload);
+    try {
+      setIsAddingEvent(true);
 
-    if (result.success) {
-      toast.success("Event added Sucessufully.....")
-      setIsAddModalOpen(false);
-    } else {
-      toast.error("Unable to add the event....")
-      console.log(result.message);
+      const result = await createEvent(payload);
+
+      if (result.success) {
+        toast.success("Event added Successfully");
+        setIsAddModalOpen(false);
+      } else {
+        toast.error("Unable to add the event");
+        console.log(result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsAddingEvent(false);
     }
   };
 
@@ -208,17 +212,37 @@ const CalenderContent = () => {
 
   // open modal click up the event title
   const handleEventClick = (info) => {
-    dispatch({ type: "SET_SELECTED_EVENT", payload: info.event });
+    dispatch({
+      type: "SET_SELECTED_EVENT",
+      payload: {
+        id: info.event.id,
+        title: info.event.title,
+        start: info.event.start,
+        end: info.event.end,
+        allDay: info.event.allDay,
+        ...info.event.extendedProps,
+      },
+    });
+
     setIsModalOpen(true);
   };
 
   // Delete event
-  const handleDeleteEvent = () => {
-    dispatch({
-      type: "SET_EVENTS",
-      payload: state.events.filter((event) => event.id !== state.selectedEvent.id),
-    });
-    setIsModalOpen(false);
+  // Delete event
+  const handleDeleteEvent = async () => {
+    try {
+      const result = await deleteEvent(state.selectedEvent.id);
+
+      if (result.success) {
+        toast.success("Event deleted successfully");
+        setIsModalOpen(false);
+      } else {
+        toast.error(result.message || "Failed to delete event");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   };
 
   // Open edit modal
@@ -254,9 +278,10 @@ const CalenderContent = () => {
 
   // title date customize
   const handleDatesSet = (dateInfo) => {
-    const date = new Date();
-    const formattedDate = format(date, "dd.MM.yy");
-    dispatch({ type: "SET_CURRENT_MONTH", payload: formattedDate });
+    dispatch({
+      type: "SET_CURRENT_MONTH",
+      payload: format(dateInfo.view.currentStart, "MMMM yyyy"),
+    });
   };
 
   const renderCustomButton = () => {
@@ -377,23 +402,25 @@ const CalenderContent = () => {
     );
   };
 
-  console.log("STORE EVENTS:", events);
-  console.log("FILTERED EVENTS:", filteredEvents);
-
   const calendarEvents = filteredEvents.map((event) => ({
     id: event.id,
     title: event.title,
     start: event.startDate,
     end: event.endDate,
     allDay: event.allDay,
+
     extendedProps: {
+      id: event.id,
+      title: event.title,
       description: event.description,
       category: event.category,
+      startDate: event.startDate,
+      endDate: event.endDate,
       createdBy: event.createdBy,
+      allDay: event.allDay,
     },
   }));
 
-  console.log("THE CALANDER EVENT IS :.............", calendarEvents);
   return (
     <>
       <CalenderSidebar
@@ -479,7 +506,11 @@ const CalenderContent = () => {
                 position={state.modalPosition}
                 ref={calenderModalRef}
               >
-                <AddEventForm eventDate={state.newEventDate} onSubmit={handleAddSubmit} />
+                <AddEventForm
+                  eventDate={state.newEventDate}
+                  onSubmit={handleAddSubmit}
+                  loading={isAddingEvent}
+                />
               </CalenderModal>
             )}
 
