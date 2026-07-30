@@ -1,9 +1,8 @@
 import React from "react";
 
-const TableSearch = ({
-  table, setGlobalFilter, globalFilter, searchPlaceholder = "Search..." }) => {
+const TableSearch = ({ table, setGlobalFilter, globalFilter, searchPlaceholder = "Search..." }) => {
   return (
-    <div className="row gy-2" >
+    <div className="row gy-2" style={{ paddingTop: "18px", paddingBottom: "10px" }}>
       <div className="col-sm-12 col-md-6 ps-0 m-0 pb-10">
         <div className="dataTables_length d-flex justify-content-md-start justify-content-center">
           <label className="d-flex align-items-center gap-1">
@@ -39,7 +38,7 @@ const TableSearch = ({
           </label>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

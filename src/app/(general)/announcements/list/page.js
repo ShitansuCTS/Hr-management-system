@@ -13,7 +13,7 @@ const page = () => {
           <AllAnnouncement />
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

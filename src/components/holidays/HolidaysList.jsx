@@ -7,6 +7,7 @@ import HolidayTableSkeleton from "@/components/loaders/HolidayTableSkeleton";
 import { useCompanyCalendarStore } from "@/store/companyCalendarStore";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import EmptyState from "@/components/sharedUi/EmptyState";
 
 const HolidaysList = () => {
   const { holidays, loading, fetchHolidays, removeHoliday } = useCompanyCalendarStore();
@@ -143,8 +144,13 @@ const HolidaysList = () => {
                   <HolidayTableSkeleton rows={6} />
                 ) : holidays.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-3">
-                      No holidays found
+                    <td colSpan={6}>
+                      <EmptyState
+                        height="350px"
+                        image="/illustrations/nodata.svg"
+                        title="No holidays found"
+                        description="No holidays have been added yet. Once created, they'll appear here."
+                      />
                     </td>
                   </tr>
                 ) : (
