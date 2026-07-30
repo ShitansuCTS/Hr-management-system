@@ -2,13 +2,15 @@
 
 import React, { useEffect } from "react";
 import CardHeader from "@/components/shared/CardHeader";
-import { FiCalendar, FiBriefcase } from "react-icons/fi";
+import { FiCalendar, FiBriefcase, FiEdit2, FiTrash2 } from "react-icons/fi";
 import HolidayTableSkeleton from "@/components/loaders/HolidayTableSkeleton";
 import { useCompanyCalendarStore } from "@/store/companyCalendarStore";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
+import EmptyState from "@/components/sharedUi/EmptyState";
 
 const HolidaysList = () => {
-  const { holidays, loading, fetchHolidays } = useCompanyCalendarStore();
-
+  const { holidays, loading, fetchHolidays, removeHoliday } = useCompanyCalendarStore();
   useEffect(() => {
     fetchHolidays();
   }, [fetchHolidays]);
@@ -40,6 +42,84 @@ const HolidaysList = () => {
     };
   };
 
+  const handleDeleteHoliday = async (id) => {
+    const result = await Swal.fire({
+      title: "Delete Holiday?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      width: 340,
+      padding: "1rem",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+      focusCancel: true,
+      confirmButtonColor: "#3156d3",
+      cancelButtonColor: "#eef2ff",
+      iconColor: "#3156d3",
+      backdrop: "rgba(15,23,42,0.45)",
+
+      didOpen: () => {
+        const popup = Swal.getPopup();
+
+        if (popup) {
+          popup.style.borderRadius = "5px";
+          popup.style.fontFamily = "inherit";
+        }
+
+        const titleElement = Swal.getTitle();
+
+        if (titleElement) {
+          titleElement.style.fontSize = "18px";
+          titleElement.style.fontWeight = "600";
+          titleElement.style.color = "#1f2937";
+        }
+
+        const textElement = Swal.getHtmlContainer();
+
+        if (textElement) {
+          textElement.style.fontSize = "12px";
+          textElement.style.color = "#6b7280";
+        }
+
+        const icon = popup?.querySelector(".swal2-icon");
+
+        if (icon) {
+          icon.style.width = "48px";
+          icon.style.height = "48px";
+          icon.style.margin = "10px auto";
+        }
+
+        const confirmButton = Swal.getConfirmButton();
+        const cancelButton = Swal.getCancelButton();
+
+        if (confirmButton) {
+          confirmButton.style.borderRadius = "3px";
+          confirmButton.style.padding = "7px 18px";
+          confirmButton.style.fontSize = "12px";
+          confirmButton.style.fontWeight = "600";
+        }
+
+        if (cancelButton) {
+          cancelButton.style.borderRadius = "3px";
+          cancelButton.style.padding = "7px 18px";
+          cancelButton.style.fontSize = "12px";
+          cancelButton.style.fontWeight = "600";
+          cancelButton.style.color = "#3156d3";
+        }
+      },
+    });
+
+    if (!result.isConfirmed) return;
+
+    const response = await removeHoliday(id);
+
+    if (response.success) {
+      toast.success(response.message);
+    } else {
+      toast.error(response.message);
+    }
+  };
   return (
     <div className="col-lg-12">
       <div className="card stretch stretch-full">
@@ -55,6 +135,7 @@ const HolidaysList = () => {
                   <th>Date</th>
                   <th>Holiday Day</th>
                   <th>Holiday Type</th>
+                  <th className="text-center">Actions</th>
                 </tr>
               </thead>
 
@@ -63,8 +144,13 @@ const HolidaysList = () => {
                   <HolidayTableSkeleton rows={6} />
                 ) : holidays.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-3">
-                      No holidays found
+                    <td colSpan={6}>
+                      <EmptyState
+                        height="350px"
+                        image="/illustrations/nodata.svg"
+                        title="No holidays found"
+                        description="No holidays have been added yet. Once created, they'll appear here."
+                      />
                     </td>
                   </tr>
                 ) : (
@@ -142,6 +228,21 @@ const HolidaysList = () => {
                               {holiday.type}
                             </span>
                           )}
+                        </td>
+
+                        {/* Actions */}
+                        <td>
+                          <div className="d-flex justify-content-center gap-2">
+                            <button
+                              type="button"
+                              className="avatar-text avatar-md text-danger"
+                              aria-label="Delete Holiday"
+                              title="Delete Holiday"
+                              onClick={() => handleDeleteHoliday(holiday.id)}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );

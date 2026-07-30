@@ -7,6 +7,12 @@ export const useCompanyCalendarStore = create((set, get) => ({
     holidays: [],
     loading: false,
     hasFetched: false,
+    editingHoliday: null,
+
+
+    events: [],
+    hasFetchedEvents: false,
+    editingEvent: null,
 
     // =============================
     // Fetch Holidays
@@ -94,22 +100,226 @@ export const useCompanyCalendarStore = create((set, get) => ({
         })),
 
     // =============================
-    // Update Holiday (Local)
+    // Edit Holiday
     // =============================
-    updateHoliday: (updatedHoliday) =>
-        set((state) => ({
-            holidays: state.holidays.map((holiday) =>
-                holiday.id === updatedHoliday.id ? updatedHoliday : holiday
-            ),
-        })),
+    editHoliday: async (id, payload) => {
+        try {
+            set({ loading: true });
+
+            const res = await fetch(`/api/holidays/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                set({ loading: false });
+
+                return {
+                    success: false,
+                    message: data.message || "Failed to update holiday",
+                };
+            }
+
+            set((state) => ({
+                holidays: state.holidays.map((holiday) =>
+                    holiday.id === id ? data.holiday : holiday
+                ),
+                loading: false,
+            }));
+
+            return {
+                success: true,
+                message: data.message,
+                holiday: data.holiday,
+            };
+        } catch (error) {
+            console.error(error);
+
+            set({ loading: false });
+
+            return {
+                success: false,
+                message: "Something went wrong",
+            };
+        }
+    },
 
     // =============================
-    // Delete Holiday (Local)
+    // Delete Holiday
     // =============================
-    deleteHoliday: (id) =>
-        set((state) => ({
-            holidays: state.holidays.filter((holiday) => holiday.id !== id),
-        })),
+    removeHoliday: async (id) => {
+        try {
+            set({ loading: true });
+
+            const res = await fetch(`/api/holidays/${id}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                set({ loading: false });
+
+                return {
+                    success: false,
+                    message: data.message || "Failed to delete holiday",
+                };
+            }
+
+            set((state) => ({
+                holidays: state.holidays.filter((holiday) => holiday.id !== id),
+                loading: false,
+            }));
+
+            return {
+                success: true,
+                message: data.message,
+            };
+        } catch (error) {
+            console.error(error);
+
+            set({ loading: false });
+
+            return {
+                success: false,
+                message: "Something went wrong",
+            };
+        }
+    },
+
+
+
+
+
+
+    fetchEvents: async (force = false) => {
+        if (get().hasFetchedEvents && !force) return;
+
+        try {
+            set({ loading: true });
+
+            const res = await fetch("/api/holidays/event-calender", {
+                credentials: "include",
+            });
+
+            const data = await res.json();
+
+            set({
+                events: data.events || [],
+                loading: false,
+                hasFetchedEvents: true,
+            });
+        } catch (error) {
+            console.error("Error fetching events:", error);
+
+            set({ loading: false });
+        }
+    },
+
+
+    createEvent: async (payload) => {
+        try {
+            set({ loading: true });
+
+            const res = await fetch("/api/holidays/event-calender", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                set({ loading: false });
+
+                return {
+                    success: false,
+                    message: data.message,
+                };
+            }
+
+            await get().fetchEvents(true);
+
+            set({ loading: false });
+
+            return {
+                success: true,
+                message: data.message,
+            };
+        } catch (error) {
+            console.error(error);
+
+            set({ loading: false });
+
+            return {
+                success: false,
+                message: "Something went wrong",
+            };
+        }
+    },
+
+
+
+    // =============================
+    // Delete Event
+    // =============================
+    deleteEvent: async (id) => {
+        try {
+            set({ loading: true });
+
+            const res = await fetch(
+                `/api/holidays/event-calender/${id}`,
+                {
+                    method: "DELETE",
+                    credentials: "include",
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                set({ loading: false });
+
+                return {
+                    success: false,
+                    message: data.message || "Failed to delete event",
+                };
+            }
+
+            set((state) => ({
+                events: state.events.filter(
+                    (event) => event.id !== id
+                ),
+                loading: false,
+            }));
+
+            return {
+                success: true,
+                message: data.message,
+            };
+
+        } catch (error) {
+            console.error(error);
+
+            set({ loading: false });
+
+            return {
+                success: false,
+                message: "Something went wrong",
+            };
+        }
+    },
+
 
     // =============================
     // Clear Store
@@ -118,6 +328,10 @@ export const useCompanyCalendarStore = create((set, get) => ({
         set({
             holidays: [],
             hasFetched: false,
+
+            events: [],
+            hasFetchedEvents: false,
+
             loading: false,
         }),
 }));

@@ -7,10 +7,11 @@ import { format, isValid } from "date-fns";
 
 const EditEventForm = ({ event, onSubmit }) => {
   const [title, setTitle] = useState(event.title);
-  const [location, setLocation] = useState(event.extendedProps.details.location);
-  const [details, setDetails] = useState(event.extendedProps.details.details);
-  const [selectedCategory, setSelectedCategory] = useState(eventCategoryOptions[0]);
-  const [position, setPosition] = useState(eventOptions[0]);
+  const [description, setDescription] = useState(event.description);
+
+  const [selectedCategory, setSelectedCategory] = useState(
+    eventCategoryOptions.find((item) => item.value === event.category) || eventCategoryOptions[0]
+  );
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [allDay, setAllDay] = useState(false);
@@ -33,8 +34,8 @@ const EditEventForm = ({ event, onSubmit }) => {
 
   useEffect(() => {
     const currentTime = new Date();
-    const startDate = new Date(event.start); // this event.srtat is props event
-    const endDate = new Date(event.end);
+    const startDate = new Date(event.startDate || event.start);
+    const endDate = new Date(event.endDate || event.end);
 
     const handleDate = (date, setter, addOneHour = false) => {
       if (isValid(date)) {
@@ -114,27 +115,13 @@ const EditEventForm = ({ event, onSubmit }) => {
         </div>
         {/* <div className='border  wd-40 d-flex align-items-center justify-content-center'> <CiLock size={16} /> </div> */}
       </div>
-      <div className="input-container d-flex gap-3 mb-3">
-        <div className="input-group border">
-          <div className="border-end h-100 wd-40 d-flex align-items-center justify-content-center">
-            <FiMapPin size={16} />
-          </div>
-          <input
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="form-control"
-          />
-        </div>
-      </div>
 
       <div className="w-100 mb-3">
         <textarea
           className="form-control border ps-3"
           placeholder="Description"
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </div>
       <div className="d-flex flex-lg-row flex-column gap-lg-4 gap-3 mb-3">

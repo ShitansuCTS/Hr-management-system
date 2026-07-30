@@ -16,70 +16,58 @@ import { initEvents } from "./initEvents";
 import EventDetails from "./EventDetails";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import Checkbox from "@/components/shared/Checkbox";
+import { useCompanyCalendarStore } from "@/store/companyCalendarStore";
+import toast from "react-hot-toast";
 
 const eventCategoryOptions = [
   {
-    label: "Office",
-    value: "Office",
+    label: "Meeting",
+    value: "MEETING",
     bgColor: "rgba(84,132,227,.15)",
     color: "#5485e4",
-    icon: "fa-briefcase",
+    icon: "feather-briefcase",
   },
   {
-    label: "Family",
-    value: "Family",
-    bgColor: "rgb(37, 184, 101, .15)",
-    color: "rgb(37, 184, 101)",
-    icon: "fa-home",
+    label: "Training",
+    value: "TRAINING",
+    bgColor: "rgba(37,184,101,.15)",
+    color: "rgb(37,184,101)",
+    icon: "feather-award",
   },
   {
-    label: "Friend",
-    value: "Friend",
-    bgColor: "rgb(209, 59, 76, .15)",
-    color: "rgb(209, 59, 76)",
-    icon: "fa-users",
+    label: "Deadline",
+    value: "DEADLINE",
+    bgColor: "rgba(209,59,76,.15)",
+    color: "rgb(209,59,76)",
+    icon: "feather-clock",
   },
   {
-    label: "Travel",
-    value: "Travel",
-    bgColor: "rgb(23, 162, 184, .15)",
-    color: "rgb(23, 162, 184)",
-    icon: "fa-plane",
+    label: "Task",
+    value: "TASK",
+    bgColor: "rgba(228,158,61,.15)",
+    color: "rgb(228,158,61)",
+    icon: "feather-check-circle",
   },
   {
-    label: "Private",
-    value: "Private",
-    bgColor: "rgb(228, 158, 61, .15)",
-    color: "rgb(228, 158, 61)",
-    icon: "fa-lock",
+    label: "Reminder",
+    value: "REMINDER",
+    bgColor: "rgba(88,86,214,.15)",
+    color: "rgb(88,86,214)",
+    icon: "feather-bell",
   },
   {
-    label: "Holidays",
-    value: "Holidays",
-    bgColor: "rgb(88, 86, 214, .15)",
-    color: "rgb(88, 86, 214)",
-    icon: "fa-umbrella-beach",
-  },
-  {
-    label: "Company",
-    value: "Company",
-    bgColor: "rgb(61, 199, 190, .15)",
-    color: "rgb(61, 199, 190)",
-    icon: "fa-building",
-  },
-  {
-    label: "Birthdays",
-    value: "Birthdays",
-    bgColor: "rgb(71, 94, 119, .15)",
-    color: "rgb(71, 94, 119)",
-    icon: "fa-birthday-cake",
+    label: "Other",
+    value: "OTHER",
+    bgColor: "rgba(66, 107, 20, 0.15)",
+    color: "rgb(71,94,119)",
+    icon: "feather-grid",
   },
 ];
 
 const initialState = {
   sidebarOpen: false,
   calenderFilter: { label: "Monthly", icon: "feather-grid" },
-  events: initEvents,
+  events: [],
   isWeekMonday: 0,
   showWeekends: true,
   currentMonth: "",
@@ -88,14 +76,12 @@ const initialState = {
   modalPosition: { top: 0, left: 0 },
   selectAll: true,
   selectedCategories: {
-    Office: true,
-    Family: true,
-    Friend: true,
-    Travel: true,
-    Private: true,
-    Holidays: true,
-    Company: true,
-    Birthdays: true,
+    MEETING: true,
+    TRAINING: true,
+    DEADLINE: true,
+    TASK: true,
+    REMINDER: true,
+    OTHER: true,
   },
 };
 
@@ -132,10 +118,16 @@ const CalenderContent = () => {
   const calendarRef = useRef(null);
   const calenderModalRef = useRef(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { events, loading, fetchEvents, createEvent, deleteEvent } = useCompanyCalendarStore();
+
+  //fetch Events
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   // category toggle
   const handleCategoryChange = (category) => {
@@ -172,7 +164,9 @@ const CalenderContent = () => {
   }, []);
 
   // Filter events based on selected categories
-  const filteredEvents = state.events.filter((event) => state.selectedCategories[event.category]);
+  const filteredEvents = events.filter((event) => {
+    return state.selectedCategories[event.category];
+  });
 
   const handleEventBtnClick = (e) => {
     e.preventDefault();
@@ -188,9 +182,25 @@ const CalenderContent = () => {
   };
 
   // event submit
-  const handleAddSubmit = (newEvent) => {
-    dispatch({ type: "SET_EVENTS", payload: [...state.events, newEvent] });
-    setIsAddModalOpen(false);
+  const handleAddSubmit = async (payload) => {
+    try {
+      setIsAddingEvent(true);
+
+      const result = await createEvent(payload);
+
+      if (result.success) {
+        toast.success("Event added Successfully");
+        setIsAddModalOpen(false);
+      } else {
+        toast.error("Unable to add the event");
+        console.log(result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    } finally {
+      setIsAddingEvent(false);
+    }
   };
 
   // open modal and add new event click on week and day click date
@@ -202,17 +212,37 @@ const CalenderContent = () => {
 
   // open modal click up the event title
   const handleEventClick = (info) => {
-    dispatch({ type: "SET_SELECTED_EVENT", payload: info.event });
+    dispatch({
+      type: "SET_SELECTED_EVENT",
+      payload: {
+        id: info.event.id,
+        title: info.event.title,
+        start: info.event.start,
+        end: info.event.end,
+        allDay: info.event.allDay,
+        ...info.event.extendedProps,
+      },
+    });
+
     setIsModalOpen(true);
   };
 
   // Delete event
-  const handleDeleteEvent = () => {
-    dispatch({
-      type: "SET_EVENTS",
-      payload: state.events.filter((event) => event.id !== state.selectedEvent.id),
-    });
-    setIsModalOpen(false);
+  // Delete event
+  const handleDeleteEvent = async () => {
+    try {
+      const result = await deleteEvent(state.selectedEvent.id);
+
+      if (result.success) {
+        toast.success("Event deleted successfully");
+        setIsModalOpen(false);
+      } else {
+        toast.error(result.message || "Failed to delete event");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
   };
 
   // Open edit modal
@@ -248,9 +278,10 @@ const CalenderContent = () => {
 
   // title date customize
   const handleDatesSet = (dateInfo) => {
-    const date = new Date();
-    const formattedDate = format(date, "dd.MM.yy");
-    dispatch({ type: "SET_CURRENT_MONTH", payload: formattedDate });
+    dispatch({
+      type: "SET_CURRENT_MONTH",
+      payload: format(dateInfo.view.currentStart, "MMMM yyyy"),
+    });
   };
 
   const renderCustomButton = () => {
@@ -359,7 +390,6 @@ const CalenderContent = () => {
       (cat) => cat.value === eventInfo.event.extendedProps.category
     );
     const eventStart = eventInfo.event.start;
-
     return (
       <span
         className="event-title-name"
@@ -372,6 +402,25 @@ const CalenderContent = () => {
     );
   };
 
+  const calendarEvents = filteredEvents.map((event) => ({
+    id: event.id,
+    title: event.title,
+    start: event.startDate,
+    end: event.endDate,
+    allDay: event.allDay,
+
+    extendedProps: {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      category: event.category,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      createdBy: event.createdBy,
+      allDay: event.allDay,
+    },
+  }));
+
   return (
     <>
       <CalenderSidebar
@@ -382,6 +431,7 @@ const CalenderContent = () => {
         selectAll={state.selectAll}
         sidebarOpen={state.sidebarOpen}
         setSidebarOpen={() => dispatch({ type: "TOGGLE_SIDEBAR" })}
+        eventCategoryOptions={eventCategoryOptions}
       />
       <div className="content-area">
         <PerfectScrollbar>
@@ -438,7 +488,7 @@ const CalenderContent = () => {
                 },
               }}
               headerToolbar={false}
-              events={filteredEvents}
+              events={calendarEvents}
               dateClick={handleDateClick}
               eventClick={handleEventClick}
               ref={calendarRef}
@@ -456,7 +506,11 @@ const CalenderContent = () => {
                 position={state.modalPosition}
                 ref={calenderModalRef}
               >
-                <AddEventForm eventDate={state.newEventDate} onSubmit={handleAddSubmit} />
+                <AddEventForm
+                  eventDate={state.newEventDate}
+                  onSubmit={handleAddSubmit}
+                  loading={isAddingEvent}
+                />
               </CalenderModal>
             )}
 

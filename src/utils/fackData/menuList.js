@@ -429,7 +429,8 @@ export const menuList = [
       {
         id: 2,
         name: "Calender",
-        path: "/holidays/calender",
+        // path: "/holidays/calender",
+        path: "/applications/calendar",
         subdropdownMenu: false,
         roles: ["ADMIN", "EMPLOYEE"],
       },
