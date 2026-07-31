@@ -46,9 +46,9 @@ const ProfileModal = () => {
     }
   };
 
-  if (!initialized) {
-    return <UserDropdownSkeleton />;
-  }
+  // if (!initialized) {
+  //   return <UserDropdownSkeleton />;
+  // }
 
   return (
     <div className="dropdown nxl-h-item">
