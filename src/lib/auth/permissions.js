@@ -39,7 +39,7 @@ export const ROUTE_PERMISSIONS = {
             "/announcements/list",
             "/announcements/create",
         ],
-        
+
         ORGANIZATION: [
             "/organization/departments",
             "/organization/designations",
@@ -48,6 +48,10 @@ export const ROUTE_PERMISSIONS = {
         EMPLOYEES: [
             "/employees",
         ],
+
+        PROFILE: [
+            "/customers/profile",
+        ]
     },
 
     EMPLOYEE: {
@@ -72,5 +76,9 @@ export const ROUTE_PERMISSIONS = {
         ANNOUNCEMENTS: [
             "/announcements/list",
         ],
+
+        PROFILE: [
+            "/customers/profile",
+        ]
     },
 };

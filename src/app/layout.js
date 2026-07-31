@@ -12,7 +12,7 @@ import AuthProvider from "@/providers/AuthProvider";
 import "./globals.css";
 
 export const metadata = {
-  title: "Duralux | Dashboard",
+  title: "Duraluddddx | Dashboard",
   description: "Duralux is a admin Dashboard create for multipurpose,",
   icons: {
     icon: "/logo.JPG", // default favicon

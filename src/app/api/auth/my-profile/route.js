@@ -24,6 +24,8 @@ export async function GET(request) {
       },
       include: {
         financialDetails: true,   // 👈 ADD THIS
+        department: true,      // ✅ Include department
+        designation: true,     // ✅ Include designation
       },
     });
 
