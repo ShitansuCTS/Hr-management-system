@@ -1,0 +1,52 @@
+import Image from "next/image";
+import { FiArrowLeft } from "react-icons/fi";
+import Link from "next/link";
+
+const ComingSoonSection = ({
+  image,
+  title,
+  description,
+  height = 480,
+  imageWidth = 220,
+  imageHeight = 100,
+
+  action,
+}) => {
+  return (
+    <div
+      className="d-flex flex-column align-items-center justify-content-center text-center"
+      style={{
+        minHeight: height,
+      }}
+    >
+      <Image
+        src={image}
+        alt={title}
+        width={imageWidth}
+        height={imageHeight}
+        priority={false}
+        style={{ objectFit: "cover" }}
+      />
+
+      <h5 className="fw-semibold mt-4">{title}</h5>
+
+      <p
+        className="text-muted mb-3"
+        style={{
+          maxWidth: 420,
+        }}
+      >
+        {description}
+      </p>
+
+      {action}
+
+      <Link href="/" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2 ">
+        <FiArrowLeft />
+        Back to Dashboard
+      </Link>
+    </div>
+  );
+};
+
+export default ComingSoonSection;

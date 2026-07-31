@@ -1,5 +1,18 @@
 import React from "react";
-import { FiAlertTriangle } from "react-icons/fi";
+import {
+  FiUser,
+  FiCalendar,
+  FiBriefcase,
+  FiMapPin,
+  FiUsers,
+  FiLayers,
+  FiPhone,
+  FiHeart,
+  FiDroplet,
+  FiPhoneCall,
+  FiUserCheck,
+  FiHome,
+} from "react-icons/fi";
 import { projectsData } from "@/utils/fackData/projectsData";
 import ImageGroup from "@/components/shared/ImageGroup";
 import HorizontalProgress from "@/components/shared/HorizontalProgress";
@@ -19,231 +32,221 @@ const informationData = [
   { label: "Website", value: "https://wrapbootstrap.com/user/theme_ocean" },
 ];
 const TabOverviewContent = ({ user }) => {
+  const formatValue = (value) => {
+    if (!value) return "-";
+
+    return value
+      .toString()
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
   return (
-    <div className="tab-pane fade show active p-4" id="overviewTab" role="tabpanel">
-      <div className="profile-details mb-5">
-        <div className="mb-2 mt-4 d-flex align-items-center justify-content-between">
-          <h5 className="fw-bold mb-0">Profile Details:</h5>
-          <a href="#" className="btn btn-sm btn-light-brand">
-            Edit Profile
-          </a>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Full Name :</div>
-          <div className="col-sm-6 fw-semibold">{user?.fullName || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Employee ID :</div>
-          <div className="col-sm-6 fw-semibold">{user?.employeeId || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Email :</div>
-          <div className="col-sm-6 fw-semibold">{user?.email || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Phone :</div>
-          <div className="col-sm-6 fw-semibold">{user?.phone || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Gender :</div>
-          <div className="col-sm-6 fw-semibold">{user?.gender || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Date of Birth :</div>
-          <div className="col-sm-6 fw-semibold">
-            {" "}
-            {user?.dateOfBirth
-              ? new Date(user.dateOfBirth).toLocaleDateString("en-IN", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })
-              : "-"}
-          </div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Designation</div>
-          <div className="col-sm-6 fw-semibold">{user?.designation.name || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Department</div>
-          <div className="col-sm-6 fw-semibold">{user?.department.name || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Employment Type</div>
-          <div className="col-sm-6 fw-semibold">{user?.employmentType || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Work Location</div>
-          <div className="col-sm-6 fw-semibold">{user?.workLocation || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Reporting Manager</div>
-          <div className="col-sm-6 fw-semibold">{user?.reportingManagerName || "-"}</div>
-        </div>
-
-        {/* Address Information */}
-        <div className="mb-2 mt-4 d-flex align-items-center justify-content-between">
-          <h5 className="fw-bold mb-0">Address Details:</h5>
-          {/* <a href="#" className="btn btn-sm btn-light-brand">
-            Edit Profile
-          </a> */}
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Current Address</div>
-          <div className="col-sm-6 fw-semibold">{user?.currentAddress || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Permanent Address</div>
-          <div className="col-sm-6 fw-semibold">{user?.permanentAddress || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">City</div>
-          <div className="col-sm-6 fw-semibold">{user?.city || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">State</div>
-          <div className="col-sm-6 fw-semibold">{user?.state || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Country</div>
-          <div className="col-sm-6 fw-semibold">{user?.country || "-"}</div>
-        </div>
-
-        {/* Emergency Contact */}
-        <div className="mb-2 mt-4 d-flex align-items-center justify-content-between">
-          <h5 className="fw-bold mb-0">Emergency Contact:</h5>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Contact Name</div>
-          <div className="col-sm-6 fw-semibold">{user?.emergencyContactName || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Contact Phone</div>
-          <div className="col-sm-6 fw-semibold">{user?.emergencyContactPhone || "-"}</div>
-        </div>
-
-        <div className="row g-2 mb-2">
-          <div className="col-sm-6 text-muted">Relation</div>
-          <div className="col-sm-6 fw-semibold">{user?.emergencyContactRelation || "-"}</div>
-        </div>
-
-        {/* {informationData.map((item, index) => (
-          <div
-            key={index}
-            className={`row g-0 ${index === informationData.length - 1 ? "mb-0" : "mb-4"}`}
-          >
-            <div className="col-sm-6 text-muted">{item.label}:</div>
-            <div className="col-sm-6 fw-semibold">{item.value}</div>
-          </div>
-        ))} */}
-      </div>
-      {/* <div
-        className="alert alert-dismissible mb-4 p-4 d-flex alert-soft-warning-message profile-overview-alert"
-        role="alert"
-      >
-        <div className="me-4 d-none d-md-block">
-          <FiAlertTriangle className="fs-1" />
-        </div>
-        <div>
-          <p className="fw-bold mb-1 text-truncate-1-line">
-            Your profile has not been updated yet!!!
-          </p>
-          <p className="fs-10 fw-medium text-uppercase text-truncate-1-line">
-            Last Update: <strong>26 Dec, 2023</strong>
-          </p>
-          <a href="#" className="btn btn-sm bg-soft-warning text-warning d-inline-block">
-            Update Now
-          </a>
-          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" />
-        </div>
-      </div> */}
-      {/* <div className="project-section">
-        <div className="mb-4 d-flex align-items-center justify-content-between">
-          <h5 className="fw-bold mb-0">Projects Details:</h5>
-          <a href="#" className="btn btn-sm btn-light-brand">
-            View Alls
-          </a>
-        </div>
-        <div className="row">
-          {projectsData.runningProjects
-            .slice(0, 2)
-            .map(
-              ({
-                id,
-                progress,
-                project_logo,
-                project_category,
-                project_name,
-                status,
-                team_members,
-                progress_color,
-                badge_color,
-              }) => (
-                <div key={id} className="col-xxl-6 col-xl-12 col-md-6">
-                  <div className="border border-dashed border-gray-5 rounded mb-4 md-lg-0">
-                    <div className="p-4">
-                      <div className="d-sm-flex align-items-center">
-                        <div className="wd-50 ht-50 p-2 bg-gray-200 rounded-2">
-                          <img src={project_logo} className="img-fluid" alt="" />
-                        </div>
-                        <div className="ms-0 mt-4 ms-sm-3 mt-sm-0">
-                          <a href="#" className="d-block">
-                            {project_name}
-                          </a>
-                          <div className="fs-12 d-block text-muted">{project_category}</div>
-                        </div>
-                      </div>
-                      <div className="my-4 text-muted text-truncate-2-line">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias dolorem
-                        necessitatibus temporibus nemo commodi eaque dignissimos itaque unde hic,
-                        sed rerum doloribus possimus minima nobis porro facilis voluptatum atque
-                        asperiores perspiciatis saepe laboriosam rem cupiditate libero sit.
-                      </div>
-                      <div className="d-flex align-items-center justify-content-between">
-                        <div className="img-group lh-0 ms-3">
-                          <ImageGroup data={team_members} avatarStyle={"bg-soft-primary"} />
-                        </div>
-                        <div className={`badge ${badge_color}`}>{status}</div>
-                      </div>
-                    </div>
-                    <div className="px-4 py-3 border-top border-top-dashed border-gray-5 d-flex justify-content-between gap-2">
-                      <div className="w-75 d-none d-md-block">
-                        <small className="mb-1 fs-11 fw-medium text-uppercase text-muted d-flex align-items-center justify-content-between">
-                          <span>Progress</span>
-                          <span>{progress}%</span>
-                        </small>
-                        <HorizontalProgress progress={progress} barColor={progress_color} />
-                      </div>
-                      <span className="mx-2 text-gray-400 d-none d-md-block">|</span>
-                      <a href="#" className="fs-12 fw-bold">
-                        View →
-                      </a>
-                    </div>
-                  </div>
+    <div className="tab-pane fade show active " id="overviewTab" role="tabpanel">
+      <div className="row g-1">
+        {/* ================= Left ================= */}
+        <div className="col-lg-6">
+          <div className="  h-100">
+            <div className="card-body">
+              <div className="d-flex align-items-center mb-4">
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-circle bg-primary-subtle me-3"
+                  style={{ width: "42px", height: "42px" }}
+                >
+                  <FiUser className="text-primary" size={22} />
                 </div>
-              )
-            )}
+
+                <div>
+                  <h5 className="fw-bold mb-0">Profile Information</h5>
+                  <small className="text-muted">Basic employee details</small>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiUser className="text-muted me-3" size={16} />
+                  <span className="text-muted">Gender</span>
+                </div>
+                <span
+                  className="fw-semibold text-dark"
+                  style={{
+                    fontSize: "14px",
+                    letterSpacing: ".2px",
+                  }}
+                >
+                  {formatValue(user?.gender)}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiCalendar className="text-muted me-3" size={16} />
+                  <span className="text-muted">Date of Birth</span>
+                </div>
+                <span className="fw-semibold text-dark">
+                  {user?.dateOfBirth
+                    ? new Date(user.dateOfBirth).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "-"}
+                </span>
+              </div>
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiBriefcase className="text-muted me-3" size={16} />
+                  <span className="text-muted">Designation</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.designation?.name)}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiLayers className="text-muted me-3" size={16} />
+                  <span className="text-muted">Department</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.department?.name)}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiBriefcase className="text-muted me-3" size={16} />
+                  <span className="text-muted">Employment Type</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.employmentType)}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiMapPin className="text-muted me-3" size={16} />
+                  <span className="text-muted">Work Location</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.workLocation)}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center pt-3">
+                <div className="d-flex align-items-center">
+                  <FiUsers className="text-muted me-3" size={16} />
+                  <span className="text-muted">Reporting Manager</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.reportingManagerName)}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div> */}
+        {/* ================= Right ================= */}
+        <div className="col-lg-6">
+          <div
+            className="  h-100"
+            style={{
+              borderLeft: "1px dashed #d8dbe5", // adjust color to match border-gray-5
+            }}
+          >
+            <div className="card-body">
+              {/* Header */}
+              <div className="d-flex align-items-center mb-4">
+                <FiPhone className="text-warning me-2" size={20} />
+                <div>
+                  <h5 className="fw-bold mb-0">Emergency Contact</h5>
+                  <small className="text-muted">Primary emergency contact</small>
+                </div>
+              </div>
+
+              {/* Contact Name */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiUser className="text-muted me-3" size={16} />
+                  <span className="text-muted">Father's Name</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">{formatValue(user?.fatherName)}</span>
+              </div>
+              {/* Contact Name */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiUsers className="text-muted me-3" size={16} />
+                  <span className="text-muted">Mother's Name</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">{formatValue(user?.motherName)}</span>
+              </div>
+              {/* Contact Name */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiUserCheck className="text-muted me-3" size={16} />
+                  <span className="text-muted">Emergency Contact</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.emergencyContactName)}
+                </span>
+              </div>
+
+              {/* Phone */}
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiPhoneCall className="text-muted me-3" size={16} />
+                  <span className="text-muted">Phone Number</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {user?.emergencyContactPhone || "-"}
+                </span>
+              </div>
+
+              {/* Phone */}
+
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiHeart className="text-muted me-3" size={16} />
+                  <span className="text-muted">Relationship</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">
+                  {formatValue(user?.emergencyContactRelation)}
+                </span>
+              </div>
+              <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
+                <div className="d-flex align-items-center">
+                  <FiDroplet className="text-muted me-3" size={16} />
+                  <span className="text-muted">Blood Group</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">{formatValue(user?.bloodGroup)}</span>
+              </div>
+
+              {/* Relationship */}
+              <div className="d-flex justify-content-between align-items-center pt-3">
+                <div className="d-flex align-items-center">
+                  <FiHome className="text-muted me-3" size={16} />
+                  <span className="text-muted">City</span>
+                </div>
+
+                <span className="fw-semibold text-dark fs-13">{formatValue(user?.city)}</span>
+              </div>
+
+              {/* Blood Group */}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

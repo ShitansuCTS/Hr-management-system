@@ -1,8 +1,8 @@
 import Image from "next/image";
 import React from "react";
+import Link from "next/link";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { FiEdit, FiMail, FiMapPin, FiPhone, FiTrash2 } from "react-icons/fi";
-
 
 const Profile = ({ user }) => {
   return (
@@ -44,24 +44,24 @@ const Profile = ({ user }) => {
               <h6 className="fs-15 fw-bolder">{user?.status || "Active"}</h6>
               <p className="fs-12 text-muted mb-0">Status</p>
             </div>
-            <div className="flex-fill py-3 px-4 rounded-1 d-none d-sm-block border border-dashed border-gray-5">
+            {/* <div className="flex-fill py-3 px-4 rounded-1 d-none d-sm-block border border-dashed border-gray-5">
               <h6 className="fs-15 fw-bolder">
                 {user?.lastLoginAt
                   ? new Date(user.lastLoginAt).toLocaleString("en-IN", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })
                   : "Never Logged In"}
               </h6>
               <p className="fs-12 text-muted mb-0">Last Login</p>
-            </div>
+            </div> */}
           </div>
         </div>
         <ul className="list-unstyled mb-4">
           <li className="hstack justify-content-between mb-4">
             <span className="text-muted fw-medium hstack gap-3">
               <FiMapPin size={16} />
-              Location
+              Address
             </span>
             <a href="#" className="float-end">
               {user?.currentAddress || " Patia , Bhuabneswar , India"}
@@ -73,28 +73,15 @@ const Profile = ({ user }) => {
               Phone
             </span>
             <a href="#" className="float-end">
-              {user?.phone || " +91 9876543210"}
-            </a>
-          </li>
-          <li className="hstack justify-content-between mb-0">
-            <span className="text-muted fw-medium hstack gap-3">
-              <FiMail size={16} />
-              Email
-            </span>
-            <a href="#" className="float-end">
-              {user?.email || " alex.della@outlook.com"}
+              {"+91 - " + user?.phone || " +91 9876543210"}
             </a>
           </li>
         </ul>
-        <div className="d-flex gap-2 text-center pt-4">
-          <a href="#" className="w-50 btn btn-light-brand">
-            <FiTrash2 size={16} className="me-2" />
-            <span>Delete</span>
-          </a>
-          <a href="#" className="w-50 btn btn-primary">
-            <FiEdit size={16} className="me-2" />
-            <span>Edit Profile</span>
-          </a>
+        <div className="d-flex justify-content-center pt-4">
+          <Link href="/" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2 ">
+            <FiEdit size={16} />
+            Edit your profile
+          </Link>
         </div>
       </div>
     </div>
