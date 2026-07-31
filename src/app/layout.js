@@ -12,12 +12,13 @@ import AuthProvider from "@/providers/AuthProvider";
 import "./globals.css";
 
 export const metadata = {
-  title: "Duraluddddx | Dashboard",
-  description: "Duralux is a admin Dashboard create for multipurpose,",
+  title: "HRMS | Human Resource Management System",
+  description:
+    "A modern Human Resource Management System for managing employees, attendance, payroll, leave, recruitment, performance, and organizational operations.",
   icons: {
-    icon: "/logo.JPG", // default favicon
-    shortcut: "/logo.JPG", // small icon
-    apple: "/logo.JPG", // iOS icon
+    icon: "/images/logo.JPG", // default favicon
+    shortcut: "/images/logo.JPG", // small icon
+    apple: "/images/logo.JPG", // iOS icon
   },
 };
 
@@ -65,7 +66,7 @@ export default function RootLayout({ children }) {
             },
           }}
         />
-      
+
       </body>
     </html>
   );
