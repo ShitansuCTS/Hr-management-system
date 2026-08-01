@@ -3,6 +3,67 @@
 <--! Customers View !-->
 <--!----------------------------------------------------------------!-->
 */
+.employee-profile-sticky-column,
+.employee-profile-content-column {
+  display: flex;
+  align-items: stretch;
+}
+
+.employee-profile-sticky-column {
+  position: sticky;
+  top: 0;
+  align-self: stretch;
+  z-index: 1;
+}
+
+.employee-profile-sticky-column > *,
+.employee-profile-content-column > * {
+  width: 100%;
+  height: 100%;
+  min-height: 570px;
+}
+
+.employee-profile-content-column {
+  min-height: 100%;
+  height: 100%;
+}
+
+.employee-profile-scroll-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 570px;
+  max-height: 570px;
+  min-height: 570px;
+  overflow: hidden;
+}
+
+.employee-profile-tabs-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.employee-profile-tab-body {
+  flex: 1;
+  height: calc(570px - 72px);
+  max-height: calc(570px - 72px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.employee-profile-tab-body > .tab-pane {
+  min-height: calc(570px - 72px);
+}
+
+.employee-profile-tab-body::-webkit-scrollbar {
+  display: none;
+}
+
 .customers-nav-tabs {
   margin-bottom: -1px;
   .nav-item {
@@ -21,5 +82,29 @@
         transition: all 0.3s ease;
       }
     }
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .employee-profile-sticky-column {
+    position: static;
+  }
+
+  .employee-profile-sticky-column > *,
+  .employee-profile-content-column > *,
+  .employee-profile-scroll-panel,
+  .employee-profile-tab-body {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .employee-profile-tab-body {
+    scrollbar-width: auto;
+    -ms-overflow-style: auto;
+  }
+
+  .employee-profile-tab-body::-webkit-scrollbar {
+    display: block;
   }
 }

@@ -31,11 +31,11 @@ const LatestLeads = ({ title }) => {
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [fetchDashboard]);
 
 
 
-  console.log("The birthday INFO ARE", data)
+  // console.log("The birthday INFO ARE", data)
 
   return (
     <div className="col-xxl-8">

@@ -51,6 +51,9 @@ export const ROUTE_PERMISSIONS = {
 
         PROFILE: [
             "/customers/profile",
+        ],
+        STORAGE:[
+            "/applications/storage",
         ]
     },
 
