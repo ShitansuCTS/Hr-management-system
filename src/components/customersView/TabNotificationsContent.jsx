@@ -8,6 +8,7 @@ import {
   FiCopy,
   FiDownload,
   FiEdit2,
+  FiFileText,
   FiInfo,
   FiLink2,
   FiMove,
@@ -249,7 +250,31 @@ const TabNotificationsContent = ({ employeeId }) => {
         {fetchLoading ? (
           <p className="text-muted">Loading documents...</p>
         ) : documents.length === 0 ? (
-          <p className="text-muted">No documents uploaded.</p>
+          <div className="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3">
+            <div
+              className="d-flex align-items-center justify-content-center rounded-circle bg-light mb-3"
+              style={{
+                width: 68,
+                height: 68,
+                border: "1px solid rgba(52, 84, 209, 0.12)",
+              }}
+            >
+              <FiFileText size={28} color="#3454d1" />
+            </div>
+
+            <h5 className="fw-bold text-dark mb-2">No documents found</h5>
+            <p className="text-muted small mb-3">
+              No documents have been uploaded for this profile yet.
+            </p>
+
+            <button
+              type="button"
+              className="btn btn-primary rounded-pill px-4"
+              onClick={() => setShowModal(true)}
+            >
+              + Upload Document
+            </button>
+          </div>
         ) : (
           <div className="recent-section mb-5 px-3">
             <SectionTitle

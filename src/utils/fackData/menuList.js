@@ -516,6 +516,21 @@ export const menuList = [
       },
     ],
   },
+ {
+    id: 16,
+    name: "Resume Bank",
+    path: "#",
+    icon: "feather-file-text",
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "All Resumes",
+        path: "/resumes",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      }
+    ],
+  },
   {
     id: 10,
     name: "authentication",
