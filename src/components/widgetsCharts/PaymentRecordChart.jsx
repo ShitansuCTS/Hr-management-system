@@ -20,7 +20,7 @@ const PaymentRecordChart = () => {
   // Fetch data
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [fetchDashboard]);
 
   // Normalize department names
   const normalizeDept = (name) => {

@@ -19,43 +19,56 @@ export const usehrdashboardStore = create((set, get) => ({
     //////////////////////
     // Dashboard Cards Data
     //////////////////////
-    fetchDashboard: async () => {
-        if (get().hasFetched) return;
+    fetchDashboard: async (force = false) => {
+        const { hasFetched, loading } = get();
+
+        // Prevent duplicate requests
+        if (!force && (hasFetched || loading)) return;
 
         try {
-            set({ loading: true, error: null });
+            set({
+                loading: true,
+                error: null,
+            });
 
             const res = await fetch("/api/v1/dashboard/admin");
 
-            if (!res.ok) throw new Error("Failed to fetch dashboard");
+            if (!res.ok) {
+                throw new Error("Failed to fetch dashboard");
+            }
 
-            const data = await res.json();
-            console.log(data);
+            const response = await res.json();
 
-            if (!data.success) throw new Error(data.message);
+            if (!response.success) {
+                throw new Error(response.message);
+            }
 
             set({
-                dashboard: data.data,
-                cardsinfo: data.data.cardsinfo, // ✅ IMPORTANT
-                birthdayinfo: data.data.birthdayinfo || [],
-                anniversaryinfo: data.data.anniversaryinfo || [],
-                charts: data.data.charts || {   // ✅ ADD THIS
+                dashboard: response.data,
+                cardsinfo: response.data.cardsinfo,
+                birthdayinfo: response.data.birthdayinfo || [],
+                anniversaryinfo: response.data.anniversaryinfo || [],
+                charts: response.data.charts || {
                     department: [],
                     employmentType: [],
                     status: [],
                 },
                 loading: false,
+                error: null,
                 hasFetched: true,
             });
 
         } catch (error) {
             console.error(error);
-            set({ loading: false, error: error.message });
+
+            set({
+                loading: false,
+                error: error.message,
+            });
+
             toast.error("Failed to load dashboard");
         }
     },
-
-
 
 
 }));

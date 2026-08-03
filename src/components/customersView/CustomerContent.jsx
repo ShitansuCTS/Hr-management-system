@@ -11,6 +11,8 @@ import TabSecurity from "./TabSecurity";
 import Profile from "../widgetsList/Profile";
 import CustomerSocalFlower from "./CustomerSocalFlower";
 import { useState, useEffect } from "react";
+import ProfileSkeleton from "../loaders/ProfileSkeleton";
+import ProfileTabsSkeleton from "../loaders/ProfileTabsSkeleton";
 
 const CustomerContent = () => {
   const { employeeId } = useParams();
@@ -54,65 +56,66 @@ const CustomerContent = () => {
 
   return (
     <>
-      <div className="col-xxl-4 col-xl-6">
-        <Profile user={user} />
-        {/* <CustomerSocalMedia />
-        <CustomerSocalFlower /> */}
+      <div className="col-xxl-4 col-xl-6 employee-profile-sticky-column h-100">
+        {loading ? <ProfileSkeleton /> : <Profile user={user} />}
       </div>
-      <div className="col-xxl-8 col-xl-6">
-        <div className="card border-top-0">
-          <div className="card-header p-0">
-            <ul
-              className="nav nav-tabs flex-wrap w-100 text-center customers-nav-tabs"
-              id="myTab"
-              role="tablist"
-            >
-              <li className="nav-item flex-fill border-top" role="presentation">
-                <a
-                  href="#"
-                  className="nav-link active"
-                  data-bs-toggle="tab"
-                  data-bs-target="#overviewTab"
-                  role="tab"
-                >
-                  Overview
-                </a>
-              </li>
-              <li className="nav-item flex-fill border-top" role="presentation">
-                <a
-                  href="#"
-                  className="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#billingTab"
-                  role="tab"
-                >
-                  Account Info
-                </a>
-              </li>
-              <li className="nav-item flex-fill border-top" role="presentation">
-                <a
-                  href="#"
-                  className="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#notificationsTab"
-                  role="tab"
-                >
-                  Documents
-                </a>
-              </li>
-              <li className="nav-item flex-fill border-top" role="presentation">
-                <a
-                  href="#"
-                  className="nav-link"
-                  data-bs-toggle="tab"
-                  data-bs-target="#activityTab"
-                  role="tab"
-                >
-                  Activity
-                </a>
-              </li>
+      <div className="col-xxl-8 col-xl-6 employee-profile-content-column h-100">
+        {loading ? (
+          <ProfileTabsSkeleton />
+        ) : (
+          <div className="employee-profile-scroll-panel card border-top-0 h-100">
+            <div className="card-header p-0 employee-profile-tabs-header">
+              <ul
+                className="nav nav-tabs flex-wrap w-100 text-center customers-nav-tabs"
+                id="myTab"
+                role="tablist"
+              >
+                <li className="nav-item flex-fill border-top" role="presentation">
+                  <a
+                    href="#"
+                    className="nav-link active"
+                    data-bs-toggle="tab"
+                    data-bs-target="#overviewTab"
+                    role="tab"
+                  >
+                    Overview
+                  </a>
+                </li>
+                <li className="nav-item flex-fill border-top" role="presentation">
+                  <a
+                    href="#"
+                    className="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#billingTab"
+                    role="tab"
+                  >
+                    Account Info
+                  </a>
+                </li>
+                <li className="nav-item flex-fill border-top" role="presentation">
+                  <a
+                    href="#"
+                    className="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#notificationsTab"
+                    role="tab"
+                  >
+                    Documents
+                  </a>
+                </li>
+                <li className="nav-item flex-fill border-top" role="presentation">
+                  <a
+                    href="#"
+                    className="nav-link"
+                    data-bs-toggle="tab"
+                    data-bs-target="#activityTab"
+                    role="tab"
+                  >
+                    Activity
+                  </a>
+                </li>
 
-              {/* <li className="nav-item flex-fill border-top" role="presentation">
+                {/* <li className="nav-item flex-fill border-top" role="presentation">
                 <a
                   href="#"
                   className="nav-link"
@@ -134,19 +137,20 @@ const CustomerContent = () => {
                   Security
                 </a>
               </li> */}
-            </ul>
-          </div>
-          <div className="tab-content">
-            <TabOverviewContent user={user} />
-            <div className="tab-pane fade" id="billingTab" role="tabpanel">
-              <TabBillingContent billingHistoryshow={true} user={user} />
+              </ul>
             </div>
-            <TabActivityContent />
-            <TabNotificationsContent employeeId={user?.employeeId} />
-            <TabConnections />
-            <TabSecurity />
+            <div className="tab-content employee-profile-tab-body">
+              <TabOverviewContent user={user} />
+              <div className="tab-pane fade" id="billingTab" role="tabpanel">
+                <TabBillingContent billingHistoryshow={true} user={user} />
+              </div>
+              <TabActivityContent />
+              <TabNotificationsContent employeeId={user?.employeeId} />
+              <TabConnections />
+              <TabSecurity />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

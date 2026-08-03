@@ -3,27 +3,50 @@ import { create } from "zustand";
 export const useUserStore = create((set, get) => ({
     user: null,
     loading: false,
-    hasFetched: false, // 🔥 prevents multiple calls
+    hasFetched: false,
 
     fetchUser: async () => {
-        if (get().hasFetched) return; // 🧠 stop duplicate fetch
+        if (get().hasFetched) {
+            return get().user;
+        }
 
         set({ loading: true });
 
         try {
-            const res = await fetch("/api/auth/my-profile");
+            const res = await fetch("/api/auth/my-profile", {
+                credentials: "include",
+            });
 
-            if (!res.ok) throw new Error("Failed to fetch");
+            if (!res.ok) {
+                set({
+                    user: null,
+                    loading: false,
+                    hasFetched: false,
+                });
+                console.warn("Logged-in profile not available:", res.status);
+                return null;
+            }
 
             const data = await res.json();
+            const loggedUser = data?.user ?? null;
+
+            console.log("Logged in user profile:", loggedUser);
 
             set({
-                user: data.user,
+                user: loggedUser,
                 loading: false,
                 hasFetched: true,
             });
+
+            return loggedUser;
         } catch (error) {
-            set({ loading: false });
+            console.error("Profile fetch failed:", error);
+            set({
+                user: null,
+                loading: false,
+                hasFetched: false,
+            });
+            return null;
         }
     },
 
@@ -31,5 +54,6 @@ export const useUserStore = create((set, get) => ({
         set({
             user: null,
             hasFetched: false,
+            loading: false,
         }),
 }));

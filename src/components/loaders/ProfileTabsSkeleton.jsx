@@ -2,7 +2,10 @@ import React from "react";
 
 const ProfileTabsSkeleton = () => {
     return (
-        <div className="card border-top-0" style={{ minHeight: "520px" }}>
+        <div
+            className="card border-top-0 w-100 h-100 employee-profile-tabs-skeleton"
+            style={{ minHeight: "570px" }}
+        >
 
             {/* Tabs header skeleton */}
             <div className="card-header p-0">
@@ -19,7 +22,7 @@ const ProfileTabsSkeleton = () => {
             </div>
 
             {/* Tab content skeleton */}
-            <div className="card-body">
+            <div className="card-body w-100">
 
                 {/* title */}
                 <div
