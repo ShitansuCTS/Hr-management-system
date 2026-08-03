@@ -52,6 +52,9 @@ export const ROUTE_PERMISSIONS = {
         PROFILE: [
             "/customers/profile",
         ],
+        RESUMES: [
+            "/resumes/all",
+        ],
         STORAGE:[
             "/applications/storage",
             "/test"

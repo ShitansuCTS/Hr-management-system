@@ -525,7 +525,7 @@ export const menuList = [
       {
         id: 1,
         name: "All Resumes",
-        path: "/resumes",
+        path: "/resumes/all",
         subdropdownMenu: false,
         roles: ["ADMIN"],
       }
