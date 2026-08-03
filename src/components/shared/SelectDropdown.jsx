@@ -13,11 +13,17 @@ const SelectDropdown = ({ options, selectedOption, onSelectOption, className, de
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    if (defaultSelect) {
+    // If parent is controlling the value
+    if (selectedOption) {
+      setLocalSelectedOption(selectedOption);
+    }
+    // Otherwise use defaultSelect
+    else if (defaultSelect !== undefined && defaultSelect !== null) {
       const defaultOption = options?.find(
-        (option) => option.value?.toLowerCase() === defaultSelect?.toLowerCase()
+        (option) => String(option.value).toLowerCase() === String(defaultSelect).toLowerCase()
       );
-      setLocalSelectedOption(defaultOption || null); // Set default if found
+
+      setLocalSelectedOption(defaultOption || null);
     }
 
     const handleClickOutside = (event) => {
@@ -25,12 +31,13 @@ const SelectDropdown = ({ options, selectedOption, onSelectOption, className, de
         setIsOpen(false);
       }
     };
+
     document.addEventListener("click", handleClickOutside);
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [defaultSelect, options]);
+  }, [selectedOption, defaultSelect, options]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 

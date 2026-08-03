@@ -2,8 +2,11 @@ import React from "react";
 
 const ProfileSkeleton = () => {
     return (
-        <div className="card stretch stretch-full">
-            <div className="card-body">
+        <div
+            className="card stretch stretch-full w-100 h-100 employee-profile-left-skeleton"
+            style={{ minHeight: "570px" }}
+        >
+            <div className="card-body h-100">
 
                 {/* Avatar */}
                 <div className="text-center mb-4">

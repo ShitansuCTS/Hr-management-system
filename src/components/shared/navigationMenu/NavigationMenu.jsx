@@ -34,7 +34,7 @@ const NavigationManu = () => {
             <Image
               width={190}
               height={50}
-              src="/full-logo.png"
+              src="/images/full-logo.png"
               alt="Logo"
               className="logo logo-lg"
             />

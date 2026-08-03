@@ -14,7 +14,7 @@ const SiteOverviewStatistics = () => {
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [fetchDashboard]);
 
   // const employeesData = employees || {};
   // const leavesData = leaves || {};

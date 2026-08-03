@@ -76,7 +76,7 @@ const createUserSchema = z
     workLocation: z
       .string()
       .trim()
-      .max(40,"Work Location must not exceed 50 characters")
+      .max(40, "Work Location must not exceed 50 characters")
       .regex(nameRegex, "Work Location must start with an alphabet"),
 
     dateOfJoining: z.string().optional(),
@@ -224,9 +224,11 @@ const createUserSchema = z
 
     /* ---------------- Image ---------------- */
 
-    profileImage: z.instanceof(File, {
-      message: "Profile image is required",
-    }),
+    profileImage: z
+      .instanceof(File, {
+        message: "Profile image is required",
+      })
+      .optional(),
   })
   .superRefine((data, ctx) => {
     const today = new Date();
@@ -567,5 +569,16 @@ export function validateCreateUser(formData) {
     reportingManagerName: clean(result.data.reportingManagerName) || null,
 
     profileImage: result.data.profileImage,
+  };
+}
+
+export function validateImportedUser(data) {
+  const employee = createUserSchema.parse(data);
+
+  return {
+    ...employee,
+    dateOfJoining: employee.dateOfJoining ? new Date(employee.dateOfJoining) : null,
+
+    dateOfBirth: employee.dateOfBirth ? new Date(employee.dateOfBirth) : null,
   };
 }

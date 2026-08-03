@@ -383,39 +383,187 @@ export const menuList = [
     ],
   },
 
+
+  {
+    id: 11,
+    name: "help center",
+    path: "#",
+    icon: "feather-life-buoy",
+    hidden: true,
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "Support",
+        path: "https://wrapbootstrap.com/user/theme_ocean",
+        target: "_blank",
+        subdropdownMenu: false,
+      },
+      {
+        id: 2,
+        name: "KnowledgeBase",
+        path: "/help/knowledgebase",
+        subdropdownMenu: false,
+      },
+      {
+        id: 3,
+        name: "Documentations",
+        path: "https://duralux-next-doc.vercel.app/",
+        target: "_blank",
+        subdropdownMenu: false,
+      },
+    ],
+  },
+  {
+    id: 12,
+    name: "Company Calendar",
+    path: "#",
+    icon: "feather-layout",
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "Holidays",
+        path: "/holidays/list",
+        subdropdownMenu: false,
+        roles: ["ADMIN", "EMPLOYEE"],
+      },
+      {
+        id: 2,
+        name: "Calender",
+        // path: "/holidays/calender",
+        path: "/applications/calendar",
+        subdropdownMenu: false,
+        roles: ["ADMIN", "EMPLOYEE"],
+      },
+      {
+        id: 3,
+        name: "Add Holidays",
+        path: "/holidays/create",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+    ],
+  },
+  {
+    id: 13,
+    name: "Leaves Management",
+    path: "#",
+    icon: "feather-send",
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "Create Leave",
+        path: "/leaves/create",
+        subdropdownMenu: false,
+        roles: ["EMPLOYEE"],
+      },
+      {
+        id: 2,
+        name: "Request Leaves",
+        path: "/leaves/list",
+        subdropdownMenu: false,
+        roles: ["EMPLOYEE"],
+      },
+      {
+        id: 3,
+        name: "Leave Applications",
+        path: "/leaves/all",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+    ],
+  },
+  {
+    id: 14,
+    name: "Activity Management",
+    path: "#",
+    icon: "feather-activity",
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "Share Update",
+        path: "/announcements/create",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+      {
+        id: 2,
+        name: "Announcements List",
+        path: "/announcements/list",
+        subdropdownMenu: false,
+        roles: ["ADMIN", "EMPLOYEE"],
+      },
+    ],
+  },
+  {
+    id: 15,
+    name: "organization",
+    path: "#",
+    icon: "feather-grid", // clean & generic
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "Departments",
+        path: "/organization/departments",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+      {
+        id: 2,
+        name: "Job Titles",
+        path: "/organization/designations",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      },
+    ],
+  },
+ {
+    id: 16,
+    name: "Resume Bank",
+    path: "#",
+    icon: "feather-file-text",
+    dropdownMenu: [
+      {
+        id: 1,
+        name: "All Resumes",
+        path: "/resumes/all",
+        subdropdownMenu: false,
+        roles: ["ADMIN"],
+      }
+    ],
+  },
   {
     id: 10,
     name: "authentication",
     path: "#",
     icon: "feather-power",
     dropdownMenu: [
-      {
-        id: 1,
-        name: "User Login",
-        path: "/authentication/login/minimal",
-        subdropdownMenu: [
-          // {
-          //   id: 1,
-          //   name: "User Login",
-          //   path: "/authentication/login/minimal",
-          // },
-          // {
-          //   id: 1,
-          //   name: "Cover",
-          //   path: "/authentication/login/cover",
-          // },
-          // {
-          //   id: 2,
-          //   name: "Minimal",
-          //   path: "/authentication/login/minimal",
-          // },
-          // {
-          //   id: 3,
-          //   name: "Creative",
-          //   path: "/authentication/login/creative",
-          // },
-        ],
-      },
+      // {
+      //   id: 1,
+      //   name: "User Login",
+      //   path: "/authentication/login/minimal",
+      //   subdropdownMenu: [
+      //     {
+      //       id: 1,
+      //       name: "User Login",
+      //       path: "/authentication/login/minimal",
+      //     },
+      //     {
+      //       id: 1,
+      //       name: "Cover",
+      //       path: "/authentication/login/cover",
+      //     },
+      //     {
+      //       id: 2,
+      //       name: "Minimal",
+      //       path: "/authentication/login/minimal",
+      //     },
+      //     {
+      //       id: 3,
+      //       name: "Creative",
+      //       path: "/authentication/login/creative",
+      //     },
+      //   ],
+      // },
       // {
       //   id: 2,
       //   name: "register",
@@ -526,137 +674,6 @@ export const menuList = [
       //     },
       //   ],
       // },
-    ],
-  },
-  {
-    id: 11,
-    name: "help center",
-    path: "#",
-    icon: "feather-life-buoy",
-    hidden: true,
-    dropdownMenu: [
-      {
-        id: 1,
-        name: "Support",
-        path: "https://wrapbootstrap.com/user/theme_ocean",
-        target: "_blank",
-        subdropdownMenu: false,
-      },
-      {
-        id: 2,
-        name: "KnowledgeBase",
-        path: "/help/knowledgebase",
-        subdropdownMenu: false,
-      },
-      {
-        id: 3,
-        name: "Documentations",
-        path: "https://duralux-next-doc.vercel.app/",
-        target: "_blank",
-        subdropdownMenu: false,
-      },
-    ],
-  },
-  {
-    id: 12,
-    name: "Company Calendar",
-    path: "#",
-    icon: "feather-layout",
-    dropdownMenu: [
-      {
-        id: 1,
-        name: "Holidays",
-        path: "/holidays/list",
-        subdropdownMenu: false,
-        roles: ["ADMIN", "EMPLOYEE"],
-      },
-      {
-        id: 2,
-        name: "Calender",
-        path: "/holidays/calender",
-        subdropdownMenu: false,
-        roles: ["ADMIN", "EMPLOYEE"],
-      },
-      {
-        id: 3,
-        name: "Add Holidays",
-        path: "/holidays/create",
-        subdropdownMenu: false,
-        roles: ["ADMIN"],
-      },
-    ],
-  },
-  {
-    id: 13,
-    name: "Leaves Management",
-    path: "#",
-    icon: "feather-send",
-    dropdownMenu: [
-      {
-        id: 1,
-        name: "Create Leave",
-        path: "/leaves/create",
-        subdropdownMenu: false,
-        roles: ["EMPLOYEE"],
-      },
-      {
-        id: 2,
-        name: "Request Leaves",
-        path: "/leaves/list",
-        subdropdownMenu: false,
-        roles: ["EMPLOYEE"],
-      },
-      {
-        id: 3,
-        name: "Leave Applications",
-        path: "/leaves/all",
-        subdropdownMenu: false,
-        roles: ["ADMIN"],
-      },
-    ],
-  },
-  {
-    id: 14,
-    name: "Activity Management",
-    path: "#",
-    icon: "feather-activity",
-    dropdownMenu: [
-      {
-        id: 1,
-        name: "Share Update",
-        path: "/announcements/create",
-        subdropdownMenu: false,
-        roles: ["ADMIN"],
-      },
-      {
-        id: 2,
-        name: "Announcements List",
-        path: "/announcements/list",
-        subdropdownMenu: false,
-        roles: ["ADMIN", "EMPLOYEE"],
-      },
-    ],
-  },
-  {
-    id: 15,
-    name: "organization",
-    path: "#",
-    icon: "feather-grid", // clean & generic
-    dropdownMenu: [
-      {
-        id: 1,
-        name: "Departments",
-        path: "/organization/departments",
-        subdropdownMenu: false,
-        roles: ["ADMIN"],
-      },
-      {
-        id: 2,
-        name: "Job Titles",
-        path: "/organization/designations",
-        subdropdownMenu: false,
-        roles: ["ADMIN"],
-      },
     ],
   }
 

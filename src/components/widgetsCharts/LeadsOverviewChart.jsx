@@ -19,7 +19,7 @@ const LeadsOverviewChart = ({ chartHeight = 280, isFooterShow }) => {
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+  }, [fetchDashboard]);
 
   // ✅ Format labels
   const formatLabel = (text) =>

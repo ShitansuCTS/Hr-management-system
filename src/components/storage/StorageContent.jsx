@@ -67,7 +67,7 @@ const StorageContent = () => {
         <PerfectScrollbar>
           <StrogeHeader setSidebarOpen={setSidebarOpen} />
           <div className="content-area-body">
-            <div className="recent-section mb-5">
+            {/* <div className="recent-section mb-5">
               <SectionTitle
                 sectionName={"Cloud Storage"}
                 sectionDescription={"Total Storage 100 GB (Free space 53.64 GB)"}
@@ -94,7 +94,7 @@ const StorageContent = () => {
                   )
                 )}
               </div>
-            </div>
+            </div> */}
 
             <div className="recent-section mb-5">
               <SectionTitle
@@ -118,7 +118,7 @@ const StorageContent = () => {
               </div>
             </div>
 
-            <div className="folder-section mb-5">
+            {/* <div className="folder-section mb-5">
               <SectionTitle
                 sectionName={"Folders"}
                 sectionDescription={"Recent access folders (Last access 2 hours ago)"}
@@ -145,7 +145,7 @@ const StorageContent = () => {
                 sectionDescription={"Recent project files (Last access 24 min ago)"}
               />
               <ProjectFilteTable />
-            </div>
+            </div> */}
           </div>
           <Footer />
         </PerfectScrollbar>
@@ -169,9 +169,6 @@ const SectionTitle = ({ sectionName, sectionDescription }) => {
     </div>
   );
 };
-
-
-
 
 // users - webmaster@crushaderstech.com
 // Athe#@34524%%Eft

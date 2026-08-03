@@ -7,13 +7,37 @@ import EventCalendarSmall from "@/components/EventCalendarSmall";
 import toast from "react-hot-toast";
 import { useCompanyCalendarStore } from "@/store/companyCalendarStore";
 
+
+
+
+
 const CreateHolidayList = () => {
+
+  const holidayOptions = [
+    {
+      value: "NATIONAL",
+      label: "National",
+    },
+    {
+      value: "FESTIVAL",
+      label: "Festival",
+    },
+    {
+      value: "OPTIONAL",
+      label: "Optional",
+    },
+    {
+      value: "COMPANY",
+      label: "Company",
+    },
+  ];
+
   const createHoliday = useCompanyCalendarStore((state) => state.createHoliday);
   const loading = useCompanyCalendarStore((state) => state.loading);
 
   const [holidayName, setHolidayName] = useState("");
   const [holidayDate, setHolidayDate] = useState(null);
-  const [holidayType, setHolidayType] = useState(null);
+  const [holidayType, setHolidayType] = useState(holidayOptions[0]);
   const [description, setDescription] = useState("");
   const [year, setYear] = useState("");
   const [day, setDay] = useState("");
@@ -21,7 +45,7 @@ const CreateHolidayList = () => {
   const resetForm = () => {
     setHolidayName("");
     setHolidayDate(null);
-    setHolidayType(null);
+   setHolidayType(holidayOptions[0]);
     setDescription("");
     setYear("");
     setDay("");
@@ -53,6 +77,10 @@ const CreateHolidayList = () => {
 
     resetForm();
   };
+
+
+
+
 
   return (
     <>
@@ -109,27 +137,11 @@ const CreateHolidayList = () => {
                     Type <span className="text-danger">*</span>
                   </label>
 
-                  <SelectDropdown
-                    options={[
-                      {
-                        value: "NATIONAL",
-                        label: "National",
-                      },
-                      {
-                        value: "FESTIVAL",
-                        label: "Festival",
-                      },
-                      {
-                        value: "OPTIONAL",
-                        label: "Optional",
-                      },
-                      {
-                        value: "COMPANY",
-                        label: "Company",
-                      },
-                    ]}
-                    onSelectOption={setHolidayType}
-                  />
+        <SelectDropdown
+  options={holidayOptions}
+  selectedOption={holidayType}
+  onSelectOption={setHolidayType}
+/>
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   FiLogOut,
   FiSettings,
   FiUser,
+  FiRefreshCw,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
@@ -45,9 +46,9 @@ const ProfileModal = () => {
     }
   };
 
-  if (!initialized) {
-    return <UserDropdownSkeleton />;
-  }
+  // if (!initialized) {
+  //   return <UserDropdownSkeleton />;
+  // }
 
   return (
     <div className="dropdown nxl-h-item">
@@ -56,7 +57,7 @@ const ProfileModal = () => {
           src={user?.profileImageUrl || "/images/avatar/1.png"}
           alt="user-image"
           className="img-fluid user-avtar me-0"
-          style={{ width: "40px", height: "40px", }}
+          style={{ width: "40px", height: "40px" }}
         />
       </a>
       <div className="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">
@@ -149,12 +150,12 @@ const ProfileModal = () => {
           </i>
           <span>Activity Feed</span>
         </a>
-        <a href="#" className="dropdown-item">
+        {/* <a href="#" className="dropdown-item">
           <i>
             <FiDollarSign />
           </i>
           <span>Billing Details</span>
-        </a>
+        </a> */}
         <Link href="/announcements/list" className="dropdown-item">
           <i>
             <FiBell />
@@ -166,6 +167,12 @@ const ProfileModal = () => {
             <FiSettings />
           </i>
           <span>Account Settings</span>
+        </a>
+        <a href="/authentication/reset/forgot-password" className="dropdown-item">
+          <i>
+            <FiRefreshCw />
+          </i>
+          <span>Reset Password</span>
         </a>
         <div className="dropdown-divider"></div>
         <button onClick={handleLogout} className="dropdown-item ">

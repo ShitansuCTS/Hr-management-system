@@ -1,8 +1,23 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FiTrash2, FiEdit, FiEye } from "react-icons/fi";
 import { BsPatchCheckFill } from "react-icons/bs";
 import toast from "react-hot-toast";
+import RecentFileCard from "../storage/RecentFileCard";
+import { cloudStorageData, storageFolderData } from "@/utils/fackData/storageData";
+import {
+  FiCopy,
+  FiDownload,
+  FiEdit2,
+  FiFileText,
+  FiInfo,
+  FiLink2,
+  FiMove,
+  FiScissors,
+  FiShare2,
+  FiTrash2,
+  FiEye,
+} from "react-icons/fi";
+import DocumentStorageSidebar from "../storage/DocumentStorageSidebar";
 
 const documentTypesList = [
   "PAN Card",
@@ -17,6 +32,19 @@ const documentTypesList = [
   "Driving License",
   "Experience Certificate",
 ];
+export const strogeOptions = [
+  { icon: <FiShare2 />, label: "Share" },
+  { icon: <FiInfo />, label: "Details", modalTarget: "#fileFolderDetailsOffcanvas" },
+  { icon: <FiEdit2 />, label: "Rename" },
+  { icon: <FiDownload />, label: "Download" },
+  { type: "divider" },
+  { icon: <FiCopy />, label: "Copy to..." },
+  { icon: <FiMove />, label: "Move to..." },
+  { icon: <FiLink2 />, label: "Open with...", link: "https://themeforest.net/user/theme_ocean" },
+  { type: "divider" },
+  { icon: <FiScissors />, label: "Backup" },
+  { icon: <FiTrash2 />, label: "Remove" },
+];
 
 const TabNotificationsContent = ({ employeeId }) => {
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +55,7 @@ const TabNotificationsContent = ({ employeeId }) => {
   const [documents, setDocuments] = useState([]);
   const [fetchLoading, setFetchLoading] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const [fileData, setFileData] = useState(storageFolderData(0, 4));
 
   const handleUpload = async () => {
     if (!documentType || !file) {
@@ -42,13 +71,10 @@ const TabNotificationsContent = ({ employeeId }) => {
       formData.append("documentName", documentType);
       formData.append("file", file);
 
-      const res = await fetch(
-        `/api/users/users-profile/${employeeId}/documents`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch(`/api/users/users-profile/${employeeId}/documents`, {
+        method: "POST",
+        body: formData,
+      });
 
       const data = await res.json();
 
@@ -71,20 +97,17 @@ const TabNotificationsContent = ({ employeeId }) => {
       setLoading(false);
     }
   };
-
-
   const fetchDocuments = async () => {
     try {
       setFetchLoading(true);
 
-      const res = await fetch(
-        `/api/users/users-profile/${employeeId}/documents`
-      );
+      const res = await fetch(`/api/users/users-profile/${employeeId}/documents`);
 
       const data = await res.json();
 
       if (res.ok) {
         setDocuments(data.documents);
+        console.log("The fetched document sare :", data.documents);
       } else {
         console.error(data.message);
       }
@@ -95,19 +118,15 @@ const TabNotificationsContent = ({ employeeId }) => {
     }
   };
 
-
   const handleDelete = async (documentId) => {
     if (!confirm("Are you sure you want to delete this document?")) return;
 
     try {
       setLoading(true);
 
-      const res = await fetch(
-        `/api/users/users-profile/documents/${documentId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`/api/users/users-profile/documents/${documentId}`, {
+        method: "DELETE",
+      });
 
       const data = await res.json();
 
@@ -125,31 +144,14 @@ const TabNotificationsContent = ({ employeeId }) => {
       setLoading(false);
     }
   };
-
-
   useEffect(() => {
     if (employeeId) {
       fetchDocuments();
     }
   }, [employeeId]);
 
-
   return (
     <div className="tab-pane fade" id="notificationsTab" role="tabpanel">
-
-      {/* Upload Header */}
-      <div className="mb-2 mt-4 d-flex align-items-center justify-content-between px-4">
-        <h5 className="fw-bold mb-0">Documents </h5>
-
-        <button
-          type="button"
-          className="btn btn-sm btn-light-brand"
-          onClick={() => setShowModal(true)}
-        >
-          + Upload Document
-        </button>
-      </div>
-
 
 
       {/* Modal */}
@@ -158,29 +160,18 @@ const TabNotificationsContent = ({ employeeId }) => {
           {/* Backdrop */}
           <div className="modal-backdrop show"></div>
 
-          <div
-            className="modal fade show d-block"
-            style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-          >
+          <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content rounded-4 border-0 shadow p-4">
-
                 {/* Header */}
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h6 className="fw-semibold mb-0">
-                    Upload Document
-                  </h6>
-                  <button
-                    className="btn-close"
-                    onClick={() => setShowModal(false)}
-                  ></button>
+                  <h6 className="fw-semibold mb-0">Upload Document</h6>
+                  <button className="btn-close" onClick={() => setShowModal(false)}></button>
                 </div>
 
                 {/* Document Type */}
                 <div className="mb-3">
-                  <label className="form-label small text-muted">
-                    Document Type
-                  </label>
+                  <label className="form-label small text-muted">Document Type</label>
                   <select
                     className="form-select"
                     value={documentType}
@@ -197,9 +188,7 @@ const TabNotificationsContent = ({ employeeId }) => {
 
                 {/* File Input */}
                 <div className="mb-3">
-                  <label className="form-label small text-muted">
-                    Select File
-                  </label>
+                  <label className="form-label small text-muted">Select File</label>
                   <input
                     type="file"
                     className="form-control"
@@ -209,12 +198,7 @@ const TabNotificationsContent = ({ employeeId }) => {
 
                       if (!selected) return;
 
-                      const allowedTypes = [
-                        "image/jpeg",
-                        "image/jpg",
-                        "image/png",
-                        "image/webp",
-                      ];
+                      const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
                       if (!allowedTypes.includes(selected.type)) {
                         alert("Only JPG, JPEG, PNG and WEBP images are allowed.");
@@ -232,11 +216,7 @@ const TabNotificationsContent = ({ employeeId }) => {
                 {preview && (
                   <div className="text-center mb-3">
                     {file?.type === "application/pdf" ? (
-                      <img
-                        src="/icons/pdf.png"
-                        alt="pdf"
-                        style={{ height: "80px" }}
-                      />
+                      <img src="/icons/pdf.png" alt="pdf" style={{ height: "80px" }} />
                     ) : (
                       <img
                         src={preview}
@@ -257,138 +237,85 @@ const TabNotificationsContent = ({ employeeId }) => {
                   onClick={handleUpload}
                   disabled={loading}
                 >
-                  {loading ? "Uploading..." : "Upload Document"}
+                  {loading ? "Uploading..." : "Upload xxxxxxxxxxDocument"}
                 </button>
-
               </div>
             </div>
           </div>
         </>
       )}
 
-      <hr />
 
-      <div className="px-4 mt-3">
+      <div className=" mt-3">
         {fetchLoading ? (
           <p className="text-muted">Loading documents...</p>
         ) : documents.length === 0 ? (
-          <p className="text-muted">No documents uploaded.</p>
+          <div className="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3">
+            <div
+              className="d-flex align-items-center justify-content-center rounded-circle bg-light mb-3"
+              style={{
+                width: 68,
+                height: 68,
+                border: "1px solid rgba(52, 84, 209, 0.12)",
+              }}
+            >
+              <FiFileText size={28} color="#3454d1" />
+            </div>
+
+            <h5 className="fw-bold text-dark mb-2">No documents found</h5>
+            <p className="text-muted small mb-3">
+              No documents have been uploaded for this profile yet.
+            </p>
+
+            <button
+              type="button"
+              className="btn btn-primary rounded-pill px-4"
+              onClick={() => setShowModal(true)}
+            >
+              + Upload Document
+            </button>
+          </div>
         ) : (
-          <div className="row">
-            {documents.map((doc) => (
-              <div key={doc.id} className="col-md-4 col-sm-6 mb-4">
-                <div
-                  className="card border-0 shadow-sm h-80 position-relative"
-                  style={{
-                    borderRadius: "12px",
-                    transition: "0.2s ease",
-                  }}
-                >
+          <div className="recent-section mb-5 px-3">
+            <SectionTitle
+              sectionName={"Recent Files"}
+              sectionDescription={"Recent access files (Last access 24 min ago)"}
+              onUpload={() => setShowModal(true)}
+            />
+            <div className="row g-2">
+              {documents.map((doc) => (
+                <RecentFileCard
+                  key={doc.id}
+                  document={doc}
+                  onOpen={setSelectedDoc}
+                  strogeOptions={strogeOptions}
+                  handleDelete={handleDelete}
+                />
+              ))}
+            </div>
 
-                  {/* Verified Badge */}
-                  <div
-                    className="position-absolute text-success"
-                    style={{
-                      top: "10px",
-                      right: "10px",
-                    }}
-                  >
-                    <BsPatchCheckFill size={18} />
-                  </div>
-
-                  {/* Image Container */}
-                  <div
-                    className="bg-light d-flex align-items-center justify-content-center"
-                    style={{
-                      height: "100px",
-                      borderTopLeftRadius: "12px",
-                      borderTopRightRadius: "12px",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {doc.fileType === "application/pdf" ? (
-                      <img
-                        src="/icons/pdf.png"
-                        alt="pdf"
-                        style={{
-                          height: "70px",
-                          objectFit: "contain",
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={doc.fileUrl}
-                        alt="document"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    )}
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-3 text-center flex-grow-1">
-                    <h6 className="fw-semibold mb-1 text-truncate">
-                      {doc.documentType}
-                    </h6>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="d-flex gap-2 p-3 pt-0">
-                    <button
-                      className="w-50 btn btn-light-brand btn-sm"
-                      style={{ borderRadius: "4px" }}
-                      onClick={() => handleDelete(doc.id)}
-                    >
-                      <FiTrash2 size={14} className="me-1" />
-                      Delete
-                    </button>
-
-                    <button
-                      className="w-50 btn btn-primary btn-sm"
-                      style={{ borderRadius: "4px" }}
-                      onClick={() => setSelectedDoc(doc)}
-                    >
-                      <FiEye size={14} className="me-1" />
-                      View
-                    </button>
-                  </div>
-
-                </div>
-              </div>
-            ))}
+            <DocumentStorageSidebar
+              document={selectedDoc}
+              onDelete={handleDelete}
+            />
           </div>
         )}
       </div>
 
-      {selectedDoc && (
+
+      {/* {selectedDoc && (
         <>
           <div className="modal-backdrop show"></div>
-
-          <div
-            className="modal fade show d-block"
-            style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-          >
+          <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
             <div className="modal-dialog modal-md modal-dialog-centered">
-              <div
-                className="modal-content"
-                style={{ borderRadius: "10px" }}
-              >
-
-                {/* Header */}
+              <div className="modal-content" style={{ borderRadius: "10px" }}>
+            
                 <div className="modal-header">
-                  <h6 className="fw-semibold mb-0">
-                    {selectedDoc.documentType}
-                  </h6>
-                  <button
-                    className="btn-close"
-                    onClick={() => setSelectedDoc(null)}
-                  ></button>
+                  <h6 className="fw-semibold mb-0">{selectedDoc.documentType}</h6>
+                  <button className="btn-close" onClick={() => setSelectedDoc(null)}></button>
                 </div>
 
-                {/* Body */}
+        
                 <div
                   className="modal-body text-center"
                   style={{
@@ -420,9 +347,8 @@ const TabNotificationsContent = ({ employeeId }) => {
                   )}
                 </div>
 
-                {/* Footer */}
+              
                 <div className="modal-footer d-flex justify-content-between">
-
                   <button
                     className="btn btn-light btn-sm"
                     onClick={() => setSelectedDoc(null)}
@@ -432,25 +358,45 @@ const TabNotificationsContent = ({ employeeId }) => {
                   </button>
 
                   <a
-                    href={selectedDoc.fileUrl.replace(
-                      "/upload/",
-                      "/upload/fl_attachment/"
-                    )}
+                    href={selectedDoc.fileUrl.replace("/upload/", "/upload/fl_attachment/")}
                     className="btn btn-primary btn-sm"
                     style={{ borderRadius: "4px" }}
                   >
                     Download
                   </a>
-
                 </div>
-
               </div>
             </div>
           </div>
         </>
-      )}
+      )} */}
     </div>
   );
 };
 
 export default TabNotificationsContent;
+
+const SectionTitle = ({
+  sectionName,
+  sectionDescription,
+  onUpload,
+}) => {
+  return (
+    <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="me-4">
+        <h2 className="fs-16 fw-bold mb-1">{sectionName}</h2>
+        <div className="fs-12 text-muted text-truncate-1-line">
+          {sectionDescription}
+        </div>
+      </div>
+
+      <button
+        type="button"
+        className="btn btn-sm btn-light-brand"
+        onClick={onUpload}
+      >
+        + Upload Document
+      </button>
+    </div>
+  );
+};

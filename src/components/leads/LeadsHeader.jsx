@@ -46,14 +46,14 @@ const LeadsHeader = () => {
   return (
     <>
       <div className="d-flex align-items-center gap-2 page-header-right-items-wrapper">
-        <a
+        {/* <a
           href="#"
           className="btn btn-icon btn-light-brand"
           data-bs-toggle="collapse"
           data-bs-target="#collapseOne"
         >
           <FiBarChart size={16} strokeWidth={1.6} />
-        </a>
+        </a> */}
         <Dropdown
           dropdownItems={filterAction}
           triggerPosition={"0, 12"}
@@ -69,10 +69,10 @@ const LeadsHeader = () => {
           iconStrokeWidth={0}
           isAvatar={false}
         />
-        <Link href="/leaves/create" className="btn btn-primary">
+        {/* <Link href="/leaves/create" className="btn btn-primary">
           <FiPlus size={16} className="me-2" />
-          <span>Apply for a Leave</span>
-        </Link>
+          <span>Add Now</span>
+        </Link> */}
       </div>
 
       <div id="collapseOne" className="accordion-collapse collapse page-header-collapse">

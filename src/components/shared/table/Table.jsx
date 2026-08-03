@@ -11,8 +11,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import LeaveApplicationLoaders from "@/components/loaders/LeaveApplicationLoaders";
+import EmptyState from "@/components/sharedUi/EmptyState";
 
-const Table = ({ data, columns, loading, searchPlaceholder }) => {
+const Table = ({ data, columns, loading, searchPlaceholder, emptyState }) => {
   // const [data] = useState([...fackData])
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -49,62 +50,77 @@ const Table = ({ data, columns, loading, searchPlaceholder }) => {
                 searchPlaceholder={searchPlaceholder}
               />
 
-              <div className="row dt-row">
+              <div className="row dt-row" style={{padding:"0px"}}>
                 <div className="col-sm-12 px-0">
-                  <table className="table table-hover dataTable no-footer" id="projectList">
+                  <table className="table table-hover dataTable no-footer mb-0" id="projectList">
                     <thead>
                       {table.getHeaderGroups().map((headerGroup) => (
                         <tr key={headerGroup.id}>
-                          {headerGroup.headers.map((header) => {
-                            return (
-                              <th
-                                key={header.id}
-                                className={header.column.columnDef.meta?.headerClassName}
-                              >
-                                {header.id === "id" ? (
-                                  <div className="d-flex gap-2">
-                                    {flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                    )}
-                                    <ArrowToggle header={header} />
-                                  </div>
-                                ) : (
-                                  <ArrowToggle header={header}>
-                                    {flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext()
-                                    )}
-                                  </ArrowToggle>
-                                )}
-                              </th>
-                            );
-                          })}
+                          {headerGroup.headers.map((header) => (
+                            <th
+                              key={header.id}
+                              className={header.column.columnDef.meta?.headerClassName}
+                            >
+                              {header.id === "id" ? (
+                                <div className="d-flex gap-2 align-items-center">
+                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                  <ArrowToggle header={header} />
+                                </div>
+                              ) : (
+                                <ArrowToggle header={header}>
+                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                </ArrowToggle>
+                              )}
+                            </th>
+                          ))}
                         </tr>
                       ))}
                     </thead>
+
                     <tbody>
                       {loading ? (
                         <LeaveApplicationLoaders rows={6} />
-                      ) : (
+                      ) : table.getRowModel().rows.length > 0 ? (
                         table.getRowModel().rows.map((row) => (
                           <tr key={row.id} className="single-item chat-single-item">
-                            {row.getVisibleCells().map((cell) => {
-                              return (
-                                <td key={cell.id} className={cell.column.columnDef.meta?.className}>
-                                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                              );
-                            })}
+                            {row.getVisibleCells().map((cell) => (
+                              <td key={cell.id} className={cell.column.columnDef.meta?.className}>
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              </td>
+                            ))}
                           </tr>
                         ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={table.getVisibleLeafColumns().length}
+                            className="p-0 border-0"
+                          >
+                            <div
+                              className="d-flex align-items-center justify-content-center"
+                              style={{
+                                minHeight: "420px",
+                                borderTop: "1px solid #e9ecef",
+                              }}
+                            >
+                              <EmptyState
+                                title={emptyState?.title || "No Records Found"}
+                                description={
+                                  emptyState?.description || "There are no records available."
+                                }
+                                image="/illustrations/nodata.svg"
+                                height="100px"
+                              />
+                            </div>
+                          </td>
+                        </tr>
                       )}
                     </tbody>
                   </table>
                 </div>
               </div>
 
-              <TablePagination table={table} />
+              {!loading && table.getRowModel().rows.length > 0 && <TablePagination table={table} />}
             </div>
           </div>
         </div>

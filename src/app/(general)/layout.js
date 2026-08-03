@@ -20,6 +20,7 @@ const layout = ({ children }) => {
         <div className="nxl-content">{children}</div>
       </main>
       <SupportDetails />
+      
     </>
   );
 };
