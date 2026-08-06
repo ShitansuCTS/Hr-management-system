@@ -8,12 +8,16 @@ import getIcon from "@/utils/getIcon";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import SelectDropdown from "@/components/shared/SelectDropdown";
+import { useAllUsersStore } from "@/store/useAllUserStore";
 
 const EmployeesTable = () => {
   const router = useRouter();
 
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const {
+    users,
+    loading,
+    fetchUsers,
+  } = useAllUsersStore();
 
   // Selected department id
   const [selectedDepartment, setSelectedDepartment] = useState({
@@ -122,25 +126,7 @@ const EmployeesTable = () => {
     [router]
   );
 
-  const fetchUsers = async (departmentId = "") => {
-    try {
-      setLoading(true);
 
-      const url = departmentId
-        ? `/api/v1/users/all-users-details?departmentId=${departmentId}`
-        : `/api/v1/users/all-users-details`;
-
-      const res = await fetch(url);
-      const json = await res.json();
-
-      setUsers(json.data || []);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to fetch users");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fetchDepartments = async () => {
     try {
@@ -161,7 +147,10 @@ const EmployeesTable = () => {
       setDepartments(formatted);
 
       // Always select first option
-      setSelectedDepartment("");
+      setSelectedDepartment({
+        label: "All Departments",
+        value: "",
+      });
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch departments");
@@ -174,12 +163,13 @@ const EmployeesTable = () => {
 
   useEffect(() => {
     fetchUsers(selectedDepartment.value);
-  }, [selectedDepartment]);
+  }, [selectedDepartment.value]);
 
   return (
     <>
+      {/* Fixed Header */}
       <div
-        className="d-flex justify-content-between align-items-center mb-3 px-3 py-2"
+        className="d-flex justify-content-between align-items-center px-3 py-2 mb-3"
         style={{
           background: "#3454d1",
           borderRadius: 8,
@@ -189,7 +179,9 @@ const EmployeesTable = () => {
       >
         <div>
           <h6 className="text-white mb-0">Search Employees with Filters</h6>
-          <small className="text-white opacity-75">Filter employees by department</small>
+          <small className="text-white opacity-75">
+            Filter employees by department
+          </small>
         </div>
 
         <div style={{ width: 260 }}>
@@ -201,12 +193,20 @@ const EmployeesTable = () => {
         </div>
       </div>
 
-      <Table
-        data={users}
-        columns={columns}
-        loading={loading}
-        searchPlaceholder="Search employees..."
-      />
+      {/* Only this section scrolls */}
+      <div
+        style={{
+          height: "calc(100vh - 100px)", // adjust to your layout
+          overflowY: "auto",
+        }}
+      >
+        <Table
+          data={users}
+          columns={columns}
+          loading={loading}
+          searchPlaceholder="Search employees..."
+        />
+      </div>
     </>
   );
 };
