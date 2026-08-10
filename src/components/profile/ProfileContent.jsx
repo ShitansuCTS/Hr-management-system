@@ -25,7 +25,7 @@ const ProfileContent = () => {
       if (employeeIdFromRoute) {
         try {
           setLoading(true);
-          const res = await fetch(`/api/users/users-profile/${employeeIdFromRoute.trim()}`, {
+          const res = await fetch(`/api/v1/users/users-profile/${employeeIdFromRoute.trim()}`, {
             method: "GET",
             credentials: "include",
           });
@@ -35,7 +35,7 @@ const ProfileContent = () => {
           }
 
           const data = await res.json();
-          setTargetUser(data?.user || null);
+          setTargetUser(data?.data || null);
         } catch (error) {
           console.error("Error fetching employee profile:", error);
           setTargetUser(null);
