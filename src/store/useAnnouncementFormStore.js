@@ -21,12 +21,12 @@ export const useAnnouncementFormStore = create((set, get) => ({
         try {
             set({ loading: true });
 
-            const response = await fetch("/api/users/emails");
+            const response = await fetch("/api/v1/users/emails");
             if (!response.ok) throw new Error();
 
             const data = await response.json();
 
-            const options = data.emails.map((email) => ({
+            const options = data.data.map((email) => ({
                 value: email,
                 label: email,
                 icon: "feather-mail",
