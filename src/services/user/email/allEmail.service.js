@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-export async function getAllEmailsSerrvice(currentUser) {
+export async function getAllEmailsService(currentUser) {
   try {
     const organizationId = currentUser.organizationId;
 

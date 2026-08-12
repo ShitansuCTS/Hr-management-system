@@ -5,7 +5,7 @@ import {
   deleteDepartmentService,
 } from "@/services/department/department.service";
 
-export async function createDepartmentController(body) {
+export async function createDepartmentController(currentUser, body) {
   
   const { name } = body;
 
@@ -13,7 +13,7 @@ export async function createDepartmentController(body) {
     departmentName: name,
   });
 
-  const department = await createDepartmentService(departmentData);
+  const department = await createDepartmentService(currentUser, departmentData);
 
   return {
     success: true,
@@ -22,8 +22,8 @@ export async function createDepartmentController(body) {
   };
 }
 
-export async function getDepartmentController() {
-  const departments = await getDepartmentService();
+export async function getDepartmentController(currentUser) {
+  const departments = await getDepartmentService(currentUser);
 
   return {
     success: true,
@@ -32,7 +32,7 @@ export async function getDepartmentController() {
   };
 }
 
-export async function deleteDepartmentController(id) {
+export async function deleteDepartmentController(currentUser, id) {
   if (!id) {
     const error = new Error("Department id is required");
 
@@ -41,7 +41,7 @@ export async function deleteDepartmentController(id) {
     throw error;
   }
 
-  const deletedDepartment = await deleteDepartmentService(id);
+  const deletedDepartment = await deleteDepartmentService(currentUser,id);
 
   return {
     success: true,
