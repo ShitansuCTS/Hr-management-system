@@ -114,6 +114,20 @@ const reducer = (state, action) => {
   }
 };
 
+
+
+const isSecondOrFourthSaturday = (date) => {
+  // Saturday = 6
+  if (date.getDay() !== 6) return false;
+
+  const day = date.getDate();
+
+  // 2nd Saturday: 8th–14th
+  // 4th Saturday: 22nd–28th
+  return (day >= 8 && day <= 14) || (day >= 22 && day <= 28);
+};
+
+
 const CalenderContent = () => {
   const calendarRef = useRef(null);
   const calenderModalRef = useRef(null);
@@ -498,6 +512,27 @@ const CalenderContent = () => {
               weekends={state.showWeekends}
               firstDay={state.isWeekMonday}
               eventContent={renderEventContent}
+              dayCellClassNames={(arg) => {
+                const date = arg.date;
+
+                // Keep Sunday as it is
+                if (date.getDay() === 0) {
+                  return ["fc-day-sun"];
+                }
+
+                // 2nd and 4th Saturday
+                if (
+                  date.getDay() === 6 &&
+                  (
+                    (date.getDate() >= 8 && date.getDate() <= 14) ||
+                    (date.getDate() >= 22 && date.getDate() <= 28)
+                  )
+                ) {
+                  return ["fc-day-sun"];
+                }
+
+                return [];
+              }}
             />
 
             {isAddModalOpen && (

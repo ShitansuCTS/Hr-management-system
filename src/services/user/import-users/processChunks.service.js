@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 const CHUNK_SIZE = 100;
 
-export async function processChunks(batch) {
+export async function processChunks(batch, organizationId) {
   const employees = batch.data.employees;
 
   for (let start = 0; start < employees.length; start += CHUNK_SIZE) {
@@ -15,6 +15,13 @@ export async function processChunks(batch) {
     const leaveBalances = [];
 
     for (const employee of employeeChunk) {
+      if (employee.user.organizationId !== organizationId) {
+        const error = new Error("Employee organization mismatch.");
+
+        error.statusCode = 500;
+
+        throw error;
+      }
       users.push(employee.user);
 
       financials.push(employee.financial);

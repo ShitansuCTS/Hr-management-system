@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
-export async function createDepartmentService(departmentData) {
+export async function createDepartmentService(currentUser, departmentData) {
   try {
     const department = await prisma.department.create({
       data: {
         name: departmentData.departmentName,
+        organizationId: currentUser.organizationId,
       },
     });
 
@@ -23,8 +24,12 @@ export async function createDepartmentService(departmentData) {
   }
 }
 
-export async function getDepartmentService() {
+export async function getDepartmentService(currentUser) {
   const departments = await prisma.department.findMany({
+    where: {
+      organizationId: currentUser.organizationId,
+      isActive: true,
+    },
     orderBy: {
       id: "asc",
     },
@@ -33,11 +38,12 @@ export async function getDepartmentService() {
   return departments;
 }
 
-export async function deleteDepartmentService(id) {
+export async function deleteDepartmentService(currentUser, id) {
   try {
     const deletedDepartment = await prisma.department.delete({
       where: {
         id,
+        organizationId: currentUser.organizationId,
       },
     });
 

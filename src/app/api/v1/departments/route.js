@@ -23,7 +23,7 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    const result = await createDepartmentController(body);
+    const result = await createDepartmentController(auth.user, body);
 
     return NextResponse.json(result, {
       status: 201,
@@ -60,7 +60,7 @@ export async function GET(request) {
       );
     }
 
-    const result = await getDepartmentController();
+    const result = await getDepartmentController(auth.user);
 
     return NextResponse.json(result, {
       status: 200,

@@ -1,9 +1,8 @@
-import { deleteDesignationController } from "@/controllers/designation/designation.controller";
-import { NextResponse } from "next/server";
 import { requireAuth } from "@/auth/requireAuth";
+import { getUserProfileController } from "@/controllers/user/usersProfile.controller";
+import { NextResponse } from "next/server";
 
-
-export async function DELETE(request, { params }) {
+export async function GET(request, { params }) {
   try {
     const auth = await requireAuth(request, ["ADMIN"]);
 
@@ -19,15 +18,13 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const { id } = await params;
-
-    const result = await deleteDesignationController(auth.user, id);
+    const result = await getUserProfileController(params.employeeId, auth.user);
 
     return NextResponse.json(result, {
       status: 200,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Get Employee Route Error:", error);
 
     return NextResponse.json(
       {

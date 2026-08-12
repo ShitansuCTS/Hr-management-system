@@ -7,12 +7,14 @@ import React from "react";
 const page = () => {
   return (
     <>
-      <div className="main-content">
+    <div className="main-content">
         <div className="row">
           <CustomersTable />
         </div>
-      </div>
-      <Footer />
+      </div> 
+
+     
+{/* <Footer /> */}
     </>
   );
 };

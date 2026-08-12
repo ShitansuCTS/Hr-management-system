@@ -11,15 +11,6 @@ const createDesignationSchema = z.object({
       "Designation name must start with an alphabet letter",
     ),
 
-  title: z
-    .string()
-    .trim()
-    .min(1, "Designation title is required")
-    .max(25, "Designation title must be less than 25 characters")
-    .regex(
-      /^[A-Za-z].*/,
-      "Designation title must start with an alphabet letter",
-    ),
 
   departmentId: z
     .string()
@@ -30,7 +21,6 @@ const createDesignationSchema = z.object({
 export function validateCreateDesignation(body) {
   const designationData = {
     name: body.name,
-    title: body.title,
     departmentId: body.departmentId,
   };
 

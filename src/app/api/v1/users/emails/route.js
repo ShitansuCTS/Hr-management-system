@@ -1,9 +1,10 @@
-import { deleteDesignationController } from "@/controllers/designation/designation.controller";
-import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
+
 import { requireAuth } from "@/auth/requireAuth";
+import { NextResponse } from "next/server";
+import { getAllEmailsController } from "@/controllers/user/allEmail.controller";
 
-
-export async function DELETE(request, { params }) {
+export async function GET(request) {
   try {
     const auth = await requireAuth(request, ["ADMIN"]);
 
@@ -19,16 +20,12 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const { id } = await params;
-
-    const result = await deleteDesignationController(auth.user, id);
+    const result = await getAllEmailsController(auth.user);
 
     return NextResponse.json(result, {
       status: 200,
     });
   } catch (error) {
-    console.error(error);
-
     return NextResponse.json(
       {
         success: false,

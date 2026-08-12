@@ -4,15 +4,20 @@ import toast from "react-hot-toast";
 export const useAllUsersStore = create((set, get) => ({
     users: [],
     loading: false,
-    hasFetched: false, // 🔥 prevent multiple fetch
+    hasFetched: false,
 
-    fetchUsers: async () => {
-        if (get().hasFetched) return; // 🧠 stop duplicate call
+    fetchUsers: async (departmentId = "", force = false) => {
+        // Prevent duplicate calls only when fetching all users
+        if (!force && !departmentId && get().hasFetched) return;
 
         set({ loading: true });
 
         try {
-            const response = await fetch("/api/v1/users/all-users-details");
+            const url = departmentId
+                ? `/api/v1/users/all-users-details?departmentId=${departmentId}`
+                : `/api/v1/users/all-users-details`;
+
+            const response = await fetch(url);
 
             if (!response.ok) {
                 throw new Error("Failed to fetch users");
@@ -20,18 +25,18 @@ export const useAllUsersStore = create((set, get) => ({
 
             const data = await response.json();
 
-            // IMPORTANT: access data.users
-            // toast.success(data.message || "Data fetched successfully");
-
             set({
-                users: data.data,
+                users: data.data || [],
                 loading: false,
-                hasFetched: true,
+                hasFetched: departmentId ? false : true, // Only cache the unfiltered list
             });
-
         } catch (error) {
             console.error("Error fetching users:", error);
-            set({ loading: false });
+            toast.error("Failed to fetch users");
+
+            set({
+                loading: false,
+            });
         }
     },
 

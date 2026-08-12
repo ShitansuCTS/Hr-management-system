@@ -39,9 +39,9 @@ export default function DesignationPage() {
 
   const handleCreate = async () => {
     const designationName = name.trim();
-    const designationTitle = title.trim();
+    // const designationTitle = title.trim();
 
-    if (!designationName || !designationTitle || !departmentId) {
+    if (!designationName || !departmentId) {
       toast.error("Please fill all fields");
       return;
     }
@@ -49,12 +49,12 @@ export default function DesignationPage() {
     try {
       await createDesignation({
         name: designationName,
-        title: designationTitle,
+        // title: designationTitle,
         departmentId,
       });
 
       setName("");
-      setTitle("");
+      // setTitle("");
       setDepartmentId("");
     } catch (error) {
       console.error("Designation creation failed:", error);
@@ -223,7 +223,7 @@ export default function DesignationPage() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Unique name"
+                placeholder="Designation name"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 disabled={designationActionLoading}
@@ -234,7 +234,7 @@ export default function DesignationPage() {
                 }}
               />
 
-              <input
+              {/* <input
                 type="text"
                 className="form-control"
                 placeholder="Display title"
@@ -251,7 +251,7 @@ export default function DesignationPage() {
                   minHeight: "42px",
                   borderRadius: "8px",
                 }}
-              />
+              /> */}
 
               <button
                 type="button"
@@ -369,9 +369,9 @@ export default function DesignationPage() {
                       </div>
 
                       <div>
-                        <h6 className="fw-bold mb-1 text-body">{item.title}</h6>
+                        <h6 className="fw-bold mb-1 text-body">{item.name}</h6>
 
-                        <span className="text-muted fs-11">{item.name}</span>
+                        {/* <span className="text-muted fs-11">{item.name}</span> */}
                       </div>
                     </div>
 

@@ -60,22 +60,26 @@ const NavigationManu = () => {
             </ul>
 
             <div className="card text-center">
-              <div className="card-body">
-                <i className="fs-4 text-dark">
+              <div className="card-body py-3 px-3">
+                <i className="fs-5 text-dark">
                   <FiSunrise />
                 </i>
 
-                <h6 className="mt-2 text-dark fw-bolder">HRMS v1.0</h6>
+                <h6 className="mt-2 mb-1 text-dark fw-bold">
+                  HRMS v1.0
+                </h6>
 
-                <p className="fs-11 my-2 text-muted">System is up to date</p>
+                <p className="fs-12 mb-3 text-muted">
+                  System is up to date
+                </p>
 
-                <Link href="#" className="btn btn-primary text-dark w-100">
+                <Link href="#" className="btn btn-primary btn-sm w-100">
                   Check Updates
                 </Link>
               </div>
             </div>
 
-            <div style={{ height: "18px" }} />
+            {/* <div style={{ height: "18px" }} /> */}
           </PerfectScrollbar>
         </div>
       </div>

@@ -5,10 +5,10 @@ import {
   deleteDesignationService,
 } from "@/services/designation/designation.service";
 
-export async function createDesignationController(body) {
+export async function createDesignationController(currentUser, body) {
   const designationData = validateCreateDesignation(body);
 
-  const designation = await createDesignationService(designationData);
+  const designation = await createDesignationService(currentUser, designationData);
 
   return {
     success: true,
@@ -17,8 +17,8 @@ export async function createDesignationController(body) {
   };
 }
 
-export async function getDesignationController() {
-  const designations = await getDesignationService();
+export async function getDesignationController(currentUser) {
+  const designations = await getDesignationService(currentUser);
 
   return {
     success: true,
@@ -28,7 +28,7 @@ export async function getDesignationController() {
 }
 
 
-export async function deleteDesignationController(id) {
+export async function deleteDesignationController(currentUser, id) {
   if (!id) {
     const error = new Error("Designation id is required");
 
@@ -37,7 +37,7 @@ export async function deleteDesignationController(id) {
     throw error;
   }
 
-  const deletedDesignation = await deleteDesignationService(id);
+  const deletedDesignation = await deleteDesignationService(currentUser, id);
 
   return {
     success: true,
