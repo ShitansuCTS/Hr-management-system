@@ -317,7 +317,7 @@ export default function DepartmentSection() {
                       >
                         <Building2 size={20} />
                       </div> */}
-                        <div
+                      <div
                         className="d-flex align-items-center justify-content-center"
                         style={{
                           width: "42px",
