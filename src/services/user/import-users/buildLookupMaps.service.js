@@ -6,6 +6,7 @@ export async function buildLookupMaps(currentUser) {
     prisma.user.findMany({
       where: {
         organizationId: currentUser.organizationId,
+        isDeleted: false,
       },
       select: {
         email: true,
@@ -31,7 +32,7 @@ export async function buildLookupMaps(currentUser) {
       },
       select: {
         id: true,
-        title: true,
+        name: true,
         departmentId: true,
       },
     }),
@@ -65,9 +66,9 @@ export async function buildLookupMaps(currentUser) {
   const designationMap = new Map();
 
   designations.forEach((designation) => {
-    designationMap.set(buildDesignationKey(designation.departmentId, designation.title), {
+    designationMap.set(buildDesignationKey(designation.departmentId, designation.name), {
       id: designation.id,
-      title: designation.title,
+      name: designation.name,
       departmentId: designation.departmentId,
     });
   });

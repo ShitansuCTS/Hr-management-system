@@ -89,6 +89,9 @@ model Organization {
   updatedAt DateTime @updatedAt
 
   users          User[] // 1:N relation to Users
+  departments    Department[]
+  designations   Designation[]
+
   holidays       Holiday[]
   announcements  Announcement[]
   documents      UserDocument[]
@@ -105,7 +108,7 @@ model User {
   // =========================
   // Login & Auth
   // =========================
-  email       String     @unique
+  email       String @unique    
   password    String
   role        Role
   status      UserStatus @default(ACTIVE)
@@ -219,7 +222,7 @@ model User {
   updatedAt     DateTime       @updatedAt
   leaveComments LeaveComment[]
 
-  @@unique([employeeId, organizationId])
+  @@unique([organizationId, employeeId])
 }
 
 ///////////////////////////
@@ -478,8 +481,12 @@ model Attendance {
 ///////////////////////////
 model Department {
   id       String  @id @default(uuid())
-  name     String  @unique
+  name     String  
   isActive Boolean @default(true)
+
+  organizationId String
+
+  organization Organization @relation(fields: [organizationId], references: [id])
 
   designations Designation[]
 
@@ -487,6 +494,9 @@ model Department {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@unique([organizationId, name])
 }
 
 ///////////////////////////
@@ -494,11 +504,14 @@ model Department {
 ///////////////////////////
 model Designation {
   id           String     @id @default(uuid())
-  name         String     @unique
-  title        String
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId String
+  name         String 
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id])
+  
   users User[]
 
   isActive Boolean @default(true)
@@ -506,7 +519,9 @@ model Designation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([name, departmentId])
+  @@unique([organizationId, departmentId, name])
+  @@index([organizationId])
+  @@index([departmentId])
 }
 
 ///////////////////////////

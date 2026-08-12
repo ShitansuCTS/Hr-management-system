@@ -20,7 +20,7 @@ export async function DELETE(request, { params }) {
 
     const { id } = await params;
 
-    const result = await deleteDepartmentController(id);
+    const result = await deleteDepartmentController(auth.user, id);
 
     return NextResponse.json(result, {
       status: 200,

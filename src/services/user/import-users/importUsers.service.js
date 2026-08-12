@@ -111,7 +111,7 @@ export async function importUsersService(file, currentUser) {
   */
 
   if (batch.data.employees.length > 0) {
-    await processChunks(batch);
+    await processChunks(batch, currentUser.organizationId);
   }
 
   /*

@@ -21,7 +21,7 @@ export async function POST(request) {
       );
     }
     const body = await request.json();
-    const result = await createDesignationController(body);
+    const result = await createDesignationController(auth.user, body);
 
     return NextResponse.json(result, {
       status: 201,
@@ -58,7 +58,7 @@ export async function GET(request) {
       );
     }
 
-    const result = await getDesignationController();
+    const result = await getDesignationController(auth.user);
 
     return NextResponse.json(result, {
       status: 200,

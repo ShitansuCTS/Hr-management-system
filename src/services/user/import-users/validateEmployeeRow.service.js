@@ -114,8 +114,6 @@ export async function validateEmployeeRow(
     };
   }
 
-  importedEmailSet.add(email);
-
   /*
   ==========================================
       Duplicate Employee ID (Database)
@@ -153,8 +151,6 @@ export async function validateEmployeeRow(
       ],
     };
   }
-
-  importedEmployeeIdSet.add(validatedEmployee.employeeId);
 
   /*
   ==========================================
@@ -216,6 +212,9 @@ export async function validateEmployeeRow(
 
   delete validatedEmployee.department;
   delete validatedEmployee.designation;
+
+  importedEmailSet.add(email);
+  importedEmployeeIdSet.add(validatedEmployee.employeeId);
 
   return {
     success: true,
