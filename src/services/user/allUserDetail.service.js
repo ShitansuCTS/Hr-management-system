@@ -154,9 +154,14 @@ export async function createUserService(userData, currentUser) {
   }
 }
 
-export async function getAllUsersDetailsService(departmentId) {
+export async function getAllUsersDetailsService(currentUser, departmentId) {
   try {
-    const whereCondition = {};
+    const organizationId = currentUser.organizationId;
+
+    const whereCondition = {
+      organizationId,
+      isDeleted: false,
+    };
 
     if (departmentId) {
       whereCondition.departmentId = departmentId;
@@ -164,6 +169,7 @@ export async function getAllUsersDetailsService(departmentId) {
 
     const users = await prisma.user.findMany({
       where: whereCondition,
+
       select: {
         id: true,
         fullName: true,
@@ -174,6 +180,7 @@ export async function getAllUsersDetailsService(departmentId) {
         employeeId: true,
         profileImageUrl: true,
         lastLoginAt: true,
+
         organization: {
           select: {
             id: true,
@@ -185,10 +192,26 @@ export async function getAllUsersDetailsService(departmentId) {
 
     return users;
   } catch (error) {
-    console.error("Get All Leave Applications Service Error:", error);
+    console.error("Get All Users Details Service Error:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
 
     if (error instanceof Prisma.PrismaClientInitializationError) {
-      const customError = new Error("Database connection failed");
+      const customError = new Error("Database connection failed.");
 
       customError.statusCode = 500;
 

@@ -20,7 +20,7 @@ export async function GET(request) {
       );
     }
 
-    const result = await getAllLeaveApplicationsController();
+    const result = await getAllLeaveApplicationsController(auth.user);
 
     return NextResponse.json(result, {
       status: 200,
