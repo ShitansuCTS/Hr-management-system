@@ -113,7 +113,13 @@ const LeavesTables = () => {
           <div className="hstack gap-3">
             <div className="avatar-image avatar-md">
               <img
-                src={row.original.user?.profileImageUrl || "/avatar.png"}
+                // src={row.original.user?.profileImageUrl || "/avatar.png"}
+                src={
+                  row.original.user?.profileImageUrl ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    row.original.user?.fullName || "User"
+                  )}&background=3454d1&color=fff&size=128`
+                }
                 alt="profile"
                 style={{
                   width: 40,
@@ -125,10 +131,10 @@ const LeavesTables = () => {
             </div>
 
             <div>
-              <span className="text-truncate-1-line fw-bold">{row.original.user.fullName}</span>
+              <span className="text-truncate-1-line fw-bold">{row.original.user?.fullName}</span>
 
               <small className="fs-12 fw-normal text-muted d-block">
-                {row.original.user.email}
+                {row.original.user?.email}
               </small>
             </div>
           </div>

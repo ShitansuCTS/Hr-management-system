@@ -45,7 +45,7 @@ const CreateHolidayList = () => {
   const resetForm = () => {
     setHolidayName("");
     setHolidayDate(null);
-   setHolidayType(holidayOptions[0]);
+    setHolidayType(holidayOptions[0]);
     setDescription("");
     setYear("");
     setDay("");
@@ -137,11 +137,11 @@ const CreateHolidayList = () => {
                     Type <span className="text-danger">*</span>
                   </label>
 
-        <SelectDropdown
-  options={holidayOptions}
-  selectedOption={holidayType}
-  onSelectOption={setHolidayType}
-/>
+                  <SelectDropdown
+                    options={holidayOptions}
+                    selectedOption={holidayType}
+                    onSelectOption={setHolidayType}
+                  />
                 </div>
               </div>
             </div>
