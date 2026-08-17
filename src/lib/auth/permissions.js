@@ -57,7 +57,8 @@ export const ROUTE_PERMISSIONS = {
         ],
         STORAGE:[
             "/applications/storage",
-            "/test"
+            "/test",
+            "/widgets/statistics"
         ]
     },
 

@@ -1,0 +1,51 @@
+/* Dashboard BirthDay Card CSS */
+
+.birthday-today-row {
+  background: linear-gradient(90deg, rgba(255, 193, 7, 0.07), rgba(255, 193, 7, 0.015));
+}
+
+.birthday-today-row td:first-child {
+  position: relative;
+}
+
+.birthday-today-row td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: #f59e0b;
+}
+/* Dashboard BirthDay Card CSS */
+
+
+
+
+
+.anniversary-item {
+    padding: 12px 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.anniversary-item:hover {
+    background-color: #f8f9fc;
+    border-color: #eef0f5;
+    transform: translateY(-1px);
+}
+
+.anniversary-item:hover .avatar-image {
+    transform: scale(1.03);
+}
+
+.anniversary-item .avatar-image {
+    transition: transform 0.2s ease;
+}
+
+
+
+
+

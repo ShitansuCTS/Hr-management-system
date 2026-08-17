@@ -16,13 +16,6 @@ const SiteOverviewStatistics = () => {
     fetchDashboard();
   }, [fetchDashboard]);
 
-  // const employeesData = employees || {};
-  // const leavesData = leaves || {};
-  // const attendanceData = attendance || {};
-
-  // console.log(" The employeesData : ", employeesData,);
-  // console.log(" The LeaveData : ", leavesData);
-  // console.log(" The AttandanceData : ", attendanceData);
 
   const totalLeaves =
     (data.approvedLeavesThisMonth || 0) +
