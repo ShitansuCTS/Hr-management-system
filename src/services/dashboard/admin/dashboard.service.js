@@ -11,6 +11,7 @@ export async function getDashboardService(currentUser) {
           where: {
             organizationId,
             isDeleted: false,
+            status: "ACTIVE",
           },
           select: {
             id: true,
@@ -19,7 +20,11 @@ export async function getDashboardService(currentUser) {
             profileImageUrl: true,
             dateOfBirth: true,
             dateOfJoining: true,
-            department: true,
+            department: {
+              select: {
+                name: true,
+              },
+            },
             employmentType: true,
             status: true,
           },
@@ -107,7 +112,7 @@ export async function getDashboardService(currentUser) {
         };
       })
       .sort((a, b) => a.anniversaryDate - b.anniversaryDate)
-      .slice(0, 4)
+      .slice(0, 5)
       .map((user) => {
         const isToday = user.anniversaryDate.toDateString() === today.toDateString();
 

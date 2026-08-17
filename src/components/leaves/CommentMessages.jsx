@@ -15,7 +15,13 @@ const CommentMessages = ({
         {/* Header */}
         <div className="d-flex align-items-center gap-2 mb-2">
           <img
-            src={avatar || "/images/avatar.png"}
+            // src={avatar || "/images/avatar.png"}
+            src={
+              avatar ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                name || "User"
+              )}&background=3454d1&color=fff&size=128`
+            }
             alt="avatar"
             className="rounded-circle"
             style={{

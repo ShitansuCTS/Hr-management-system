@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { requireAuth } from "@/auth/requireAuth";
 import {
   createUserController,
@@ -62,7 +64,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const departmentId = searchParams.get("departmentId");
 
-    const result = await getAllUsersDetailsController(departmentId);
+    const result = await getAllUsersDetailsController(auth.user, departmentId);
 
     return NextResponse.json(result, {
       status: 200,

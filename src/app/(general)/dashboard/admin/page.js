@@ -12,6 +12,11 @@ import LatestLeads from "@/components/widgetsTables/LatestLeads";
 import TeamProgress from "@/components/widgetsList/Progress";
 import { projectsDataTwo } from "@/utils/fackData/projectsDataTwo";
 import DuplicateLayout from "@/app/duplicateLayout";
+import OrdersStatistics from "@/components/dashboard/admin/OrdersStatistics";
+import EmployeementOverview from "@/components/dashboard/admin/EmployeementOverview";
+import DepartmentOverview from "@/components/dashboard/admin/DepartmentOverview";
+import BirthDayOverview from "@/components/dashboard/admin/BirthDayOverview";
+import WorkAniversaryOverview from "@/components/dashboard/admin/WorkAniversaryOverview";
 // import { useRouter } from "next/navigation";
 // import { useState } from "react";
 // import { useEffect } from "react";
@@ -57,11 +62,17 @@ const Home = () => {
 
         <div className="main-content">
             <div className="row">
-                <SiteOverviewStatistics />
-                <LeadsOverviewChart chartHeight={315} />
-                <PaymentRecordChart />
-                <LatestLeads title={"Upcoming Birthdays"} />
-                <TeamProgress title={"Upcoming Anniversaries"} footerShow={true} />
+                {/* <SiteOverviewStatistics /> */}
+                <OrdersStatistics />
+                {/* <br /><br /> */}
+                {/* <LeadsOverviewChart chartHeight={315} /> */}
+                <EmployeementOverview />
+                {/* <PaymentRecordChart /> */}
+                <DepartmentOverview />
+                {/* <LatestLeads title={"Upcoming Birthdays"} /> */}
+                <BirthDayOverview title={"Upcoming Birthdays"} />
+                <WorkAniversaryOverview title={"Work Anniversaries"} />
+                {/* <TeamProgress title={"Upcoming Anniversaries"} footerShow={true} /> */}
                 {/* <SalesMiscellaneous isFooterShow={true} dataList={projectsDataTwo} />
           <TasksOverviewChart />
           <Schedule title={"Upcoming Schedule"} />

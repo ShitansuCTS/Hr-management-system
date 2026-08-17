@@ -4,14 +4,17 @@ import sanitizeHtml from "sanitize-html";
 
 export async function createLeaveCommentService(commentData, leaveId, currentUser) {
   try {
+    const organizationId = currentUser.organizationId;
+
     const safeMessage = sanitizeHtml(commentData.message, {
       allowedTags: [],
       allowedAttributes: {},
-    });
+    }).trim();
 
-    const leave = await prisma.leaveApplication.findUnique({
+    const leave = await prisma.leaveApplication.findFirst({
       where: {
         id: leaveId,
+        organizationId,
       },
     });
 
@@ -31,10 +34,14 @@ export async function createLeaveCommentService(commentData, leaveId, currentUse
       throw error;
     }
 
-    return await prisma.leaveComment.create({
+    const comment = await prisma.leaveComment.create({
       data: {
+        organizationId,
+
         leaveId,
+
         userId: currentUser.id,
+
         message: safeMessage,
       },
 
@@ -47,13 +54,31 @@ export async function createLeaveCommentService(commentData, leaveId, currentUse
         },
       },
     });
+
+    return comment;
   } catch (error) {
     console.error("Create Leave Comment Service Error:", error);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
-      const customError = new Error("Invalid reference");
+      const customError = new Error("Invalid reference data.");
 
       customError.statusCode = 400;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Invalid comment data.");
+
+      customError.statusCode = 400;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      const customError = new Error("Database connection failed.");
+
+      customError.statusCode = 500;
 
       throw customError;
     }
@@ -64,13 +89,22 @@ export async function createLeaveCommentService(commentData, leaveId, currentUse
 
 export async function getLeaveCommentsService(leaveId, currentUser) {
   try {
-    const leave = await prisma.leaveApplication.findUnique({
+    const organizationId = currentUser.organizationId;
+
+    const leave = await prisma.leaveApplication.findFirst({
       where: {
         id: leaveId,
+        organizationId,
       },
 
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            profileImageUrl: true,
+          },
+        },
       },
     });
 
@@ -93,6 +127,7 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
     const comments = await prisma.leaveComment.findMany({
       where: {
         leaveId,
+        organizationId,
       },
 
       include: {
@@ -136,6 +171,30 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
     return [...initialNote, ...comments];
   } catch (error) {
     console.error("Get Leave Comments Service Error:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      const customError = new Error("Database connection failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
 
     throw error;
   }

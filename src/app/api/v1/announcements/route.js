@@ -59,7 +59,7 @@ export async function GET(request) {
       );
     }
 
-    const result = await getAnnouncementController();
+    const result = await getAnnouncementController(auth.user);
 
     return NextResponse.json(result, {
       status: 200,

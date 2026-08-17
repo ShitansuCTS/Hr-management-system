@@ -111,7 +111,6 @@ export async function createAnnouncementService(announcementData, currentUser) {
       return announcement;
     });
 
-    
     const emailResponse = await resend.emails.send({
       from: "HR Team <hr@odishabiz.com>",
 
@@ -172,38 +171,73 @@ export async function createAnnouncementService(announcementData, currentUser) {
   }
 }
 
-export async function getAnnouncementService() {
-  const announcements = await prisma.announcement.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 4,
-    select: {
-      id: true,
-      title: true,
-      message: true,
-      createdAt: true,
+export async function getAnnouncementService(currentUser) {
+  try {
+    const announcements = await prisma.announcement.findMany({
+      where: {
+        organizationId: currentUser.organizationId,
+      },
 
-      recipients: {
-        take: 4,
-        select: {
-          user: {
-            select: {
-              fullName: true,
-              profileImageUrl: true,
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      take: 4,
+
+      select: {
+        id: true,
+        title: true,
+        message: true,
+        createdAt: true,
+
+        recipients: {
+          take: 4,
+          select: {
+            user: {
+              select: {
+                fullName: true,
+                profileImageUrl: true,
+              },
             },
           },
         },
-      },
-      _count: {
-        select: {
-          recipients: true,
+
+        _count: {
+          select: {
+            recipients: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return announcements;
+    return announcements;
+  } catch (error) {
+    console.error("Get announcement service failed:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      const customError = new Error("Database connection failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    throw error;
+  }
 }
-
-

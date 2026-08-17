@@ -14,8 +14,8 @@ export async function createAnnouncementController(body, currentUser){
     };
 }
 
-export async function getAnnouncementController() {
-    const announcemnets = await getAnnouncementService();
+export async function getAnnouncementController(currentUser) {
+    const announcemnets = await getAnnouncementService(currentUser);
 
     return {
         success: true,

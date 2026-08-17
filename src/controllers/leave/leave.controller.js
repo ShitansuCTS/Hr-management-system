@@ -27,8 +27,8 @@ export async function getLeaveApplicationsController(currentUser) {
   };
 }
 
-export async function getAllLeaveApplicationsController() {
-  const allLeaveApplications = await getAllLeaveApplicationsService();
+export async function getAllLeaveApplicationsController(currentUser) {
+  const allLeaveApplications = await getAllLeaveApplicationsService(currentUser);
 
   return {
     success: true,
