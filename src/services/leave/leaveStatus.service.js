@@ -8,9 +8,12 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
   try {
     const { status } = leaveStatus;
 
-    const leave = await prisma.leaveApplication.findUnique({
+    const organizationId = currentUser.organizationId;
+
+    const leave = await prisma.leaveApplication.findFirst({
       where: {
         id: leaveId,
+        organizationId,
       },
 
       include: {
@@ -31,10 +34,6 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
       throw error;
     }
 
-    // -------------------------------------
-    // Leave already finalized
-    // -------------------------------------
-
     if (leave.status !== "PENDING") {
       const error = new Error("Leave status has already been finalized");
 
@@ -43,10 +42,6 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
       throw error;
     }
 
-    // -------------------------------------
-    // Same status
-    // -------------------------------------
-
     if (leave.status === status) {
       const error = new Error(`Leave is already ${status.toLowerCase()}`);
 
@@ -54,10 +49,6 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
 
       throw error;
     }
-
-    // -------------------------------------
-    // Cannot update after leave starts
-    // -------------------------------------
 
     const today = new Date();
 
@@ -75,13 +66,10 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
       throw error;
     }
 
-    //------------------------------------
-    // Update
-    //------------------------------------
-
-    const updatedLeave = await prisma.leaveApplication.update({
+    const updatedLeave = await prisma.leaveApplication.updateMany({
       where: {
         id: leaveId,
+        organizationId,
       },
 
       data: {
@@ -89,9 +77,13 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
       },
     });
 
-    //------------------------------------
-    // Send Email
-    //------------------------------------
+    if (updatedLeave.count === 0) {
+      const error = new Error("Leave not found");
+
+      error.statusCode = 404;
+
+      throw error;
+    }
 
     if (status !== "PENDING") {
       let html = "";
@@ -135,7 +127,10 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
       });
     }
 
-    return updatedLeave;
+    return {
+      ...leave,
+      status,
+    };
   } catch (error) {
     console.error("Update Leave Status Service Error:", error);
 
@@ -143,6 +138,22 @@ export async function updateLeaveStatusService(leaveStatus, leaveId, currentUser
       const customError = new Error("Leave not found");
 
       customError.statusCode = 404;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
 
       throw customError;
     }

@@ -10,28 +10,33 @@ export async function createLeaveService(leaveData, currentUser) {
   try {
     const { leaveType, startDate, endDate, reason } = leaveData;
 
+    const organizationId = currentUser.organizationId;
+
     const safeReason = sanitizeHtml(reason, {
       allowedTags: [],
       allowedAttributes: {},
-    });
+    }).trim();
 
     const start = new Date(startDate);
     const end = new Date(endDate);
 
     const leaveDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
+    const year = start.getFullYear();
+
     const leaveBalance = await prisma.leaveBalance.findUnique({
       where: {
-        userId_leaveType_year: {
+        organizationId_userId_leaveType_year: {
+          organizationId,
           userId: currentUser.id,
           leaveType,
-          year: start.getFullYear(),
+          year,
         },
       },
     });
 
     if (!leaveBalance) {
-      const error = new Error("Leave type not assigned to user");
+      const error = new Error("Leave type is not assigned to this employee.");
 
       error.statusCode = 400;
 
@@ -39,7 +44,7 @@ export async function createLeaveService(leaveData, currentUser) {
     }
 
     if (leaveDays > leaveBalance.remaining) {
-      const error = new Error("Insufficient leave balance");
+      const error = new Error("Insufficient leave balance.");
 
       error.statusCode = 400;
 
@@ -49,21 +54,29 @@ export async function createLeaveService(leaveData, currentUser) {
     const application = await prisma.$transaction(async (tx) => {
       const leaveApplication = await tx.leaveApplication.create({
         data: {
+          organizationId,
+
           userId: currentUser.id,
+
           leaveType,
+
           startDate: start,
+
           endDate: end,
+
           reason: safeReason,
+
           status: "PENDING",
         },
       });
 
       await tx.leaveBalance.update({
         where: {
-          userId_leaveType_year: {
+          organizationId_userId_leaveType_year: {
+            organizationId,
             userId: currentUser.id,
             leaveType,
-            year: start.getFullYear(),
+            year,
           },
         },
 
@@ -81,9 +94,11 @@ export async function createLeaveService(leaveData, currentUser) {
       return leaveApplication;
     });
 
-    const employee = await prisma.user.findUnique({
+    const employee = await prisma.user.findFirst({
       where: {
         id: currentUser.id,
+        organizationId,
+        isDeleted: false,
       },
 
       select: {
@@ -93,7 +108,7 @@ export async function createLeaveService(leaveData, currentUser) {
     });
 
     if (!employee) {
-      const error = new Error("Employee not found");
+      const error = new Error("Employee not found.");
 
       error.statusCode = 404;
 
@@ -144,7 +159,7 @@ export async function createLeaveService(leaveData, currentUser) {
     console.error("Create Leave Service Error:", error);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-      const customError = new Error("Record not found");
+      const customError = new Error("Leave balance or related record not found.");
 
       customError.statusCode = 404;
 
@@ -152,7 +167,7 @@ export async function createLeaveService(leaveData, currentUser) {
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      const customError = new Error("Duplicate record already exists");
+      const customError = new Error("Duplicate record already exists.");
 
       customError.statusCode = 409;
 
@@ -160,7 +175,7 @@ export async function createLeaveService(leaveData, currentUser) {
     }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2003") {
-      const customError = new Error("Invalid reference data");
+      const customError = new Error("Invalid reference data.");
 
       customError.statusCode = 400;
 
@@ -168,7 +183,7 @@ export async function createLeaveService(leaveData, currentUser) {
     }
 
     if (error instanceof Prisma.PrismaClientValidationError) {
-      const customError = new Error("Invalid input data");
+      const customError = new Error("Invalid input data.");
 
       customError.statusCode = 400;
 
@@ -176,7 +191,7 @@ export async function createLeaveService(leaveData, currentUser) {
     }
 
     if (error instanceof Prisma.PrismaClientInitializationError) {
-      const customError = new Error("Database connection failed");
+      const customError = new Error("Database connection failed.");
 
       customError.statusCode = 500;
 
@@ -188,31 +203,73 @@ export async function createLeaveService(leaveData, currentUser) {
 }
 
 export async function getLeaveApplicationsService(currentUser) {
-  return await prisma.leaveApplication.findMany({
-    where: {
-      userId: currentUser.id,
-    },
+  try {
+    const organizationId = currentUser.organizationId;
 
-    include: {
-      user: {
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
-          profileImageUrl: true,
+    const leaveApplications = await prisma.leaveApplication.findMany({
+      where: {
+        organizationId,
+
+        userId: currentUser.id,
+      },
+
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            profileImageUrl: true,
+          },
         },
       },
-    },
 
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return leaveApplications;
+  } catch (error) {
+    console.error("Get Leave Applications Service Error:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientInitializationError) {
+      const customError = new Error("Database connection failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    throw error;
+  }
 }
 
-export async function getAllLeaveApplicationsService() {
+export async function getAllLeaveApplicationsService(currentUser) {
   try {
+    const organizationId = currentUser.organizationId;
+
     const allLeaveApplications = await prisma.leaveApplication.findMany({
+      where: {
+        organizationId,
+      },
+
       orderBy: {
         createdAt: "desc",
       },
@@ -233,8 +290,24 @@ export async function getAllLeaveApplicationsService() {
   } catch (error) {
     console.error("Get All Leave Applications Service Error:", error);
 
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
     if (error instanceof Prisma.PrismaClientInitializationError) {
-      const customError = new Error("Database connection failed");
+      const customError = new Error("Database connection failed.");
 
       customError.statusCode = 500;
 

@@ -82,20 +82,18 @@ export async function getHolidayService(currentUser) {
     const holidays = await prisma.holiday.findMany({
       where: {
         organizationId: currentUser.organizationId,
+        isDeleted: false,
       },
-
       orderBy: {
         date: "asc",
       },
     });
 
     const today = new Date();
-
     today.setHours(0, 0, 0, 0);
 
     const upcoming = holidays.filter((holiday) => {
       const holidayDate = new Date(holiday.date);
-
       holidayDate.setHours(0, 0, 0, 0);
 
       return holidayDate >= today;
@@ -103,7 +101,6 @@ export async function getHolidayService(currentUser) {
 
     const expired = holidays.filter((holiday) => {
       const holidayDate = new Date(holiday.date);
-
       holidayDate.setHours(0, 0, 0, 0);
 
       return holidayDate < today;
@@ -113,8 +110,24 @@ export async function getHolidayService(currentUser) {
   } catch (error) {
     console.error("Get Holiday Service Error:", error);
 
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      const customError = new Error("Database operation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      const customError = new Error("Database validation failed.");
+
+      customError.statusCode = 500;
+
+      throw customError;
+    }
+
     if (error instanceof Prisma.PrismaClientInitializationError) {
-      const customError = new Error("Database connection failed");
+      const customError = new Error("Database connection failed.");
 
       customError.statusCode = 500;
 

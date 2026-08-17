@@ -46,10 +46,6 @@ enum LeaveType {
   PAID_LEAVE
   SICK_LEAVE
   CASUAL_LEAVE
-  MATERNITY_LEAVE
-  PATERNITY_LEAVE
-  BEREAVEMENT_LEAVE
-  OPTIONAL_LEAVE
 }
 
 enum LeaveStatus {
@@ -97,6 +93,10 @@ model Organization {
   documents      UserDocument[]
   attendances    Attendance[]
   calendarEvents CalendarEvent[]
+
+  leaveApplications LeaveApplication[]
+  leaveBalances     LeaveBalance[]
+  leaveComments     LeaveComment[]
 }
 
 ///////////////////////////
@@ -239,9 +239,8 @@ model Holiday {
   type        HolidayType
   description String?
 
-  // Optional: if later multiple orgs
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
 
   isDeleted Boolean @default(false)
 
@@ -260,15 +259,20 @@ model LeaveBalance {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   leaveType LeaveType
   allocated Int       @default(0)
   used      Int       @default(0)
   remaining Int       @default(0)
-  year      Int       @default(2025)
+  year      Int       
 
   createdAt DateTime @default(now())
 
-  @@unique([userId, leaveType, year])
+  @@unique([organizationId, userId, leaveType, year])
+  @@index([organizationId])
+  @@index([userId])
 }
 
 ///////////////////////////
@@ -278,6 +282,9 @@ model LeaveApplication {
   id     String @id @default(uuid())
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
   leaveType LeaveType
   startDate DateTime
@@ -289,6 +296,9 @@ model LeaveApplication {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
 }
 
 ///////////////////////////
@@ -414,10 +424,14 @@ model LeaveComment {
   user   User   @relation(fields: [userId], references: [id])
   userId String
 
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
   message String
 
   createdAt DateTime @default(now())
 
+  @@index([organizationId])
   @@index([leaveId])
   @@index([userId])
 }

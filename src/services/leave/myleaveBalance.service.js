@@ -5,10 +5,13 @@ export async function getLeaveBalanceService(currentUser) {
   try {
     const currentYear = new Date().getFullYear();
 
+    const organizationId = currentUser.organizationId;
+
     const leaveBalances = await prisma.leaveBalance.findMany({
       where: {
         userId: currentUser.id,
         year: currentYear,
+        organizationId,
       },
 
       select: {

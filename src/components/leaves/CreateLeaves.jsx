@@ -67,7 +67,6 @@ const CreateLeaves = () => {
   // Submit Leave Request
   // ==========================
   const handleClick = async () => {
-
     if (!formData.leaveType || !formData.startDate || !formData.endDate || !formData.reason) {
       toast.error("Please fill all required fields");
       return;
@@ -76,7 +75,6 @@ const CreateLeaves = () => {
     const success = await applyLeave(formData);
 
     if (success) {
-
       // reset form
       setFormData({
         leaveType: "",
@@ -93,9 +91,7 @@ const CreateLeaves = () => {
   // Cancel Form
   // ==========================
   const handleCancel = () => {
-
     if (window.confirm("Are you sure you want to cancel? All entered data will be lost.")) {
-
       setFormData({
         leaveType: "",
         startDate: "",
@@ -107,7 +103,6 @@ const CreateLeaves = () => {
 
       toast.success("Form cleared successfully");
     }
-
   };
 
   // ==========================
@@ -117,30 +112,20 @@ const CreateLeaves = () => {
     fetchUser();
   }, []);
 
-
-
-
-
-
-
-
   return (
     <>
       <div className="col-xl-8">
         <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-
           {/* Header */}
           <div className="card-header bg-white border-0 py-3">
             <h5 className="mb-0 fw-semibold">Apply Leave</h5>
           </div>
 
           <div className="card-body">
-
             {/* ===================== */}
             {/* Employee Info Section */}
             {/* ===================== */}
             <div className="d-flex align-items-center flex-wrap gap-4 pb-4 border-0">
-
               {/* Avatar */}
               <div className="position-relative">
                 <div
@@ -154,7 +139,7 @@ const CreateLeaves = () => {
                       width: "100%",
                       height: "100%",
                       objectFit: "cover",
-                      objectPosition: "center"
+                      objectPosition: "center",
                     }}
                   />
                 </div>
@@ -169,14 +154,13 @@ const CreateLeaves = () => {
               {/* Details */}
               <div>
                 <h5 className="fw-bold mb-1"> {user?.fullName || "John Doe"}</h5>
-                <p className="text-muted mb-2 small">{user?.designation || "Developer"}</p>
+                <p className="text-muted mb-2 small">{user?.designation?.name || "Developer"}</p>
 
                 <span className="badge bg-light text-dark px-3 py-2 rounded-pill">
                   <User size={13} className="me-1 text-primary" />
                   {user?.employeeId || "ctsl_0001"}
                 </span>
               </div>
-
             </div>
 
             {/* ===================== */}
@@ -214,7 +198,6 @@ const CreateLeaves = () => {
             {/* Leave Details */}
             {/* ===================== */}
             <div className="row g-4 pt-4">
-
               <div className="col-lg-4">
                 <label className="form-label fw-semibold small">
                   Leave Type <span className="text-danger">*</span>
@@ -246,14 +229,12 @@ const CreateLeaves = () => {
                   onChange={handleChange}
                 />
               </div>
-
             </div>
 
             {/* ===================== */}
             {/* Action Button */}
             {/* ===================== */}
             <div className="d-flex justify-content-end gap-3 pt-4">
-
               <button
                 className="btn btn-light d-flex align-items-center justify-content-center"
                 style={{ minWidth: "150px", height: "44px" }}
@@ -281,14 +262,8 @@ const CreateLeaves = () => {
                   </>
                 )}
               </button>
-
             </div>
-
-
           </div>
-
-
-
         </div>
 
         {/* Leave Policy Info */}
@@ -301,7 +276,9 @@ const CreateLeaves = () => {
                 <div className="row g-3">
                   <div className="col-md-6">
                     <ul className="small mb-0 ps-3">
-                      <li className="mb-2">Submit leave requests 48 hours in advance for planned leaves</li>
+                      <li className="mb-2">
+                        Submit leave requests 48 hours in advance for planned leaves
+                      </li>
                       <li className="mb-2">Emergency leaves require notification before 9:00 AM</li>
                       <li className="mb-2">Early leaves (max 2 hours) count as half-day leave</li>
                     </ul>
@@ -323,18 +300,6 @@ const CreateLeaves = () => {
       <LeaveSidebar />
     </>
   );
-
 };
 
 export default CreateLeaves;
-
-
-
-
-
-
-
-
-
-
-

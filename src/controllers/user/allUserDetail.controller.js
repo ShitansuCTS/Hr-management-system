@@ -18,8 +18,8 @@ export async function createUserController(request, currentUser) {
   };
 }
 
-export async function getAllUsersDetailsController(departmentId) {
-  const users = await getAllUsersDetailsService(departmentId);
+export async function getAllUsersDetailsController(currentUser ,departmentId) {
+  const users = await getAllUsersDetailsService(currentUser, departmentId);
 
   return {
     success: true,
