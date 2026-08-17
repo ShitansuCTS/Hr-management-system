@@ -43,7 +43,14 @@ const SidebarHeader = ({ avatar, name }) => {
                         data-bs-target="#userProfileDetails"
                     >
                         <div className="avatar-image">
-                            <img src={avatar} className="img-fluid" alt="image" />
+                            <img 
+                                src={
+                                    avatar ||
+                                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                        name || "User"
+                                    )}&background=3454d1&color=fff&size=128`
+                                }
+                                className="img-fluid" alt="image" />
                         </div>
                         <div className="d-none d-sm-block">
                             <div className="fw-bold d-flex align-items-center">{name}</div>

@@ -55,8 +55,13 @@ const EmployeesTable = () => {
 
               <div className="avatar-image avatar-md">
                 <img
-                  src={user.profileImageUrl || "/default-avatar.png"}
-                  alt={user.fullName}
+                  src={
+                    user.profileImageUrl ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                      user.fullName || "User"
+                    )}&background=3454d1&color=fff&size=128`
+                  }
+                  alt={user.fullName || "User"}
                   className="img-fluid"
                   style={{
                     width: 40,

@@ -55,11 +55,6 @@ export const ROUTE_PERMISSIONS = {
         RESUMES: [
             "/resumes/all",
         ],
-        STORAGE:[
-            "/applications/storage",
-            "/test",
-            "/widgets/statistics"
-        ]
     },
 
     EMPLOYEE: {
