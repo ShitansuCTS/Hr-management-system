@@ -161,6 +161,7 @@ export async function getAllUsersDetailsService(currentUser, departmentId) {
     const whereCondition = {
       organizationId,
       isDeleted: false,
+      status: "ACTIVE",
     };
 
     if (departmentId) {
