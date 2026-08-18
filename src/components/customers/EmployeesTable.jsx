@@ -53,7 +53,7 @@ const EmployeesTable = () => {
                 }}
               />
 
-              <div className="avatar-image avatar-md">
+              <div className="avatar-image">
                 <img
                   src={
                     user.profileImageUrl ||
@@ -64,10 +64,10 @@ const EmployeesTable = () => {
                   alt={user.fullName || "User"}
                   className="img-fluid"
                   style={{
-                    width: 40,
-                    height: 40,
+                    width: 60,
+                    height: 60,
                     borderRadius: "50%",
-                    objectFit: "cover",
+                    objectFit: "contain",
                   }}
                 />
               </div>

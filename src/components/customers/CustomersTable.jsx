@@ -91,8 +91,8 @@ const CustomersTable = () => {
                     <img
                       src={user.profileImageUrl || "https://i.pravatar.cc/150"}
                       alt={user.fullName}
-                      width={72}
-                      height={72}
+                      width={100}
+                      height={100}
                       className="rounded-circle border border-4 border-white"
                       style={{
                         objectFit: "cover",
