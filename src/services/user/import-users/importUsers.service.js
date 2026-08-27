@@ -7,55 +7,22 @@ import { processChunks } from "./processChunks.service";
 import { generateErrorReport } from "./generateErrorReport.service";
 import { buildImportResponse } from "./buildImportResponse.service";
 import { uploadFile } from "@/services/storage/uploadFile.service";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
 
 export async function importUsersService(file, currentUser) {
-  /*
-  ==========================================
-      Parse Excel
-  ==========================================
-  */
+  const organizationId = currentUser.organizationId;
 
   const { headers, rows } = await parseExcel(file);
-
-  /*
-  ==========================================
-      Duplicate Tracking
-  ==========================================
-  */
 
   const importedEmailSet = new Set();
 
   const importedEmployeeIdSet = new Set();
 
-  /*
-  ==========================================
-      Database Lookup
-  ==========================================
-  */
-
   const lookupMaps = await buildLookupMaps(currentUser.organizationId);
-
-  /*
-  ==========================================
-      Batch
-  ==========================================
-  */
 
   const batch = createEmptyBatch();
 
-  /*
-  ==========================================
-      Failed Rows
-  ==========================================
-  */
-
   const failedRows = [];
-
-  /*
-  ==========================================
-      Process Rows
-  ==========================================
-  */
 
   for (let index = 0; index < rows.length; index++) {
     batch.statistics.processed++;
@@ -104,21 +71,9 @@ export async function importUsersService(file, currentUser) {
     }
   }
 
-  /*
-  ==========================================
-      Database Insert
-  ==========================================
-  */
-
   if (batch.data.employees.length > 0) {
     await processChunks(batch, currentUser.organizationId);
   }
-
-  /*
-  ==========================================
-      Generate Error Report
-  ==========================================
-  */
 
   let errorReport = null;
 
@@ -134,10 +89,12 @@ export async function importUsersService(file, currentUser) {
 
     const month = String(now.getMonth() + 1).padStart(2, "0");
 
-    const folder = `organization-${currentUser.organizationId}/${year}/${month}`;
+    const bucket = getOrganizationBucket(organizationId);
 
-    const updloadedReport = await uploadFile({
-      bucket: process.env.SUPABASE_IMPORT_REPORT_BUCKET,
+    const folder = `import-errors/${year}/${month}`;
+
+    const uploadedReport = await uploadFile({
+      bucket,
 
       folder,
 
@@ -151,19 +108,13 @@ export async function importUsersService(file, currentUser) {
     });
 
     errorReport = {
-      fileName: updloadedReport.fileName,
+      fileName: uploadedReport.fileName,
 
-      downloadUrl: updloadedReport.downloadUrl,
+      downloadUrl: uploadedReport.downloadUrl,
 
       expiresIn: 3600,
     };
   }
-
-  /*
-  ==========================================
-      Response
-  ==========================================
-  */
 
   const response = buildImportResponse({
     totalRows: rows.length,

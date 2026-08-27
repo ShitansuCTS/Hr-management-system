@@ -133,7 +133,7 @@ model User {
   // Personal Details
   // =========================
   profileImageUrl      String?
-  profileImagePublicId String? // 🔥 ADD THIS
+  
   gender               Gender?
   dateOfBirth          DateTime?
   fatherName           String?
@@ -205,7 +205,8 @@ model User {
   // =========================
   // Documents
   // =========================
-  documents UserDocument[]
+  documents         UserDocument[]
+  uploadedDocuments UserDocument[] @relation("UploadedDocuments")
 
   // =========================
   // Attendance Status
@@ -448,20 +449,25 @@ model UserDocument {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
+  uploadedBy   User   @relation("UploadedDocuments", fields: [uploadedById], references: [id])
+  uploadedById String
+
   documentType   String
   documentName   String
-  documentNumber String?
-  fileUrl        String
-  filePublicId   String?
-  fileType       String?
+  
+  storagePath    String
+  mimeType       String
+  fileSize       Int
 
   isVerified Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId])
+  @@unique([organizationId, userId, documentType])
   @@index([organizationId])
+  @@index([userId])
+  @@index([uploadedById])
 }
 
 model Attendance {

@@ -1,38 +1,54 @@
-import cloudinary from "@/lib/cloudinary";
+import { randomUUID } from "crypto";
 
-export async function uploadProfileImage(file) {
-  if (!file || file.size === 0) {
+import { uploadFile } from "@/services/storage/uploadFile.service";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
+
+export async function uploadProfileImage(file, currentUser, employeeId) {
+  try {
+    if (!file || file.size === 0) {
+      return null;
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    let extension = "jpg";
+
+    if (file.type === "image/png") {
+      extension = "png";
+    }
+
+    const bucket = getOrganizationBucket(currentUser.organizationId);
+
+    const safeEmployeeId = employeeId.trim().replace(/[^A-Za-z0-9_-]/g, "_");
+
+    const fileName = `${randomUUID()}.${extension}`;
+
+    const folder = `profile-images/${safeEmployeeId}`;
+
+    const uploadedFile = await uploadFile({
+      bucket,
+      folder,
+      fileName,
+      buffer,
+      contentType: file.type,
+    });
+
     return {
-      profileImageUrl: null,
-      profileImagePublicId: null,
+      bucket: uploadedFile.bucket,
+      storagePath: uploadedFile.storagePath,
     };
+  } catch (error) {
+    console.error("Upload Profile Image Service Error:", error);
+
+    if (error.statusCode) {
+      throw error;
+    }
+
+    const customError = new Error("Failed to upload profile image.");
+
+    customError.statusCode = 500;
+
+    throw customError;
   }
-
-  const bytes = await file.arrayBuffer();
-
-  const buffer = Buffer.from(bytes);
-
-  const uploadResult = await new Promise((resolve, reject) => {
-    cloudinary.uploader
-      .upload_stream(
-        {
-          folder: "hrms/profile-images",
-          resource_type: "image",
-        },
-        (error, result) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        }
-      )
-      .end(buffer);
-  });
-
-  return {
-    profileImageUrl: uploadResult.secure_url,
-
-    profileImagePublicId: uploadResult.public_id,
-  };
 }
