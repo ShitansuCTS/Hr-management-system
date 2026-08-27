@@ -8,13 +8,18 @@ import { createFinancialDetails } from "./financial.service";
 import { allocateDefaultLeaveBalances } from "./leaveBalance.service";
 import { sendWelcomeEmail } from "./welcomeEmail.service";
 
-export async function createUserService(userData, currentUser) {
-  try {
-    const { profileImageUrl, profileImagePublicId } = await uploadProfileImage(
-      userData.profileImage
-    );
+import { deleteFile } from "@/services/storage/deleteFile.service";
 
+import { createSignedUrl } from "@/services/storage/createSignedUrl.service";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
+
+export async function createUserService(userData, currentUser) {
+  let uploadedProfileImage = null;
+
+  try {
     const employeeId = `CTSL${userData.employeeId}`;
+
+    uploadedProfileImage = await uploadProfileImage(userData.profileImage, currentUser, employeeId);
 
     const hashedPassword = await bcrypt.hash(process.env.DEFAULT_USER_PASSWORD, 10);
 
@@ -33,9 +38,7 @@ export async function createUserService(userData, currentUser) {
 
           phone: userData.phone,
 
-          profileImageUrl,
-
-          profileImagePublicId,
+          profileImageUrl: uploadedProfileImage?.storagePath ?? null,
 
           designationId: userData.designation,
 
@@ -91,16 +94,37 @@ export async function createUserService(userData, currentUser) {
         },
       });
 
-      await allocateDefaultLeaveBalances(tx, createdUser.id);
+      await allocateDefaultLeaveBalances(tx, createdUser.id, currentUser.organizationId);
 
       return createdUser;
     });
 
     await sendWelcomeEmail(user);
 
-    return user;
+    const { password, ...safeUser } = user;
+
+    return safeUser;
   } catch (error) {
     console.error("Create User Service:", error);
+
+    if (uploadedProfileImage) {
+      try {
+        await deleteFile({
+          bucket: uploadedProfileImage.bucket,
+          storagePath: uploadedProfileImage.storagePath,
+        });
+      } catch (cleanupError) {
+        console.error("CRITICAL: Failed to cleanup profile image after user creation failure:", {
+          organizationId: currentUser.organizationId,
+
+          employeeId,
+
+          storagePath: uploadedProfileImage.storagePath,
+
+          error: cleanupError,
+        });
+      }
+    }
 
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       const target = error.meta?.target || [];
@@ -173,10 +197,20 @@ export async function getAllUsersDetailsService(currentUser, departmentId) {
       select: {
         id: true,
         fullName: true,
-        designation: true,
+        designation: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         email: true,
         phone: true,
-        department: true,
+        department: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         employeeId: true,
         profileImageUrl: true,
         lastLoginAt: true,
@@ -190,7 +224,44 @@ export async function getAllUsersDetailsService(currentUser, departmentId) {
       },
     });
 
-    return users;
+    const bucket = getOrganizationBucket(organizationId);
+
+    const usersWithProfileImages = await Promise.all(
+      users.map(async (user) => {
+        if (!user.profileImageUrl) {
+          return user;
+        }
+
+        try {
+          const signedUrl = await createSignedUrl({
+            bucket,
+            storagePath: user.profileImageUrl,
+            expiresIn: 300,
+          });
+
+          console.log("image link",signedUrl.signedUrl);
+          
+          return {
+            ...user,
+            profileImageUrl: signedUrl.signedUrl,
+          };
+
+        } catch (error) {
+          console.error("Failed to generate profile image URL:", {
+            userId: user.id,
+            organizationId,
+            error,
+          });
+
+          return {
+            ...user,
+            profileImageUrl: null,
+          };
+        }
+      })
+    );
+
+    return usersWithProfileImages;
   } catch (error) {
     console.error("Get All Users Details Service Error:", error);
 

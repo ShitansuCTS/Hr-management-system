@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
+import { createSignedUrl } from "@/services/storage/createSignedUrl.service";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
+
 export async function getUserProfileService(employeeId, currentUser) {
   try {
     if (!employeeId || typeof employeeId !== "string") {
@@ -16,9 +19,7 @@ export async function getUserProfileService(employeeId, currentUser) {
     const user = await prisma.user.findFirst({
       where: {
         employeeId: employeeId.trim(),
-
         organizationId,
-
         isDeleted: false,
       },
 
@@ -39,10 +40,32 @@ export async function getUserProfileService(employeeId, currentUser) {
 
     const { password, resetPasswordToken, resetPasswordExpires, ...safeUser } = user;
 
+    let profileImageUrl = null;
+
+    if (safeUser.profileImageUrl) {
+      try {
+        const bucket = getOrganizationBucket(organizationId);
+
+        const signedUrl = await createSignedUrl({
+          bucket,
+          storagePath: safeUser.profileImageUrl,
+          expiresIn: 300,
+        });
+
+        profileImageUrl = signedUrl.signedUrl;
+      } catch (error) {
+        console.error("Failed to generate profile image URL:", {
+          userId: user.id,
+          organizationId,
+          error,
+        });
+      }
+    }
+
     return {
       ...safeUser,
-
-      resetPasswordExpires: resetPasswordExpires ? resetPasswordExpires.toISOString() : null,
+      profileImageUrl,
+      resetPasswordExpires: resetPasswordExpires ? resetPasswordExpires.toString() : null,
     };
   } catch (error) {
     console.error("Get Employee Service Error:", error);
