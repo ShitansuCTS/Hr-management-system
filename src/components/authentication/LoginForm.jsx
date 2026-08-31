@@ -41,8 +41,7 @@ const LoginForm = ({ registerPath, resetPath }) => {
       <h2 className="fs-20 fw-bolder mb-4">Welcome Back</h2>
       <h4 className="fs-13 fw-bold mb-2">Sign in to your Crusaders HRMS account</h4>
       <p className="fs-12 fw-medium text-muted">
-        Welcome to <strong>Crusaders HRMS</strong>. Sign in to manage your workforce from one
-        centralized platform.
+        Welcome to <strong>Crusaders HRMS</strong>, Manage your workforce from one place.
       </p>
       <form className="w-100 mt-4 pt-2" onSubmit={handleLogin}>
         <div className="mb-4">
