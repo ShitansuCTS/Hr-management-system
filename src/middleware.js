@@ -95,9 +95,28 @@ export async function middleware(req) {
   }
 
   try {
-    const { payload } = await jwtVerify(token, secret);
+    await jwtVerify(token, secret);
 
-    const role = payload.role;
+    const authResponse = await fetch(new URL("/api/auth/me", req.url), {
+      headers: {
+        cookie: req.headers.get("cookie") || "",
+      },
+      cache: "no-store",
+    });
+
+    if (!authResponse.ok) {
+      const response = NextResponse.redirect(new URL(LOGIN_PATH, req.url));
+      response.cookies.delete("auth_token");
+      return response;
+    }
+
+    const authData = await authResponse.json();
+    const role = authData?.user?.role;
+    if (role !== "ADMIN" && role !== "EMPLOYEE") {
+      const response = NextResponse.redirect(new URL(LOGIN_PATH, req.url));
+      response.cookies.delete("auth_token");
+      return response;
+    }
 
     // =========================
     // ROOT (/)

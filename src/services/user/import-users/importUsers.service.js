@@ -18,7 +18,7 @@ export async function importUsersService(file, currentUser) {
 
   const importedEmployeeIdSet = new Set();
 
-  const lookupMaps = await buildLookupMaps(currentUser.organizationId);
+  const lookupMaps = await buildLookupMaps(currentUser);
 
   const batch = createEmptyBatch();
 
@@ -30,7 +30,7 @@ export async function importUsersService(file, currentUser) {
     try {
       const result = await validateEmployeeRow(
         rows[index],
-        index + 2,
+        rows[index].excelRow,
         lookupMaps,
         importedEmailSet,
         importedEmployeeIdSet
@@ -50,7 +50,16 @@ export async function importUsersService(file, currentUser) {
 
       const currentYear = new Date().getFullYear();
 
-      await createBatchObjects(result.employee, currentUser, batch, currentYear);
+      await createBatchObjects(
+        {
+          ...result.employee,
+          excelRow: rows[index].excelRow,
+          sourceRow: rows[index],
+        },
+        currentUser,
+        batch,
+        currentYear
+      );
     } catch (error) {
       batch.statistics.failed++;
 
@@ -61,7 +70,7 @@ export async function importUsersService(file, currentUser) {
         originalRow: rows[index],
         errors: [
           {
-            row: index + 2,
+            row: rows[index].excelRow,
             field: "SYSTEM",
             value: null,
             message: error.message,
@@ -72,7 +81,8 @@ export async function importUsersService(file, currentUser) {
   }
 
   if (batch.data.employees.length > 0) {
-    await processChunks(batch, currentUser.organizationId);
+    const persistenceFailures = await processChunks(batch, currentUser.organizationId);
+    failedRows.push(...persistenceFailures);
   }
 
   let errorReport = null;

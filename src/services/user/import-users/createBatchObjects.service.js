@@ -88,10 +88,16 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
     esicNo: employee.esicNo,
   };
 
+  const payrollSettings = {
+    id: randomUUID(),
+    userId,
+  };
+
   const leaveBalances = DEFAULT_LEAVE_BALANCES.map((leave) => ({
     id: randomUUID(),
 
     userId,
+    organizationId: currentUser.organizationId,
 
     leaveType: leave.leaveType,
 
@@ -107,6 +113,9 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
   batch.data.employees.push({
     user,
     financial,
+    payrollSettings,
     leaveBalances,
+    excelRow: employee.excelRow,
+    sourceRow: employee.sourceRow,
   });
 }

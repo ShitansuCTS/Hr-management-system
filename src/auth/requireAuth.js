@@ -41,15 +41,17 @@ export async function requireAuth(
                     fullName: true,
                     email: true,
                     role: true,
-                    organizationId: true
+                    organizationId: true,
+                    status: true,
+                    isDeleted: true
                 }
             });
 
-        if (!user) {
+        if (!user || user.status !== "ACTIVE" || user.isDeleted) {
             return {
                 success: false,
                 status: 401,
-                message: "User not found"
+                message: "Unauthorized"
             };
         }
 
@@ -66,10 +68,8 @@ export async function requireAuth(
             };
         }
 
-        return {
-            success: true,
-            user
-        };
+        const { status, isDeleted, ...currentUser } = user;
+        return { success: true, user: currentUser };
 
     } catch (error) {
 

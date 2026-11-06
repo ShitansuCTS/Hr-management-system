@@ -7,6 +7,7 @@ import {
   FiFileText,
   FiCheckCircle,
   FiAlertCircle,
+  FiX,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 
@@ -24,6 +25,7 @@ const Importexcel = () => {
   const [result, setResult] = useState(null);
 
   const [errorReport, setErrorReport] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const resetImport = () => {
     setSelectedFile(null);
@@ -60,7 +62,7 @@ const Importexcel = () => {
       const link = document.createElement("a");
 
       link.href = url;
-      link.download = "employee-template.xlsx";
+      link.download = "employee-import-template.xlsx";
 
       document.body.appendChild(link);
 
@@ -68,7 +70,7 @@ const Importexcel = () => {
 
       link.remove();
 
-      window.URL.revokeObjectURL(url);
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 1000);
     } catch (error) {
       console.error(error);
       toast.error(error.message);
@@ -81,20 +83,20 @@ const Importexcel = () => {
         Select File
   =============================== */
 
-  const handleFileChange = (e) => {
-    if (!e.target.files.length) return;
-
-    const file = e.target.files[0];
+  const selectFile = (file) => {
+    if (!file) return;
 
     const extension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
 
-    if (![".xlsx", ".xls"].includes(extension)) {
-      alert("Only Excel files are allowed.");
+    if (extension !== ".xlsx") {
+      toast.error("Please choose an .xlsx Excel file.");
+      if (fileRef.current) fileRef.current.value = "";
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      alert("Maximum file size is 10 MB.");
+      toast.error("Excel files must be 10 MB or smaller.");
+      if (fileRef.current) fileRef.current.value = "";
       return;
     }
 
@@ -107,6 +109,10 @@ const Importexcel = () => {
     setProgress(0);
 
     setUploadStatus("");
+  };
+
+  const handleFileChange = (event) => {
+    selectFile(event.target.files?.[0]);
   };
 
   /* ===============================
@@ -138,9 +144,10 @@ const Importexcel = () => {
       setProgress(40);
       setUploadStatus("Validating employee records...");
 
-      const data = await response.json();
-
-      console.log("IMPORT RESPONSE", data);
+      const data = await response.json().catch(() => null);
+      if (!data) {
+        throw new Error("The server returned an invalid import response.");
+      }
 
       setProgress(80);
       setUploadStatus("Importing employees...");
@@ -179,19 +186,25 @@ const Importexcel = () => {
       const successData = data.body || data;
 
       if (successData.data) {
-        setResult(successData.data);
+        const importData = successData.data;
+        const summary = importData.summary || importData;
+        setResult(summary);
 
-        if (successData.data.errorReport) {
-          setErrorReport(successData.data.errorReport);
+        if (importData.errorReport) {
+          setErrorReport(importData.errorReport);
+        }
+
+        if (summary.failed > 0) {
+          toast.error(
+            `${summary.inserted} employees imported. ${summary.failed} rows need attention.`
+          );
+        } else {
+          toast.success(successData.message || "Employees imported successfully.");
         }
       }
 
-      toast.success(successData.message || "Employees imported successfully.");
-
-      setTimeout(() => {
-        setUploading(false);
-        setUploadStatus("");
-      }, 500);
+      setUploading(false);
+      setUploadStatus("");
     } catch (error) {
       console.error(error);
 
@@ -204,43 +217,57 @@ const Importexcel = () => {
   };
 
   return (
-    <div className="offcanvas offcanvas-end" tabIndex={-1} id="importexcel" style={{ width: 520 }}>
+    <div
+      className="offcanvas offcanvas-end"
+      tabIndex={-1}
+      id="importexcel"
+      aria-labelledby="importexcel-title"
+      style={{ width: "min(540px, 100vw)" }}
+    >
       {/* ================= HEADER ================= */}
 
-      <div className="offcanvas-header border-bottom py-3 px-4">
+      <div
+        className="offcanvas-header border-bottom py-3 px-4"
+        style={{
+          background: "linear-gradient(135deg, #f8fbff 0%, #ffffff 68%)",
+        }}
+      >
         <div className="d-flex align-items-center gap-3">
           <div
-            className="rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center"
-            style={{ width: 54, height: 54 }}
+            className="rounded-3 bg-primary-subtle d-flex align-items-center justify-content-center shadow-sm"
+            style={{ width: 52, height: 52 }}
           >
-            <FiUploadCloud size={26} className="text-primary" />
+            <FiUploadCloud size={24} className="text-primary" />
           </div>
 
           <div>
-            <h4 className="fw-bold mb-1">Import Employees</h4>
+            <h4 id="importexcel-title" className="fw-bold mb-1">
+              Import Employees
+            </h4>
 
-            <p className="text-muted mb-0">Upload an Excel sheet to create employees in bulk.</p>
+            <p className="text-muted small mb-0">Add employee records securely in one step.</p>
           </div>
         </div>
 
-        <button className="btn-close" data-bs-dismiss="offcanvas"></button>
+        <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
       </div>
 
       {/* ================= BODY ================= */}
 
       <div className="offcanvas-body p-4">
         {/* Instructions */}
-        <div className="card shadow-sm border-0 mb-4">
+        <div className="card shadow-sm border mb-4" style={{ borderRadius: 16 }}>
           <div className="card-body">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div>
-                <h6 className="fw-bold mb-1">Import Instructions</h6>
+                <h6 className="fw-bold mb-1">Prepare your spreadsheet</h6>
                 <small className="text-muted">
-                  Download the template before uploading your employee data.
+                  The template includes required fields, accepted values, and formatting guidance.
                 </small>
               </div>
 
               <button
+                type="button"
                 className="btn btn-sm btn-outline-primary"
                 disabled={downloadingTemplate}
                 onClick={getTemplate}
@@ -248,12 +275,12 @@ const Importexcel = () => {
                 {downloadingTemplate ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-2"></span>
-                    Downloading...
+                    Preparing...
                   </>
                 ) : (
                   <>
                     <FiDownload className="me-1" />
-                    Template
+                    Download template
                   </>
                 )}
               </button>
@@ -262,22 +289,22 @@ const Importexcel = () => {
             <div className="border-top pt-3">
               <div className="d-flex align-items-start gap-2 mb-2">
                 <FiCheckCircle className="text-success mt-1" size={14} />
-                <small>Download the employee template.</small>
+                <small>Start with the latest employee template.</small>
               </div>
 
               <div className="d-flex align-items-start gap-2 mb-2">
                 <FiCheckCircle className="text-success mt-1" size={14} />
-                <small>Fill employee information.</small>
+                <small>Required fields are marked with an asterisk.</small>
               </div>
 
               <div className="d-flex align-items-start gap-2 mb-2">
                 <FiCheckCircle className="text-success mt-1" size={14} />
-                <small>Do not modify the column headers.</small>
+                <small>Columns can be reordered; headers are matched flexibly.</small>
               </div>
 
               <div className="d-flex align-items-start gap-2">
                 <FiCheckCircle className="text-success mt-1" size={14} />
-                <small>Supports .xlsx / .xls (Max 10 MB).</small>
+                <small>Use .xlsx format (maximum 10 MB).</small>
               </div>
             </div>
           </div>
@@ -286,41 +313,62 @@ const Importexcel = () => {
 
         {/* ================= Upload Area ================= */}
 
-        <div className="card border-0 shadow-sm mb-4">
+        <div
+          className="card border-0 shadow-sm mb-4"
+          style={{ borderRadius: 16, overflow: "hidden" }}
+        >
           <div
             className="card-body text-center py-4 px-4"
             onClick={() => {
               if (!uploading) {
-                fileRef.current.click();
+                fileRef.current?.click();
               }
             }}
+            onDragOver={(event) => {
+              event.preventDefault();
+              if (!uploading) setIsDragging(true);
+            }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(event) => {
+              event.preventDefault();
+              setIsDragging(false);
+              if (!uploading) selectFile(event.dataTransfer.files?.[0]);
+            }}
             style={{
-              border: "2px dashed #d7dee8",
-              borderRadius: "14px",
+              border: `2px dashed ${isDragging ? "#2257a7" : "#cbd8e8"}`,
+              borderRadius: 16,
               cursor: "pointer",
               transition: "all .25s ease",
-              minHeight: "180px",
+              minHeight: 190,
+              background: isDragging ? "#f0f6ff" : "#fbfdff",
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Choose or drop an .xlsx employee spreadsheet"
+            onKeyDown={(event) => {
+              if ((event.key === "Enter" || event.key === " ") && !uploading) {
+                event.preventDefault();
+                fileRef.current?.click();
+              }
             }}
           >
             <div
               className="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center"
-              style={{
-                width: 60,
-                height: 60,
-                background: "#eef5ff",
-              }}
+              style={{ width: 60, height: 60, background: "#eef5ff" }}
             >
               <FiUploadCloud className="text-primary" size={30} />
             </div>
 
-            <h6 className="fw-bold mb-1">Upload Employee Excel</h6>
+            <h6 className="fw-bold mb-1">
+              {isDragging ? "Drop your spreadsheet here" : "Choose an employee spreadsheet"}
+            </h6>
 
             <p className="text-muted small mb-3">
-              Drag & drop your Excel file here or click to browse.
+              Drag and drop your .xlsx file here, or click to browse.
             </p>
 
             <div className="mt-3 text-muted small">
-              Supported: <strong>.xlsx</strong>, <strong>.xls</strong> • Max 10 MB
+              <strong>.xlsx</strong> only <span className="mx-1">·</span> Maximum 10 MB
             </div>
 
             <input
@@ -328,8 +376,9 @@ const Importexcel = () => {
               hidden
               ref={fileRef}
               type="file"
-              accept=".xlsx,.xls"
+              accept=".xlsx"
               onChange={handleFileChange}
+              onClick={(event) => event.stopPropagation()}
             />
           </div>
         </div>
@@ -337,10 +386,10 @@ const Importexcel = () => {
         {/* ================= Selected File ================= */}
 
         {selectedFile && (
-          <div className="card border-0 shadow-sm mb-4">
+          <div className="card border shadow-sm mb-4" style={{ borderRadius: 14 }}>
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center min-w-0">
                   <div
                     className="rounded-circle d-flex align-items-center justify-content-center me-3"
                     style={{
@@ -353,7 +402,9 @@ const Importexcel = () => {
                   </div>
 
                   <div>
-                    <div className="fw-semibold">{selectedFile.name}</div>
+                    <div className="fw-semibold text-truncate" style={{ maxWidth: 250 }}>
+                      {selectedFile.name}
+                    </div>
 
                     <small className="text-muted">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -364,6 +415,16 @@ const Importexcel = () => {
                 <span className="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
                   Ready to Import
                 </span>
+                {!uploading && (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-light ms-2"
+                    aria-label="Remove selected file"
+                    onClick={() => resetImport()}
+                  >
+                    <FiX />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -489,11 +550,11 @@ const Importexcel = () => {
                 </div>
 
                 <div className="flex-grow-1">
-                  <h6 className="fw-bold mb-2">Validation Errors Found</h6>
+                  <h6 className="fw-bold mb-2">Rows need attention</h6>
 
                   <p className="text-muted small mb-3">
-                    Some employee records could not be imported. Download the validation report,
-                    correct the highlighted rows and upload the file again.
+                    Some employee records could not be imported. Download the report, correct the
+                    affected rows, and upload the file again.
                   </p>
 
                   <a
@@ -516,11 +577,17 @@ const Importexcel = () => {
 
       <div className="border-top p-4 bg-white">
         <div className="d-flex justify-content-end gap-2">
-          <button className="btn btn-light px-4" data-bs-dismiss="offcanvas" disabled={uploading}>
+          <button
+            type="button"
+            className="btn btn-light px-4"
+            data-bs-dismiss="offcanvas"
+            disabled={uploading}
+          >
             Cancel
           </button>
 
           <button
+            type="button"
             className="btn btn-primary px-4"
             disabled={!selectedFile || uploading}
             onClick={handleImport}

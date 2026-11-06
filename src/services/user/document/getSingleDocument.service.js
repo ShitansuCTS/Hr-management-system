@@ -60,6 +60,9 @@ export async function getSingleDocumentService(employeeId, documentId, currentUs
         id: documentId,
         organizationId,
         userId: targetUser.id,
+        storagePath: {
+          not: null,
+        },
       },
 
       select: {
@@ -70,6 +73,7 @@ export async function getSingleDocumentService(employeeId, documentId, currentUs
         documentName: true,
         storagePath: true,
         mimeType: true,
+        fileType: true,
         fileSize: true,
         isVerified: true,
         createdAt: true,
@@ -85,13 +89,17 @@ export async function getSingleDocumentService(employeeId, documentId, currentUs
       throw error;
     }
 
-    const bucket = getOrganizationBucket(organizationId);
-
-    const signedUrl = await createSignedUrl({
-      bucket,
+    const { signedUrl: downloadUrl } = await createSignedUrl({
+      bucket: getOrganizationBucket(organizationId),
       storagePath: document.storagePath,
       expiresIn: 300,
     });
+
+    if (!downloadUrl) {
+      const error = new Error("Document file is unavailable.");
+      error.statusCode = 404;
+      throw error;
+    }
 
     return {
       id: document.id,
@@ -99,13 +107,14 @@ export async function getSingleDocumentService(employeeId, documentId, currentUs
       organizationId: document.organizationId,
       documentType: document.documentType,
       documentName: document.documentName,
-      mimeType: document.mimeType,
+      mimeType: document.mimeType ?? document.fileType,
+      fileType: document.mimeType ?? document.fileType,
       fileSize: document.fileSize,
       isVerified: document.isVerified,
       createdAt: document.createdAt,
       updatedAt: document.updatedAt,
-      downloadUrl: signedUrl.signedUrl,
-      expiresIn: signedUrl.expiresIn,
+      downloadUrl,
+      expiresIn: 300,
     };
   } catch (error) {
     console.error("Get User Document Service Error:", error);

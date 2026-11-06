@@ -20,7 +20,7 @@ export async function POST(request) {
 
     const result = await importUsersController(request, auth.user);
 
-    return NextResponse.json(result, {
+    return NextResponse.json(result.body, {
       status: result.statusCode,
     });
   } catch (error) {

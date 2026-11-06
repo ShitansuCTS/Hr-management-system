@@ -79,15 +79,15 @@ export async function deleteDocumentService(employeeId, documentId, currentUser)
       },
     });
 
-    const bucket = getOrganizationBucket(organizationId);
-
     try {
-      await deleteFile({
-        bucket,
-        storagePath: document.storagePath,
-      });
+      if (document.storagePath) {
+        await deleteFile({
+          bucket: getOrganizationBucket(organizationId),
+          storagePath: document.storagePath,
+        });
+      }
     } catch (storageError) {
-      console.error("CRITICAL: UserDocument deleted from database but Supabase cleanup failed.", {
+      console.error("CRITICAL: UserDocument deleted from database but file storage cleanup failed.", {
         documentId: document.id,
         organizationId,
         userId: targetUser.id,

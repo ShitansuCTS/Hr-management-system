@@ -332,7 +332,7 @@ const TabNotificationsContent = ({ employeeId }) => {
                   </button>
 
                   <a
-                    href={selectedDoc.fileUrl.replace("/upload/", "/upload/fl_attachment/")}
+                    href={selectedDoc.fileUrl}
                     className="btn btn-primary btn-sm"
                     style={{ borderRadius: "4px" }}
                   >

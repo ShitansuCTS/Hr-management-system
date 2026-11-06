@@ -449,15 +449,19 @@ model UserDocument {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
 
-  uploadedBy   User   @relation("UploadedDocuments", fields: [uploadedById], references: [id])
-  uploadedById String
+  uploadedBy   User?  @relation("UploadedDocuments", fields: [uploadedById], references: [id], onDelete: SetNull)
+  uploadedById String?
 
   documentType   String
   documentName   String
-  
-  storagePath    String
-  mimeType       String
-  fileSize       Int
+
+  storagePath    String?
+  mimeType       String?
+  fileSize       Int?
+  documentNumber String?
+  fileUrl        String?
+  filePublicId   String?
+  fileType       String?
 
   isVerified Boolean @default(false)
 

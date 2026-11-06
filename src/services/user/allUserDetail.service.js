@@ -16,6 +16,9 @@ import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
 export async function createUserService(userData, currentUser) {
   let uploadedProfileImage = null;
 
+
+  console.log("createUserService called with userData:", userData);
+
   try {
     const employeeId = `CTSL${userData.employeeId}`;
 

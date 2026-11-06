@@ -7,7 +7,6 @@ export const IMPORT_FIELD_TYPES = {
 };
 
 export const EMPLOYEE_IMPORT_COLUMNS = {
-
   employeeId: {
     header: "Employee ID",
     required: true,
@@ -37,19 +36,19 @@ export const EMPLOYEE_IMPORT_COLUMNS = {
 
   designation: {
     header: "Designation",
-    required: true,
+    required: false,
     type: "string",
   },
 
   department: {
     header: "Department",
-    required: true,
+    required: false,
     type: "string",
   },
 
   employmentType: {
     header: "Employment Type",
-    required: true,
+    required: false,
     type: "string",
   },
 
@@ -67,134 +66,211 @@ export const EMPLOYEE_IMPORT_COLUMNS = {
 
   gender: {
     header: "Gender",
-    required: true,
+    required: false,
     type: "string",
   },
 
   dateOfBirth: {
     header: "Date Of Birth",
-    required: true,
+    required: false,
     type: "date",
   },
 
   bloodGroup: {
     header: "Blood Group",
-    required: true,
+    required: false,
     type: "string",
   },
 
   fatherName: {
     header: "Father Name",
-    required: true,
+    required: false,
     type: "string",
   },
 
   motherName: {
     header: "Mother Name",
-    required: true,
+    required: false,
     type: "string",
   },
 
   spouseName: {
     header: "Spouse Name",
-    required: true,
+    required: false,
     type: "string",
   },
 
   bankName: {
     header: "Bank Name",
-    required: true,
+    required: false,
     type: "string",
   },
 
   accountNo: {
     header: "Account Number",
-    required: true,
+    required: false,
     type: "string",
   },
 
   ifscCode: {
     header: "IFSC Code",
-    required: true,
+    required: false,
     type: "string",
   },
 
   panNumber: {
     header: "PAN Number",
-    required: true,
+    required: false,
     type: "string",
   },
 
   uanNo: {
     header: "UAN Number",
-    required: true,
+    required: false,
     type: "string",
   },
 
   esicNo: {
     header: "ESIC Number",
-    required: true,
+    required: false,
     type: "string",
   },
 
   currentAddress: {
     header: "Current Address",
-    required: true,
+    required: false,
     type: "string",
   },
 
   permanentAddress: {
     header: "Permanent Address",
-    required: true,
+    required: false,
     type: "string",
   },
 
   city: {
     header: "City",
-    required: true,
+    required: false,
     type: "string",
   },
 
   state: {
     header: "State",
-    required: true,
+    required: false,
     type: "string",
   },
 
   country: {
     header: "Country",
-    required: true,
+    required: false,
     type: "string",
   },
 
   pincode: {
     header: "Pincode",
-    required: true,
+    required: false,
     type: "string",
   },
 
   emergencyContactName: {
     header: "Emergency Contact Name",
-    required: true,
+    required: false,
     type: "string",
   },
 
   emergencyContactPhone: {
     header: "Emergency Contact Phone",
-    required: true,
+    required: false,
     type: "string",
   },
 
   emergencyContactRelation: {
     header: "Emergency Contact Relation",
-    required: true,
+    required: false,
     type: "string",
   },
 
   reportingManagerName: {
     header: "Reporting Manager Name",
-    required: true,
+    required: false,
     type: "string",
   },
-
 };
+
+const HEADER_ALIASES = {
+  employeeid: "employeeId",
+  employeecode: "employeeId",
+  email: "email",
+  emailaddress: "email",
+  fullname: "fullName",
+  employeename: "fullName",
+  phone: "phone",
+  phonenumber: "phone",
+  mobilenumber: "phone",
+  designation: "designation",
+  designationname: "designation",
+  department: "department",
+  departmentname: "department",
+  employmenttype: "employmentType",
+  worklocation: "workLocation",
+  dateofjoining: "dateOfJoining",
+  joiningdate: "dateOfJoining",
+  gender: "gender",
+  dateofbirth: "dateOfBirth",
+  dob: "dateOfBirth",
+  bloodgroup: "bloodGroup",
+  fathername: "fatherName",
+  mothername: "motherName",
+  spousename: "spouseName",
+  bankname: "bankName",
+  accountnumber: "accountNo",
+  accountno: "accountNo",
+  ifsccode: "ifscCode",
+  pannumber: "panNumber",
+  panno: "panNumber",
+  uannumber: "uanNo",
+  uanno: "uanNo",
+  esicnumber: "esicNo",
+  esicno: "esicNo",
+  currentaddress: "currentAddress",
+  permanentaddress: "permanentAddress",
+  city: "city",
+  state: "state",
+  country: "country",
+  pincode: "pincode",
+  emergencycontactname: "emergencyContactName",
+  emergencycontactphone: "emergencyContactPhone",
+  emergencycontactnumber: "emergencyContactPhone",
+  emergencycontactrelation: "emergencyContactRelation",
+  reportingmanagername: "reportingManagerName",
+  reportingmanager: "reportingManagerName",
+};
+
+export function normalizeEmployeeImportHeader(header) {
+  return String(header ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+export function getEmployeeImportField(header) {
+  const normalizedHeader = normalizeEmployeeImportHeader(header);
+  const alias = HEADER_ALIASES[normalizedHeader];
+
+  if (alias) {
+    return alias;
+  }
+
+  return Object.entries(EMPLOYEE_IMPORT_COLUMNS).find(
+    ([, config]) => normalizeEmployeeImportHeader(config.header) === normalizedHeader
+  )?.[0];
+}
+
+export const REQUIRED_EMPLOYEE_IMPORT_FIELDS = [
+  "employeeId",
+  "email",
+  "fullName",
+  "phone",
+  "workLocation",
+  "dateOfJoining",
+];

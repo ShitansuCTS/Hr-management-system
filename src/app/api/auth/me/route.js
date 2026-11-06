@@ -1,22 +1,20 @@
 
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/auth/requireAuth";
 
+export const dynamic = "force-dynamic";
 
 export async function GET(req) {
-    try {
-        const token = req.cookies.get("auth_token")?.value;
-        if (!token) {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        return NextResponse.json({
-            user: {
-                id: decoded.userId,
-                role: decoded.role,
-            },
-        });
-    } catch {
-        return NextResponse.json({ user: null });
+    const auth = await requireAuth(req);
+
+    if (!auth.success) {
+        return NextResponse.json({ user: null }, { status: auth.status });
     }
+
+    return NextResponse.json({
+        user: {
+            id: auth.user.id,
+            role: auth.user.role,
+        },
+    });
 }

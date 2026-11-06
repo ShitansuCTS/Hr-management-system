@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
+import { createSignedUrl } from "@/services/storage/createSignedUrl.service";
 
 export async function getDocumentsService(employeeId, currentUser) {
   try {
@@ -56,13 +58,18 @@ export async function getDocumentsService(employeeId, currentUser) {
       where: {
         organizationId,
         userId: targetUser.id,
+        storagePath: {
+          not: null,
+        },
       },
 
       select: {
         id: true,
         documentType: true,
         documentName: true,
+        storagePath: true,
         mimeType: true,
+        fileType: true,
         fileSize: true,
         isVerified: true,
         createdAt: true,
@@ -74,7 +81,30 @@ export async function getDocumentsService(employeeId, currentUser) {
       },
     });
 
-    return documents;
+    const bucket = getOrganizationBucket(organizationId);
+
+    return Promise.all(
+      documents.map(async (document) => {
+        const { signedUrl: fileUrl } = await createSignedUrl({
+          bucket,
+          storagePath: document.storagePath,
+          expiresIn: 300,
+        });
+
+        return {
+          id: document.id,
+          documentType: document.documentType,
+          documentName: document.documentName,
+          fileType: document.mimeType ?? document.fileType,
+          mimeType: document.mimeType ?? document.fileType,
+          fileSize: document.fileSize,
+          fileUrl,
+          isVerified: document.isVerified,
+          createdAt: document.createdAt,
+          updatedAt: document.updatedAt,
+        };
+      })
+    );
   } catch (error) {
     console.error("Get User Documents Service Error:", error);
 
