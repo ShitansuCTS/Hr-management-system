@@ -72,7 +72,7 @@ const TabNotificationsContent = ({ employeeId }) => {
       formData.append("documentName", documentType);
       formData.append("file", file);
 
-      const res = await fetch(`/api/users/users-profile/${employeeId}/documents`, {
+      const res = await fetch(`/api/v1/users/${employeeId}/documents`, {
         method: "POST",
         body: formData,
       });
@@ -102,12 +102,12 @@ const TabNotificationsContent = ({ employeeId }) => {
     try {
       setFetchLoading(true);
 
-      const res = await fetch(`/api/users/users-profile/${employeeId}/documents`);
+      const res = await fetch(`/api/v1/users/${employeeId}/documents`);
 
       const data = await res.json();
 
       if (res.ok) {
-        setDocuments(data.documents);
+        setDocuments(data.data);
         console.log("The fetched document sare :", data.documents);
       } else {
         console.error(data.message);
@@ -125,7 +125,7 @@ const TabNotificationsContent = ({ employeeId }) => {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/users/users-profile/documents/${documentId}`, {
+      const res = await fetch(`/api/v1/users/${employeeId}/documents/${documentId}`, {
         method: "DELETE",
       });
 
@@ -153,8 +153,6 @@ const TabNotificationsContent = ({ employeeId }) => {
 
   return (
     <div className="tab-pane fade" id="notificationsTab" role="tabpanel">
-
-
       {/* Modal */}
       {showModal && (
         <>
@@ -246,7 +244,6 @@ const TabNotificationsContent = ({ employeeId }) => {
         </>
       )}
 
-
       <div className="">
         {fetchLoading ? (
           <p className="text-muted">Loading documents...</p>
@@ -275,14 +272,10 @@ const TabNotificationsContent = ({ employeeId }) => {
               ))}
             </div>
 
-            <DocumentStorageSidebar
-              document={selectedDoc}
-              onDelete={handleDelete}
-            />
+            <DocumentStorageSidebar document={selectedDoc} onDelete={handleDelete} />
           </div>
         )}
       </div>
-
 
       {/* {selectedDoc && (
         <>
@@ -357,25 +350,15 @@ const TabNotificationsContent = ({ employeeId }) => {
 
 export default TabNotificationsContent;
 
-const SectionTitle = ({
-  sectionName,
-  sectionDescription,
-  onUpload,
-}) => {
+const SectionTitle = ({ sectionName, sectionDescription, onUpload }) => {
   return (
     <div className="d-flex justify-content-between align-items-center mb-4">
       <div className="me-4">
         <h2 className="fs-16 fw-bold mb-1">{sectionName}</h2>
-        <div className="fs-12 text-muted text-truncate-1-line">
-          {sectionDescription}
-        </div>
+        <div className="fs-12 text-muted text-truncate-1-line">{sectionDescription}</div>
       </div>
 
-      <button
-        type="button"
-        className="btn btn-sm btn-light-brand"
-        onClick={onUpload}
-      >
+      <button type="button" className="btn btn-sm btn-light-brand" onClick={onUpload}>
         + Upload Document
       </button>
     </div>
