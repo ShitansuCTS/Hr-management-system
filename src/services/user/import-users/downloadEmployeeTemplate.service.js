@@ -3,87 +3,111 @@ import { EMPLOYEE_IMPORT_COLUMNS } from "@/config/employeeImport.config";
 
 export async function downloadEmployeeTemplateService() {
   const workbook = new ExcelJS.Workbook();
-
   const worksheet = workbook.addWorksheet("Employees");
 
   worksheet.columns = Object.entries(EMPLOYEE_IMPORT_COLUMNS).map(([field, config]) => ({
-    header: config.header,
+    header: config.required ? `${config.header} *` : config.header,
     key: field,
   }));
 
   worksheet.getRow(1).font = {
     bold: true,
+    color: { argb: "FFFFFFFF" },
   };
-
-  worksheet.views = [
-    {
-      state: "frozen",
-      ySplit: 1,
-    },
-  ];
-
+  worksheet.getRow(1).fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FF2257A7" },
+  };
+  worksheet.getRow(1).height = 24;
+  worksheet.getRow(1).alignment = { vertical: "middle", wrapText: true };
+  worksheet.views = [{ state: "frozen", ySplit: 1 }];
   worksheet.autoFilter = {
     from: "A1",
-    to: {
-      row: 1,
-      column: worksheet.columnCount,
-    },
+    to: { row: 1, column: worksheet.columnCount },
   };
 
-  worksheet.addRow({
-    employeeId: "1001",
-    email: "john.doe@example.com",
-    fullName: "John Doe",
-    phone: "9876543210",
-    designation: "Software Engineer",
-    department: "IT",
-    employmentType: "FULL_TIME",
-    workLocation: "Hyderabad",
-    dateOfJoining: new Date(2026, 0, 15),
-    gender: "MALE",
-    dateOfBirth: new Date(2000, 0, 15),
-    bloodGroup: "O+",
-    fatherName: "Robert Doe",
-    motherName: "Jane Doe",
-    spouseName: "",
-    bankName: "State Bank of India",
-    accountNo: "123456789012",
-    ifscCode: "SBIN0001234",
-    panNumber: "ABCDE1234F",
-    uanNo: "100123456789",
-    esicNo: "1234567890",
-    currentAddress: "123 Main Street",
-    permanentAddress: "123 Main Street",
-    city: "Hyderabad",
-    state: "Telangana",
-    country: "India",
-    pincode: "500001",
-    emergencyContactName: "Jane Doe",
-    emergencyContactPhone: "9876543211",
-    emergencyContactRelation: "Mother",
-    reportingManagerName: "Rahul Sharma",
-  });
+  for (const field of [
+    "employeeId",
+    "phone",
+    "emergencyContactPhone",
+    "accountNo",
+    "uanNo",
+    "esicNo",
+    "pincode",
+  ]) {
+    worksheet.getColumn(field).numFmt = "@";
+  }
 
-  ["dateOfJoining", "dateOfBirth"].forEach((key) => {
-    const column = worksheet.getColumn(key);
+  worksheet.getColumn("dateOfJoining").numFmt = "dd-mm-yyyy";
+  worksheet.getColumn("dateOfBirth").numFmt = "dd-mm-yyyy";
 
-    column.eachCell((cell, rowNumber) => {
-      if (rowNumber > 1 && cell.value) {
-        cell.numFmt = "dd-mm-yyyy";
-      }
-    });
-  });
+  for (const [field, values] of Object.entries({
+    employmentType: ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERN"],
+    gender: ["MALE", "FEMALE", "OTHER"],
+    bloodGroup: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+  })) {
+    for (let rowNumber = 2; rowNumber <= 5000; rowNumber++) {
+      worksheet.getCell(rowNumber, worksheet.getColumn(field).number).dataValidation = {
+        type: "list",
+        allowBlank: true,
+        formulae: [`"${values.join(",")}"`],
+      };
+    }
+  }
 
   worksheet.columns.forEach((column) => {
-    let maxLength = 15;
+    column.width = Math.max(16, String(column.header).length + 3);
+  });
 
-    column.eachCell({ includeEmpty: true }, (cell) => {
-      const value = cell.value ? cell.value.toString() : "";
-
-      maxLength = Math.max(maxLength, value.length);
-    });
-
-    column.width = maxLength + 2;
+  const instructions = workbook.addWorksheet("Read Me");
+  instructions.columns = [
+    { header: "Employee Import Guide", key: "title", width: 28 },
+    { header: "Details", key: "details", width: 100 },
+  ];
+  instructions.addRows([
+    {
+      title: "Required columns",
+      details:
+        "Complete every column marked with *. Employee ID, Email, Full Name, Phone, Work Location, and Date Of Joining are required.",
+    },
+    {
+      title: "Department and designation",
+      details:
+        "Optional. Use existing department and designation names. A designation must belong to the selected department.",
+    },
+    {
+      title: "Accepted values",
+      details:
+        "Employment Type: FULL_TIME, PART_TIME, CONTRACT, INTERN. Gender: MALE, FEMALE, OTHER. Blood Group: A+, A-, B+, B-, AB+, AB-, O+, O-.",
+    },
+    {
+      title: "Dates",
+      details:
+        "Enter dates as DD-MM-YYYY or use the date picker. The import worksheet accepts flexible column order and case-insensitive header names.",
+    },
+    {
+      title: "Identifiers",
+      details:
+        "Keep Employee ID, phone numbers, and account identifiers as text to preserve leading zeroes.",
+    },
+    {
+      title: "Import behavior",
+      details:
+        "Each imported employee receives the Employee role, default payroll settings, and the same default leave balances as an employee created in the app.",
+    },
+  ]);
+  instructions.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+  instructions.getRow(1).fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FF2257A7" },
+  };
+  instructions.getColumn("details").alignment = { wrapText: true, vertical: "top" };
+  instructions.eachRow((row, rowNumber) => {
+    if (rowNumber > 1) {
+      row.height = 36;
+    }
   });
 
   const buffer = Buffer.from(await workbook.xlsx.writeBuffer());

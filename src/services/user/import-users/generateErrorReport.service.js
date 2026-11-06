@@ -1,5 +1,5 @@
 import ExcelJS from "exceljs";
-import { EMPLOYEE_IMPORT_COLUMNS } from "@/config/employeeImport.config";
+import { getEmployeeImportField } from "@/config/employeeImport.config";
 
 export async function generateErrorReport({ headers, failedRows }) {
   try {
@@ -38,13 +38,9 @@ export async function generateErrorReport({ headers, failedRows }) {
       },
     };
 
-    const headerMap = Object.fromEntries(
-      Object.entries(EMPLOYEE_IMPORT_COLUMNS).map(([field, config]) => [config.header, field])
-    );
-
     for (const failedRow of failedRows) {
       const values = headers.map((header) => {
-        const field = headerMap[header];
+        const field = getEmployeeImportField(header);
 
         let value = failedRow.originalRow[field] ?? "";
 

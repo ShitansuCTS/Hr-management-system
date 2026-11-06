@@ -384,6 +384,43 @@ const createUserSchema = z
     }
   });
 
+function normalizeValidatedUserData(data) {
+  return {
+    employeeId: data.employeeId,
+    email: data.email.toLowerCase(),
+    fullName: clean(data.fullName),
+    phone: data.phone,
+    designation: data.designation || null,
+    department: data.department || null,
+    employmentType: data.employmentType || null,
+    workLocation: clean(data.workLocation) || null,
+    dateOfJoining: data.dateOfJoining ? new Date(data.dateOfJoining) : null,
+    gender: data.gender || null,
+    dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+    bloodGroup: data.bloodGroup || null,
+    fatherName: clean(data.fatherName) || null,
+    motherName: clean(data.motherName) || null,
+    spouseName: clean(data.spouseName) || null,
+    bankName: clean(data.bankName) || null,
+    accountNo: data.accountNo || null,
+    ifscCode: data.ifscCode?.toUpperCase() || null,
+    panNumber: data.panNumber?.toUpperCase() || null,
+    uanNo: data.uanNo || null,
+    esicNo: data.esicNo || null,
+    currentAddress: clean(data.currentAddress) || null,
+    permanentAddress: clean(data.permanentAddress) || null,
+    city: clean(data.city) || null,
+    state: clean(data.state) || null,
+    country: clean(data.country) || null,
+    pincode: data.pincode || null,
+    emergencyContactName: clean(data.emergencyContactName) || null,
+    emergencyContactPhone: data.emergencyContactPhone || null,
+    emergencyContactRelation: clean(data.emergencyContactRelation) || null,
+    reportingManagerName: clean(data.reportingManagerName) || null,
+    profileImage: data.profileImage,
+  };
+}
+
 export function validateCreateUser(formData) {
   const userData = {
     employeeId: formData.get("employeeId"),
@@ -505,80 +542,11 @@ export function validateCreateUser(formData) {
     }
   }
 
-  return {
-    employeeId: result.data.employeeId,
-
-    email: result.data.email.toLowerCase(),
-
-    fullName: clean(result.data.fullName),
-
-    phone: result.data.phone,
-
-    designation: result.data.designation || null,
-
-    department: result.data.department || null,
-
-    employmentType: result.data.employmentType || null,
-
-    workLocation: clean(result.data.workLocation) || null,
-
-    dateOfJoining: result.data.dateOfJoining ? new Date(result.data.dateOfJoining) : null,
-
-    gender: result.data.gender || null,
-
-    dateOfBirth: result.data.dateOfBirth ? new Date(result.data.dateOfBirth) : null,
-
-    bloodGroup: result.data.bloodGroup || null,
-
-    fatherName: clean(result.data.fatherName) || null,
-
-    motherName: clean(result.data.motherName) || null,
-
-    spouseName: clean(result.data.spouseName) || null,
-
-    bankName: clean(result.data.bankName) || null,
-
-    accountNo: result.data.accountNo || null,
-
-    ifscCode: result.data.ifscCode?.toUpperCase() || null,
-
-    panNumber: result.data.panNumber?.toUpperCase() || null,
-
-    uanNo: result.data.uanNo || null,
-
-    esicNo: result.data.esicNo || null,
-
-    currentAddress: clean(result.data.currentAddress) || null,
-
-    permanentAddress: clean(result.data.permanentAddress) || null,
-
-    city: clean(result.data.city) || null,
-
-    state: clean(result.data.state) || null,
-
-    country: clean(result.data.country) || null,
-
-    pincode: result.data.pincode || null,
-
-    emergencyContactName: clean(result.data.emergencyContactName) || null,
-
-    emergencyContactPhone: result.data.emergencyContactPhone || null,
-
-    emergencyContactRelation: clean(result.data.emergencyContactRelation) || null,
-
-    reportingManagerName: clean(result.data.reportingManagerName) || null,
-
-    profileImage: result.data.profileImage,
-  };
+  return normalizeValidatedUserData(result.data);
 }
 
 export function validateImportedUser(data) {
   const employee = createUserSchema.parse(data);
 
-  return {
-    ...employee,
-    dateOfJoining: employee.dateOfJoining ? new Date(employee.dateOfJoining) : null,
-
-    dateOfBirth: employee.dateOfBirth ? new Date(employee.dateOfBirth) : null,
-  };
+  return normalizeValidatedUserData(employee);
 }

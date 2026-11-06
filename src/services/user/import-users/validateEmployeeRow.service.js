@@ -21,33 +21,43 @@ export async function validateEmployeeRow(
   const employee = {};
 
   for (const field in EMPLOYEE_IMPORT_COLUMNS) {
-    const column = EMPLOYEE_IMPORT_COLUMNS[field];
-
-    employee[field] = row[field];
+    employee[field] = row[field] ?? "";
   }
 
-  employee.employeeId = String(employee.employeeId);
-  employee.phone = String(employee.phone);
+  for (const field of [
+    "employeeId",
+    "phone",
+    "accountNo",
+    "uanNo",
+    "esicNo",
+    "pincode",
+    "emergencyContactPhone",
+  ]) {
+    employee[field] = employee[field] === "" ? "" : String(employee[field]);
+  }
 
-  employee.accountNo = employee.accountNo ? String(employee.accountNo) : "";
+  if (employee.employmentType) {
+    employee.employmentType = String(employee.employmentType)
+      .trim()
+      .toUpperCase()
+      .replace(/[\s-]+/g, "_");
+  } else {
+    employee.employmentType = undefined;
+  }
 
-  employee.uanNo = employee.uanNo ? String(employee.uanNo) : "";
+  employee.gender = employee.gender ? String(employee.gender).trim().toUpperCase() : undefined;
+  employee.bloodGroup = employee.bloodGroup
+    ? String(employee.bloodGroup).trim().toUpperCase().replace(/\s+/g, "")
+    : undefined;
 
-  employee.esicNo = employee.esicNo ? String(employee.esicNo) : "";
+  if (employee.employmentType === "FULLTIME") employee.employmentType = "FULL_TIME";
+  if (employee.employmentType === "PARTTIME") employee.employmentType = "PART_TIME";
 
-  employee.pincode = employee.pincode ? String(employee.pincode) : "";
-
-  employee.emergencyContactPhone = employee.emergencyContactPhone
-    ? String(employee.emergencyContactPhone)
-    : "";
-
-  employee.dateOfJoining = employee.dateOfJoining
-    ? employee.dateOfJoining.toISOString().split("T")[0]
-    : "";
-
-  employee.dateOfBirth = employee.dateOfBirth
-    ? employee.dateOfBirth.toISOString().split("T")[0]
-    : "";
+  for (const field of ["dateOfJoining", "dateOfBirth"]) {
+    if (employee[field] instanceof Date) {
+      employee[field] = employee[field].toISOString().split("T")[0];
+    }
+  }
 
   /*
   ==========================================
@@ -72,6 +82,19 @@ export async function validateEmployeeRow(
     }
 
     throw error;
+  }
+
+  if (!validatedEmployee.dateOfJoining) {
+    return {
+      success: false,
+      errors: [
+        {
+          row: excelRow,
+          field: "dateOfJoining",
+          message: "Date of joining is required.",
+        },
+      ],
+    };
   }
 
   /*
@@ -120,7 +143,10 @@ export async function validateEmployeeRow(
   ==========================================
   */
 
-  if (employeeIdSet.has(validatedEmployee.employeeId)) {
+  if (
+    employeeIdSet.has(`CTSL${validatedEmployee.employeeId}`) ||
+    employeeIdSet.has(validatedEmployee.employeeId)
+  ) {
     return {
       success: false,
       errors: [
@@ -158,9 +184,10 @@ export async function validateEmployeeRow(
   ==========================================
   */
 
-  const department = departmentMap.get(validatedEmployee.department.trim().toLowerCase());
+  const departmentName = validatedEmployee.department?.trim().toLowerCase();
+  const department = departmentName ? departmentMap.get(departmentName) : null;
 
-  if (!department) {
+  if (departmentName && !department) {
     return {
       success: false,
       errors: [
@@ -181,11 +208,26 @@ export async function validateEmployeeRow(
   ==========================================
   */
 
-  const designationKey = buildDesignationKey(department.id, validatedEmployee.designation);
+  const designationName = validatedEmployee.designation?.trim();
+  const designationKey =
+    department && designationName ? buildDesignationKey(department.id, designationName) : null;
+  const designation = designationKey ? designationMap.get(designationKey) : null;
 
-  const designation = designationMap.get(designationKey);
+  if (designationName && !department) {
+    return {
+      success: false,
+      errors: [
+        {
+          row: excelRow,
+          field: "department",
+          value: validatedEmployee.department,
+          message: "A department is required when a designation is provided.",
+        },
+      ],
+    };
+  }
 
-  if (!designation) {
+  if (designationName && !designation) {
     return {
       success: false,
       errors: [
@@ -206,9 +248,9 @@ export async function validateEmployeeRow(
   ==========================================
   */
 
-  validatedEmployee.departmentId = department.id;
+  validatedEmployee.departmentId = department?.id ?? null;
 
-  validatedEmployee.designationId = designation.id;
+  validatedEmployee.designationId = designation?.id ?? null;
 
   delete validatedEmployee.department;
   delete validatedEmployee.designation;

@@ -18,7 +18,9 @@ export default function AccessDenied() {
       }
       description="You don't have permission to access this page. If you believe this is a mistake, please contact your administrator."
       action={
-        <Link href="/" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
+        <Link href="/" className="btn btn-primary px-4 d-inline-flex al
+        
+        ign-items-center gap-2">
           <FiArrowLeft />
           Back to Dashboard
         </Link>
@@ -26,3 +28,4 @@ export default function AccessDenied() {
     />
   );
 }
+   

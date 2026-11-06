@@ -1,50 +1,68 @@
+export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
+import { requireAuth } from "@/auth/requireAuth";
 import { prisma } from "@/lib/prisma";
-import { verifyToken } from "@/lib/jwt";
-import cloudinary from "@/lib/cloudinary";
+import { deleteDocumentController } from "@/controllers/user/document/deleteDocument.controller";
 
 export async function DELETE(request, { params }) {
-    try {
-        const token = request.cookies.get("auth_token")?.value;
-        if (!token) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  try {
+    const auth = await requireAuth(request, ["ADMIN"]);
 
-        const decoded = verifyToken(token);
-        if (!decoded?.userId) return NextResponse.json({ message: "Invalid token" }, { status: 401 });
-
-        if (decoded.role !== "ADMIN") {
-            return NextResponse.json({ message: "Access denied. Admins only." }, { status: 403 });
-        }
-
-        const { documentId } = params;
-        if (!documentId) return NextResponse.json({ message: "Document ID is required" }, { status: 400 });
-
-        // 🔍 Find the document
-        const document = await prisma.userDocument.findUnique({
-            where: { id: documentId },
-        });
-
-        if (!document) return NextResponse.json({ message: "Document not found" }, { status: 404 });
-
-        // ☁️ Delete from Cloudinary
-        if (document.filePublicId) {
-            await cloudinary.uploader.destroy(document.filePublicId, {
-                resource_type: document.fileType === "application/pdf" ? "raw" : "image",
-            });
-        }
-
-        // 💾 Delete from database
-        await prisma.userDocument.delete({
-            where: { id: documentId },
-        });
-
-        return NextResponse.json({
-            success: true,
-            message: "Document deleted from DB & Cloudinary successfully",
-        });
-
-    } catch (error) {
-        console.error("Document delete error:", error);
-        return NextResponse.json({ success: false, message: "Delete failed" }, { status: 500 });
+    if (!auth.success) {
+      return NextResponse.json(
+        { success: false, message: auth.message },
+        { status: auth.status }
+      );
     }
+
+    const { documentId } = await params;
+
+    if (!documentId?.trim()) {
+      return NextResponse.json(
+        { success: false, message: "Document ID is required." },
+        { status: 400 }
+      );
+    }
+
+    const document = await prisma.userDocument.findFirst({
+      where: {
+        id: documentId.trim(),
+        organizationId: auth.user.organizationId,
+      },
+      select: {
+        user: {
+          select: {
+            employeeId: true,
+          },
+        },
+      },
+    });
+
+    if (!document) {
+      return NextResponse.json(
+        { success: false, message: "Document not found." },
+        { status: 404 }
+      );
+    }
+
+    const result = await deleteDocumentController(
+      document.user.employeeId,
+      documentId.trim(),
+      auth.user
+    );
+
+    return NextResponse.json(result, { status: 200 });
+  } catch (error) {
+    console.error("Delete Document Route Error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Failed to delete document.",
+        errors: error.errors || {},
+      },
+      { status: error.statusCode || 500 }
+    );
+  }
 }
