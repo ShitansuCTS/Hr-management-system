@@ -160,10 +160,8 @@ const Importexcel = () => {
 
         if (errorData.errors?.errorReport) {
           setResult(errorData.errors.summary);
-
           // Store COMPLETE object
           setErrorReport(errorData.errors.errorReport);
-
           toast.error(errorData.message);
 
           setProgress(100);
@@ -571,6 +569,7 @@ const Importexcel = () => {
             </div>
           </div>
         )}
+
       </div>
 
       {/* ================= FOOTER ================= */}

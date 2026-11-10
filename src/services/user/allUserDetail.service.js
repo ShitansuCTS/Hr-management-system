@@ -16,7 +16,6 @@ import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
 export async function createUserService(userData, currentUser) {
   let uploadedProfileImage = null;
 
-
   console.log("createUserService called with userData:", userData);
 
   try {
@@ -86,6 +85,15 @@ export async function createUserService(userData, currentUser) {
           reportingManagerName: userData.reportingManagerName,
 
           organizationId: currentUser.organizationId,
+        },
+      });
+
+      await tx.userActivity.create({
+        data: {
+          userId: createdUser.id,
+          organizationId: currentUser.organizationId,
+          action: "USER_CREATED",
+          description: `Employee account created by ${currentUser.fullName}.`,
         },
       });
 
@@ -243,13 +251,12 @@ export async function getAllUsersDetailsService(currentUser, departmentId) {
             expiresIn: 300,
           });
 
-          console.log("image link",signedUrl.signedUrl);
-          
+          console.log("image link", signedUrl.signedUrl);
+
           return {
             ...user,
             profileImageUrl: signedUrl.signedUrl,
           };
-
         } catch (error) {
           console.error("Failed to generate profile image URL:", {
             userId: user.id,

@@ -32,13 +32,22 @@ export async function POST(req) {
       return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
     }
 
-    // ✅ Update last login time
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        lastLoginAt: new Date(),
-      },
-    });
+    const loginTime = new Date();
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: loginTime },
+      }),
+      prisma.userActivity.create({
+        data: {
+          userId: user.id,
+          organizationId: user.organizationId,
+          action: "LOGIN",
+          description: "Logged in.",
+          createdAt: loginTime,
+        },
+      }),
+    ]);
 
     // ✅ Generate JWT
     const token = jwt.sign(

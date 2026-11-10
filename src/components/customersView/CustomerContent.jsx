@@ -144,7 +144,7 @@ const CustomerContent = () => {
               <div className="tab-pane fade" id="billingTab" role="tabpanel">
                 <TabBillingContent billingHistoryshow={true} user={user} />
               </div>
-              <TabActivityContent />
+              <TabActivityContent employeeId={user?.employeeId} />
               <TabNotificationsContent employeeId={user?.employeeId} />
               <TabConnections />
               <TabSecurity />

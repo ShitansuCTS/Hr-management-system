@@ -93,6 +93,14 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
     userId,
   };
 
+  const activity = {
+    id: randomUUID(),
+    userId,
+    organizationId: currentUser.organizationId,
+    action: "USER_CREATED",
+    description: "Employee account created by bulk import.",
+  };
+
   const leaveBalances = DEFAULT_LEAVE_BALANCES.map((leave) => ({
     id: randomUUID(),
 
@@ -114,6 +122,7 @@ export async function createBatchObjects(employee, currentUser, batch, currentYe
     user,
     financial,
     payrollSettings,
+    activity,
     leaveBalances,
     excelRow: employee.excelRow,
     sourceRow: employee.sourceRow,
