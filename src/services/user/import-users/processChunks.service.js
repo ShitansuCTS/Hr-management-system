@@ -54,6 +54,7 @@ async function persistEmployee(employee) {
     await tx.user.create({ data: employee.user });
     await tx.financialDetails.create({ data: employee.financial });
     await tx.payrollSettings.create({ data: employee.payrollSettings });
+    await tx.userActivity.create({ data: employee.activity });
     await tx.leaveBalance.createMany({ data: employee.leaveBalances });
   });
 }
@@ -85,6 +86,10 @@ export async function processChunks(batch, organizationId) {
 
         await tx.payrollSettings.createMany({
           data: employeeChunk.map(({ payrollSettings }) => payrollSettings),
+        });
+
+        await tx.userActivity.createMany({
+          data: employeeChunk.map(({ activity }) => activity),
         });
 
         await tx.leaveBalance.createMany({

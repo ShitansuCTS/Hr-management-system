@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import TabOverviewContent from "@/components/customersView/TabOverviewContent";
 import TabNotificationsContent from "@/components/customersView/TabNotificationsContent";
+import TabActivityContent from "@/components/customersView/TabActivityContent";
 import TabConnections from "@/components/customersView/TabConnections";
 import TabSecurity from "@/components/customersView/TabSecurity";
 import Profile from "@/components/widgetsList/Profile";
@@ -161,13 +162,7 @@ const ProfileContent = () => {
 
               <TabNotificationsContent employeeId={currentUser?.employeeId} />
 
-              <div className="tab-pane fade" id="activityTab" role="tabpanel">
-                <ComingSoonSection
-                  image="/illustrations/coming-soon.png"
-                  title="No Activity Found"
-                  description="Recent employee activities will appear here."
-                />
-              </div>
+              <TabActivityContent employeeId={currentUser?.employeeId} />
 
               <div className="tab-pane fade" id="connectionTab" role="tabpanel">
                 <ComingSoonSection

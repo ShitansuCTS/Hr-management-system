@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import UserDropdownSkeleton from "@/components/loaders/UserDropdownSkeletonHeader";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const activePosition = ["Active", "Always", "Bussy", "Inactive", "Disabled", "Cutomization"];
 const subscriptionsList = [
@@ -32,9 +33,15 @@ const ProfileModal = () => {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", {
+      const response = await fetch("/api/auth/logout", {
         method: "POST",
       });
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => null);
+        console.error("Logout completed with an activity logging error:", result?.message);
+        toast.error(result?.message || "You were signed out, but the activity could not be saved.");
+      }
 
       // Clear Zustand immediately
       clearAuth();
@@ -43,6 +50,7 @@ const ProfileModal = () => {
       router.refresh();
     } catch (error) {
       console.error("Logout failed:", error);
+      toast.error("Unable to reach the server. Please retry logout.");
     }
   };
 
@@ -57,7 +65,7 @@ const ProfileModal = () => {
           src={user?.profileImageUrl || "/images/avatar/1.png"}
           alt="user-image"
           className="img-fluid user-avtar me-0"
-          style={{ width: "40px", height: "40px",  }}
+          style={{ width: "40px", height: "40px" }}
         />
       </a>
       <div className="dropdown-menu dropdown-menu-end nxl-h-dropdown nxl-user-dropdown">

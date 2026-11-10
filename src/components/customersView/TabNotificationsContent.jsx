@@ -161,7 +161,7 @@ const TabNotificationsContent = ({ employeeId }) => {
 
           <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
             <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content rounded-4 border-0 shadow p-4">
+              <div className="modal-content rounded-1 border-0 shadow p-4">
                 {/* Header */}
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h6 className="fw-semibold mb-0">Upload Document</h6>
@@ -232,11 +232,11 @@ const TabNotificationsContent = ({ employeeId }) => {
 
                 {/* Upload Button */}
                 <button
-                  className="btn btn-primary w-100 rounded-pill"
+                  className="btn btn-primary w-100 rounded-small"
                   onClick={handleUpload}
                   disabled={loading}
                 >
-                  {loading ? "Uploading..." : "Upload xxxxxxxxxxDocument"}
+                  {loading ? "Uploading..." : "Upload Document"}
                 </button>
               </div>
             </div>
@@ -276,74 +276,6 @@ const TabNotificationsContent = ({ employeeId }) => {
           </div>
         )}
       </div>
-
-      {/* {selectedDoc && (
-        <>
-          <div className="modal-backdrop show"></div>
-          <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
-            <div className="modal-dialog modal-md modal-dialog-centered">
-              <div className="modal-content" style={{ borderRadius: "10px" }}>
-            
-                <div className="modal-header">
-                  <h6 className="fw-semibold mb-0">{selectedDoc.documentType}</h6>
-                  <button className="btn-close" onClick={() => setSelectedDoc(null)}></button>
-                </div>
-
-        
-                <div
-                  className="modal-body text-center"
-                  style={{
-                    maxHeight: "400px",
-                    overflowY: "auto",
-                  }}
-                >
-                  {selectedDoc.fileUrl?.toLowerCase().includes(".pdf") ? (
-                    <iframe
-                      src={selectedDoc.fileUrl}
-                      width="100%"
-                      height="350px"
-                      title="PDF Preview"
-                      style={{
-                        borderRadius: "6px",
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={selectedDoc.fileUrl}
-                      alt="preview"
-                      style={{
-                        maxHeight: "350px",
-                        maxWidth: "100%",
-                        objectFit: "contain",
-                        borderRadius: "6px",
-                      }}
-                    />
-                  )}
-                </div>
-
-              
-                <div className="modal-footer d-flex justify-content-between">
-                  <button
-                    className="btn btn-light btn-sm"
-                    onClick={() => setSelectedDoc(null)}
-                    style={{ borderRadius: "4px" }}
-                  >
-                    Close
-                  </button>
-
-                  <a
-                    href={selectedDoc.fileUrl}
-                    className="btn btn-primary btn-sm"
-                    style={{ borderRadius: "4px" }}
-                  >
-                    Download
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )} */}
     </div>
   );
 };
