@@ -21,6 +21,7 @@ export async function getUserProfileService(employeeId, currentUser) {
         employeeId: employeeId.trim(),
         organizationId,
         isDeleted: false,
+        role: "EMPLOYEE",
       },
 
       include: {

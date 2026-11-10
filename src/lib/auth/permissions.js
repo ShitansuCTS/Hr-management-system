@@ -23,6 +23,7 @@ export const ROUTE_PERMISSIONS = {
             "/customers/list",
             "/customers/create",
             "/customers/all",
+            "/customers/employees",
         ],
 
         HOLIDAYS: [
@@ -63,7 +64,6 @@ export const ROUTE_PERMISSIONS = {
         ],
 
         CUSTOMERS: [
-            "/customers/list",
         ],
 
         HOLIDAYS: [

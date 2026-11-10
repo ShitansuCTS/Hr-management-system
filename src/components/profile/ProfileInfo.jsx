@@ -8,11 +8,18 @@ import useImageUpload from "@/hooks/useImageUpload";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import InputTopLabel from "@/components/shared/InputTopLabel";
 import ProfileDetailsSkeleton from "@/components/loaders/ProfileLoader";
-import { useUserStore } from "@/store/useUserStore";
+import { useProfileStore } from "@/store/profile.store";
 
 
 const ProfileInfo = () => {
-  const { user, loading, fetchUser } = useUserStore();
+  const profile = useProfileStore((state) => state.profile);
+  const profileKey = useProfileStore((state) => state.profileKey);
+  const loading = useProfileStore((state) => state.profileLoading);
+  const storeError = useProfileStore((state) => state.profileError);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
+  const user = profileKey === "self" ? profile : null;
+  const profileError = profileKey === "self" ? storeError : "";
+  const isLoading = loading || (!user && !profileError);
 
 
   // helper function
@@ -52,10 +59,10 @@ const ProfileInfo = () => {
 
 
   useEffect(() => {
-    fetchUser();
-  }, []);
-
-  console.log("The user in the prifile section is  , ", user);
+    fetchProfile().catch((error) => {
+      console.error("Failed to load profile details:", error);
+    });
+  }, [fetchProfile]);
 
   // helper function
 
@@ -64,8 +71,12 @@ const ProfileInfo = () => {
     <div className="content-area">
       <PerfectScrollbar>
         <PageHeaderSetting />
-        {loading ? (
+        {isLoading ? (
           <ProfileDetailsSkeleton />
+        ) : profileError ? (
+          <div className="alert alert-danger" role="alert">
+            {profileError}
+          </div>
         ) : (
           <div className="content-area-body">
             <div className="card mb-0">

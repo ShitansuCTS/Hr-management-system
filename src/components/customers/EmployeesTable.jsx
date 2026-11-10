@@ -121,7 +121,7 @@ const EmployeesTable = () => {
         cell: ({ row }) => (
           <button
             className="avatar-text avatar-md"
-            onClick={() => router.push(`/employees/${row.original.employeeId}`)}
+            onClick={() => router.push(`/customers/employees/${row.original.employeeId}`)}
           >
             <FiEye />
           </button>

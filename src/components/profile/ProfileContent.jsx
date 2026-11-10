@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
 import TabOverviewContent from "@/components/customersView/TabOverviewContent";
 import TabNotificationsContent from "@/components/customersView/TabNotificationsContent";
@@ -8,7 +8,7 @@ import TabActivityContent from "@/components/customersView/TabActivityContent";
 import TabConnections from "@/components/customersView/TabConnections";
 import TabSecurity from "@/components/customersView/TabSecurity";
 import Profile from "@/components/widgetsList/Profile";
-import { useAuthStore } from "@/store/authStore";
+import { useProfileStore } from "@/store/profile.store";
 import ProfileSkeleton from "@/components/loaders/ProfileSkeleton";
 import ProfileTabsSkeleton from "@/components/loaders/ProfileTabsSkeleton";
 import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
@@ -16,62 +16,50 @@ import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
 const ProfileContent = () => {
   const params = useParams();
   const employeeIdFromRoute = params?.employeeId;
-  const { user: loggedInUser, loading: userLoading, fetchProfile } = useAuthStore();
-
-  const [targetUser, setTargetUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const profile = useProfileStore((state) => state.profile);
+  const profileKey = useProfileStore((state) => state.profileKey);
+  const profileLoading = useProfileStore((state) => state.profileLoading);
+  const profileError = useProfileStore((state) => state.profileError);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
+  const expectedProfileKey = employeeIdFromRoute
+    ? `employee:${employeeIdFromRoute.trim()}`
+    : "self";
 
   useEffect(() => {
-    const loadProfile = async () => {
-      if (employeeIdFromRoute) {
-        try {
-          setLoading(true);
-          const res = await fetch(`/api/v1/users/users-profile/${employeeIdFromRoute.trim()}`, {
-            method: "GET",
-            credentials: "include",
-          });
-
-          if (!res.ok) {
-            throw new Error("Failed to fetch employee profile");
-          }
-
-          const data = await res.json();
-          setTargetUser(data?.data || null);
-        } catch (error) {
-          console.error("Error fetching employee profile:", error);
-          setTargetUser(null);
-        } finally {
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const userFromServer = await fetchProfile(true);
-        setTargetUser(userFromServer || null);
-      } catch (error) {
-        setTargetUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProfile();
+    fetchProfile(employeeIdFromRoute || null).catch((error) => {
+      console.error("Failed to load profile:", error);
+    });
   }, [employeeIdFromRoute, fetchProfile]);
 
-  const currentUser = employeeIdFromRoute ? targetUser : loggedInUser;
-  const isLoading = employeeIdFromRoute ? loading : userLoading || loading;
+  const currentUser = profileKey === expectedProfileKey ? profile : null;
+  const currentError = profileKey === expectedProfileKey ? profileError : "";
+  const isLoading = profileLoading || (!currentUser && !currentError);
 
   return (
     <>
       <div className="col-xxl-4 col-xl-6 employee-profile-sticky-column h-100">
-        {isLoading ? <ProfileSkeleton /> : <Profile user={currentUser} />}
+        {isLoading ? (
+          <ProfileSkeleton />
+        ) : currentError ? (
+          <div className="alert alert-danger" role="alert">
+            {currentError}
+          </div>
+        ) : (
+          <Profile user={currentUser} />
+        )}
       </div>
 
       <div className="col-xxl-8 col-xl-6 employee-profile-content-column h-100">
         {isLoading ? (
           <ProfileTabsSkeleton />
+        ) : currentError ? (
+          <div className="alert alert-danger" role="alert">
+            {currentError}
+          </div>
+        ) : !currentUser ? (
+          <div className="alert alert-warning" role="alert">
+            Profile details are unavailable.
+          </div>
         ) : (
           <div className="employee-profile-scroll-panel card border-top-0 h-100">
             <div className="card-header p-0 employee-profile-tabs-header">
