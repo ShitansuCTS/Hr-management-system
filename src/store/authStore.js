@@ -91,7 +91,7 @@ export const useAuthStore = create((set, get) => ({
     // Fetch Profile
     // =============================
     fetchProfile: async (force = false) => {
-        if (get().initialized && !force) return;
+        if (get().initialized && !force) return get().user;
 
         try {
             set({
@@ -110,17 +110,19 @@ export const useAuthStore = create((set, get) => ({
                     isAuthenticated: false,
                 });
 
-                return;
+                return null;
             }
 
             const data = await res.json();
+            const user = data.user ?? null;
 
             set({
-                user: data.user ?? null,
+                user,
                 loading: false,
                 initialized: true,
-                isAuthenticated: !!data.user,
+                isAuthenticated: !!user,
             });
+            return user;
         } catch (error) {
             console.error("Fetch Profile Error:", error);
 
@@ -130,6 +132,7 @@ export const useAuthStore = create((set, get) => ({
                 initialized: true,
                 isAuthenticated: false,
             });
+            return null;
         }
     },
 

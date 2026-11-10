@@ -8,7 +8,7 @@ import TabActivityContent from "@/components/customersView/TabActivityContent";
 import TabConnections from "@/components/customersView/TabConnections";
 import TabSecurity from "@/components/customersView/TabSecurity";
 import Profile from "@/components/widgetsList/Profile";
-import { useUserStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/store/authStore";
 import ProfileSkeleton from "@/components/loaders/ProfileSkeleton";
 import ProfileTabsSkeleton from "@/components/loaders/ProfileTabsSkeleton";
 import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
@@ -16,7 +16,7 @@ import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
 const ProfileContent = () => {
   const params = useParams();
   const employeeIdFromRoute = params?.employeeId;
-  const { user: loggedInUser, loading: userLoading, fetchUser } = useUserStore();
+  const { user: loggedInUser, loading: userLoading, fetchProfile } = useAuthStore();
 
   const [targetUser, setTargetUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,8 +48,8 @@ const ProfileContent = () => {
 
       try {
         setLoading(true);
-        const userFromServer = await fetchUser();
-        setTargetUser(userFromServer || loggedInUser || null);
+        const userFromServer = await fetchProfile(true);
+        setTargetUser(userFromServer || null);
       } catch (error) {
         setTargetUser(null);
       } finally {
@@ -58,9 +58,9 @@ const ProfileContent = () => {
     };
 
     loadProfile();
-  }, [employeeIdFromRoute, fetchUser, loggedInUser]);
+  }, [employeeIdFromRoute, fetchProfile]);
 
-  const currentUser = employeeIdFromRoute ? targetUser : loggedInUser || targetUser;
+  const currentUser = employeeIdFromRoute ? targetUser : loggedInUser;
   const isLoading = employeeIdFromRoute ? loading : userLoading || loading;
 
   return (
