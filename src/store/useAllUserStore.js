@@ -44,5 +44,6 @@ export const useAllUsersStore = create((set, get) => ({
         set({
             users: [],
             hasFetched: false,
+            loading: false,
         }),
 }));

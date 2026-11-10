@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FiActivity, FiClock, FiCalendar, FiUser, FiLogIn, FiLogOut, FiCheckCircle, FiArrowDownCircle } from "react-icons/fi";
+import { useProfileStore } from "@/store/profile.store";
 
 const ACTIVITY_LABELS = {
   USER_CREATED: "Account created",
@@ -40,60 +41,22 @@ const ACTIVITY_STYLES = {
 };
 
 const TabActivityContent = ({ employeeId }) => {
-  const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(Boolean(employeeId));
-  const [error, setError] = useState("");
+  const activities = useProfileStore((state) =>
+    state.activityEmployeeId === employeeId ? state.activities : []
+  );
+  const loading = useProfileStore(
+    (state) => state.activityEmployeeId !== employeeId || state.activitiesLoading
+  );
+  const error = useProfileStore((state) =>
+    state.activityEmployeeId === employeeId ? state.activitiesError : ""
+  );
+  const fetchActivities = useProfileStore((state) => state.fetchActivities);
 
   useEffect(() => {
-    let isCurrent = true;
-
-    async function fetchActivities() {
-      if (!employeeId) {
-        setActivities([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      setError("");
-
-      try {
-        const response = await fetch(
-          `/api/v1/users/users-profile/${encodeURIComponent(employeeId)}/activity`,
-          {
-            credentials: "include",
-            cache: "no-store",
-          }
-        );
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.message || "Unable to load employee activity.");
-        }
-
-        if (isCurrent) {
-          setActivities(result.data?.activities || []);
-        }
-      } catch (fetchError) {
-        console.error("Fetch employee activity failed:", fetchError);
-
-        if (isCurrent) {
-          setError(fetchError.message || "Unable to load employee activity.");
-        }
-      } finally {
-        if (isCurrent) {
-          setLoading(false);
-        }
-      }
-    }
-
-    fetchActivities();
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [employeeId]);
+    fetchActivities(employeeId).catch((fetchError) => {
+      console.error("Fetch employee activity failed:", fetchError);
+    });
+  }, [employeeId, fetchActivities]);
 
   return (
     <div className="tab-pane fade" id="activityTab" role="tabpanel">

@@ -1,52 +1,52 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
+import { requireAuth } from "@/auth/requireAuth";
 import { prisma } from "@/lib/prisma";
-import { verifyToken } from "@/lib/jwt";
 
 
 export async function GET(request) {
   try {
-    // 🔐 Auth
-    const token = request.cookies.get("auth_token")?.value;
-    if (!token) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const auth = await requireAuth(request, ["ADMIN", "EMPLOYEE"]);
+    if (!auth.success) {
+      return NextResponse.json({ success: false, message: auth.message }, { status: auth.status });
     }
 
-    const decoded = verifyToken(token);
-    if (!decoded?.userId) {
-      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
-    }
-
-    const userId = decoded.userId;
     const user = await prisma.user.findUnique({
       where: {
-        id: userId, // ✅ MUST be unique field
+        id: auth.user.id,
       },
       include: {
-        financialDetails: true,   // 👈 ADD THIS
-        department: true,      // ✅ Include department
-        designation: true,     // ✅ Include designation
+        financialDetails: true,
+        department: true,
+        designation: true,
       },
     });
 
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: "Profile not found." },
+        { status: 404 }
+      );
+    }
 
     const formattedUser = {
       ...user,
-      password: undefined, // remove
-      resetPasswordToken: undefined, // remove
+      password: undefined,
+      resetPasswordToken: undefined,
       resetPasswordExpires: user.resetPasswordExpires
         ? user.resetPasswordExpires.toString()
         : null,
     };
-
-    // console.log("The user is ", user);
 
     return NextResponse.json({
       success: true,
       user: formattedUser,
     });
   } catch (error) {
-    console.error("Error fetching users:", error);
-    return new Response("Error fetching users", { status: 500 });
+    console.error("Get Current User Profile Route Error:", error);
+    return NextResponse.json(
+      { success: false, message: error.message || "Failed to fetch profile." },
+      { status: error.statusCode || 500 }
+    );
   }
 }

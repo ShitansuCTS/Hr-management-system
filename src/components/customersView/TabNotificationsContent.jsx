@@ -19,6 +19,7 @@ import {
 } from "react-icons/fi";
 import DocumentStorageSidebar from "../storage/DocumentStorageSidebar";
 import EmptyCardComponenets from "./EmptyCardComponenets";
+import { useProfileStore } from "@/store/profile.store";
 
 const documentTypesList = [
   "PAN Card",
@@ -53,8 +54,18 @@ const TabNotificationsContent = ({ employeeId }) => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [documents, setDocuments] = useState([]);
-  const [fetchLoading, setFetchLoading] = useState(false);
+  const documents = useProfileStore((state) =>
+    state.documentsEmployeeId === employeeId ? state.documents : []
+  );
+  const fetchLoading = useProfileStore(
+    (state) => state.documentsEmployeeId !== employeeId || state.documentsLoading
+  );
+  const documentsError = useProfileStore((state) =>
+    state.documentsEmployeeId === employeeId ? state.documentsError : ""
+  );
+  const fetchDocuments = useProfileStore((state) => state.fetchDocuments);
+  const uploadDocument = useProfileStore((state) => state.uploadDocument);
+  const deleteDocument = useProfileStore((state) => state.deleteDocument);
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [fileData, setFileData] = useState(storageFolderData(0, 4));
 
@@ -72,50 +83,17 @@ const TabNotificationsContent = ({ employeeId }) => {
       formData.append("documentName", documentType);
       formData.append("file", file);
 
-      const res = await fetch(`/api/v1/users/${employeeId}/documents`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success("Document uploaded successfully ✅");
-
-        // Reset
-        setDocumentType("");
-        setFile(null);
-        setPreview(null);
-        await fetchDocuments();
-        setShowModal(false);
-      } else {
-        toast.error(data.message || "Upload failed");
-      }
+      await uploadDocument(employeeId, formData);
+      toast.success("Document uploaded successfully");
+      setDocumentType("");
+      setFile(null);
+      setPreview(null);
+      setShowModal(false);
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
-    }
-  };
-  const fetchDocuments = async () => {
-    try {
-      setFetchLoading(true);
-
-      const res = await fetch(`/api/v1/users/${employeeId}/documents`);
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setDocuments(data.data);
-        console.log("The fetched document sare :", data.documents);
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
-      setFetchLoading(false);
     }
   };
 
@@ -124,32 +102,23 @@ const TabNotificationsContent = ({ employeeId }) => {
 
     try {
       setLoading(true);
-
-      const res = await fetch(`/api/v1/users/${employeeId}/documents/${documentId}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success("Document deleted successfully ");
-        // Refresh the document list
-        setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
-      } else {
-        toast.error(data.message || "Delete failed");
-      }
+      await deleteDocument(employeeId, documentId);
+      toast.success("Document deleted successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong while deleting the document");
+      toast.error(error.message || "Something went wrong while deleting the document");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (employeeId) {
-      fetchDocuments();
+      fetchDocuments(employeeId).catch((error) => {
+        console.error("Fetch documents failed:", error);
+      });
     }
-  }, [employeeId]);
+  }, [employeeId, fetchDocuments]);
 
   return (
     <div className="tab-pane fade" id="notificationsTab" role="tabpanel">
@@ -247,6 +216,10 @@ const TabNotificationsContent = ({ employeeId }) => {
       <div className="">
         {fetchLoading ? (
           <p className="text-muted">Loading documents...</p>
+        ) : documentsError ? (
+          <div className="alert alert-danger mx-3" role="alert">
+            {documentsError}
+          </div>
         ) : documents.length === 0 ? (
           <EmptyCardComponenets
             title="No documents uploaded!"

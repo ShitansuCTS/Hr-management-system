@@ -10,58 +10,55 @@ import TabConnections from "./TabConnections";
 import TabSecurity from "./TabSecurity";
 import Profile from "../widgetsList/Profile";
 import CustomerSocalFlower from "./CustomerSocalFlower";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import ProfileSkeleton from "../loaders/ProfileSkeleton";
 import ProfileTabsSkeleton from "../loaders/ProfileTabsSkeleton";
+import { useProfileStore } from "@/store/profile.store";
 
 const CustomerContent = () => {
   const { employeeId } = useParams();
-
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const user = useProfileStore((state) => state.profile);
+  const profileKey = useProfileStore((state) => state.profileKey);
+  const loading = useProfileStore((state) => state.profileLoading);
+  const storeError = useProfileStore((state) => state.profileError);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
+  const expectedProfileKey = `employee:${employeeId?.trim()}`;
+  const currentUser = profileKey === expectedProfileKey ? user : null;
+  const profileError = profileKey === expectedProfileKey ? storeError : "";
+  const isLoading = loading || (!currentUser && !profileError);
 
   useEffect(() => {
     if (!employeeId) return;
 
-    const fetchUserDetails = async () => {
-      try {
-        setLoading(true);
-
-        const res = await fetch(`/api/users/users-profile/${employeeId.trim()}`, {
-          method: "GET",
-          credentials: "include", // important for cookies (auth_token)
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch user");
-        }
-
-        const data = await res.json();
-
-        // console.log("The user infor what we are getting is :", user);
-
-        if (data.success) {
-          setUser(data.user);
-          console.log("Received user details:", data.user);
-        }
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserDetails();
-  }, [employeeId]);
+    fetchProfile(employeeId).catch((error) => {
+      console.error("Failed to load employee profile:", error);
+    });
+  }, [employeeId, fetchProfile]);
 
   return (
     <>
       <div className="col-xxl-4 col-xl-6 employee-profile-sticky-column h-100">
-        {loading ? <ProfileSkeleton /> : <Profile user={user} />}
+        {isLoading ? (
+          <ProfileSkeleton />
+        ) : profileError ? (
+          <div className="alert alert-danger" role="alert">
+            {profileError}
+          </div>
+        ) : (
+          <Profile user={currentUser} />
+        )}
       </div>
       <div className="col-xxl-8 col-xl-6 employee-profile-content-column h-100">
-        {loading ? (
+        {isLoading ? (
           <ProfileTabsSkeleton />
+        ) : profileError ? (
+          <div className="alert alert-danger" role="alert">
+            {profileError}
+          </div>
+        ) : !currentUser ? (
+          <div className="alert alert-warning" role="alert">
+            Profile details are unavailable.
+          </div>
         ) : (
           <div className="employee-profile-scroll-panel card border-top-0 h-100">
             <div className="card-header p-0 employee-profile-tabs-header">
@@ -140,12 +137,12 @@ const CustomerContent = () => {
               </ul>
             </div>
             <div className="tab-content employee-profile-tab-body">
-              <TabOverviewContent user={user} />
+              <TabOverviewContent user={currentUser} />
               <div className="tab-pane fade" id="billingTab" role="tabpanel">
-                <TabBillingContent billingHistoryshow={true} user={user} />
+                <TabBillingContent billingHistoryshow={true} user={currentUser} />
               </div>
-              <TabActivityContent employeeId={user?.employeeId} />
-              <TabNotificationsContent employeeId={user?.employeeId} />
+              <TabActivityContent employeeId={currentUser?.employeeId} />
+              <TabNotificationsContent employeeId={currentUser?.employeeId} />
               <TabConnections />
               <TabSecurity />
             </div>

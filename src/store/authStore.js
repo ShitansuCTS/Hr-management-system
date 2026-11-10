@@ -1,4 +1,13 @@
 import { create } from "zustand";
+import { useProfileStore } from "@/store/profile.store";
+import { useAllUsersStore } from "@/store/useAllUserStore";
+
+function clearCachedUserData() {
+    useProfileStore.getState().clearProfileData();
+    useAllUsersStore.getState().clearUsers();
+}
+
+let authRequestVersion = 0;
 
 export const useAuthStore = create((set, get) => ({
     // =============================
@@ -12,13 +21,18 @@ export const useAuthStore = create((set, get) => ({
     // =============================
     // Set User
     // =============================
-    setUser: (user) =>
+    setUser: (user) => {
+        if (get().user?.id !== user?.id) {
+            authRequestVersion += 1;
+            clearCachedUserData();
+        }
         set({
             user,
             isAuthenticated: !!user,
             initialized: true,
             loading: false,
-        }),
+        });
+    },
 
     // =============================
     // Set Loading
@@ -63,6 +77,8 @@ export const useAuthStore = create((set, get) => ({
 
             // Cookie is now set by the backend.
             // Fetch the complete profile.
+            authRequestVersion += 1;
+            clearCachedUserData();
             await get().fetchProfile(true);
 
             set({
@@ -91,38 +107,29 @@ export const useAuthStore = create((set, get) => ({
     // Fetch Profile
     // =============================
     fetchProfile: async (force = false) => {
-        if (get().initialized && !force) return;
+        if (get().initialized && !force) return get().user;
+        const requestVersion = authRequestVersion;
 
         try {
             set({
                 loading: true,
             });
 
-            const res = await fetch("/api/auth/my-profile", {
-                credentials: "include",
-            });
+            const user = await useProfileStore.getState().fetchProfile(null, force);
 
-            if (!res.ok) {
-                set({
-                    user: null,
-                    loading: false,
-                    initialized: true,
-                    isAuthenticated: false,
-                });
-
-                return;
-            }
-
-            const data = await res.json();
+            if (requestVersion !== authRequestVersion) return get().user;
 
             set({
-                user: data.user ?? null,
+                user,
                 loading: false,
                 initialized: true,
-                isAuthenticated: !!data.user,
+                isAuthenticated: !!user,
             });
+            return user;
         } catch (error) {
             console.error("Fetch Profile Error:", error);
+
+            if (requestVersion !== authRequestVersion) return get().user;
 
             set({
                 user: null,
@@ -130,6 +137,7 @@ export const useAuthStore = create((set, get) => ({
                 initialized: true,
                 isAuthenticated: false,
             });
+            return null;
         }
     },
 
@@ -156,11 +164,14 @@ export const useAuthStore = create((set, get) => ({
     // =============================
     // Logout
     // =============================
-    clearAuth: () =>
+    clearAuth: () => {
+        authRequestVersion += 1;
+        clearCachedUserData();
         set({
             user: null,
             loading: false,
             initialized: true,
             isAuthenticated: false,
-        }),
+        });
+    },
 }));
