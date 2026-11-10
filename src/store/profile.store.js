@@ -1,8 +1,17 @@
 import { create } from "zustand";
+import toast from "react-hot-toast";
 
 const pendingRequests = new Map();
 const CACHE_DURATION = 4 * 60 * 1000;
 let storeVersion = 0;
+const EDITABLE_FINANCIAL_FIELDS = [
+  "bankName",
+  "accountNo",
+  "ifscCode",
+  "panNumber",
+  "uanNo",
+  "esicNo",
+];
 
 async function requestJson(url, options = {}, fallbackMessage = "Profile request failed.") {
   const response = await fetch(url, {
@@ -50,6 +59,12 @@ export const useProfileStore = create((set, get) => ({
   documentsLoading: false,
   documentsError: "",
   documentMutationLoading: false,
+  profileUpdateLoading: false,
+  employeeEditDepartments: [],
+  employeeEditDesignations: [],
+  employeeEditOptionsLoading: false,
+  employeeEditOptionsError: "",
+  employeeEditOptionsFetched: false,
 
   fetchProfile: async (employeeId = null, force = false) => {
     const normalizedEmployeeId = employeeId?.trim() || null;
@@ -101,6 +116,116 @@ export const useProfileStore = create((set, get) => ({
         throw error;
       }
     });
+  },
+
+  fetchEmployeeEditOptions: async (force = false) => {
+    const current = get();
+    if (current.employeeEditOptionsFetched && !force) {
+      return {
+        departments: current.employeeEditDepartments,
+        designations: current.employeeEditDesignations,
+      };
+    }
+
+    set({ employeeEditOptionsLoading: true, employeeEditOptionsError: "" });
+    const version = storeVersion;
+
+    return dedupeRequest("employee-edit-options", async () => {
+      try {
+        const [departmentsResult, designationsResult] = await Promise.all([
+          requestJson("/api/v1/departments", {}, "Unable to load departments."),
+          requestJson("/api/v1/designations", {}, "Unable to load designations."),
+        ]);
+        const departments = departmentsResult.data || [];
+        const designations = designationsResult.data || [];
+
+        if (version === storeVersion) {
+          set({
+            employeeEditDepartments: departments,
+            employeeEditDesignations: designations,
+            employeeEditOptionsLoading: false,
+            employeeEditOptionsError: "",
+            employeeEditOptionsFetched: true,
+          });
+        }
+
+        return { departments, designations };
+      } catch (error) {
+        if (version === storeVersion) {
+          set({
+            employeeEditOptionsLoading: false,
+            employeeEditOptionsError: error.message,
+          });
+        }
+        throw error;
+      }
+    });
+  },
+
+  updateEmployeeProfile: async (employeeId, updates) => {
+    const normalizedEmployeeId = employeeId?.trim();
+    if (!normalizedEmployeeId) throw new Error("Employee ID is required.");
+
+    const requestBody = { ...updates };
+    if (requestBody.financialDetails) {
+      requestBody.financialDetails = Object.fromEntries(
+        EDITABLE_FINANCIAL_FIELDS.filter((field) =>
+          Object.prototype.hasOwnProperty.call(requestBody.financialDetails, field)
+        ).map((field) => [field, requestBody.financialDetails[field]])
+      );
+    }
+
+    const version = storeVersion;
+    set({ profileUpdateLoading: true });
+
+    try {
+      const result = await requestJson(
+        `/api/v1/users/users-profile/${encodeURIComponent(normalizedEmployeeId)}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody),
+        },
+        "Employee profile update failed."
+      );
+      const profile = result.data;
+      if (!profile) throw new Error("Updated employee profile was not returned.");
+
+      const profileKey = `employee:${normalizedEmployeeId}`;
+      if (version === storeVersion) {
+        set((state) => ({
+          ...(state.profileKey === profileKey
+            ? {
+                profile,
+                profileFetchedAt: Date.now(),
+                profileError: "",
+              }
+            : {}),
+          ...(state.activityEmployeeId === normalizedEmployeeId
+            ? {
+                activities: [
+                  {
+                    id: `optimistic-profile-updated-${Date.now()}`,
+                    action: "PROFILE_UPDATED",
+                    description: "Employee profile updated by ADMIN.",
+                    createdAt: new Date().toISOString(),
+                  },
+                  ...state.activities,
+                ],
+                activitiesFetchedAt: Date.now(),
+              }
+            : {}),
+          profileUpdateLoading: false,
+        }));
+      }
+
+      toast.success(result.message || "Employee profile updated successfully.");
+      return profile;
+    } catch (error) {
+      if (version === storeVersion) set({ profileUpdateLoading: false });
+      toast.error(error.message || "Failed to update employee profile.");
+      throw error;
+    }
   },
 
   fetchActivities: async (employeeId, force = false) => {
@@ -269,6 +394,12 @@ export const useProfileStore = create((set, get) => ({
       documentsLoading: false,
       documentsError: "",
       documentMutationLoading: false,
+      profileUpdateLoading: false,
+      employeeEditDepartments: [],
+      employeeEditDesignations: [],
+      employeeEditOptionsLoading: false,
+      employeeEditOptionsError: "",
+      employeeEditOptionsFetched: false,
     });
   },
 }));

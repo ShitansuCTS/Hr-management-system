@@ -19,6 +19,16 @@ export async function createSignedUrl({ bucket, storagePath, expiresIn = 300 }) 
       .createSignedUrl(storagePath, expiresIn);
 
     if (signedUrlError) {
+      if (
+        String(signedUrlError.statusCode) === "404" ||
+        signedUrlError.message === "Object not found"
+      ) {
+        const error = new Error("Stored file was not found.");
+        error.statusCode = 404;
+        error.code = "STORAGE_OBJECT_NOT_FOUND";
+        throw error;
+      }
+
       console.error("Supabase signed URL error:", signedUrlError);
 
       const error = new Error("Failed to generate document access URL.");
@@ -33,6 +43,10 @@ export async function createSignedUrl({ bucket, storagePath, expiresIn = 300 }) 
       expiresIn,
     };
   } catch (error) {
+    if (error.code === "STORAGE_OBJECT_NOT_FOUND") {
+      throw error;
+    }
+
     console.error("Create Signed URL Service Error:", error);
 
     if (error.statusCode) {

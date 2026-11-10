@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BsPatchCheckFill } from "react-icons/bs";
 import { FiEdit, FiMail, FiMapPin, FiPhone, FiTrash2 } from "react-icons/fi";
 
-const Profile = ({ user }) => {
+const Profile = ({ user, onEdit }) => {
   return (
     <div className="card stretch stretch-full">
       <div className="card-body">
@@ -78,10 +78,21 @@ const Profile = ({ user }) => {
           </li>
         </ul>
         <div className="d-flex justify-content-center pt-4">
-          <Link href="/" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2 ">
-            <FiEdit size={16} />
-            Edit your profile
-          </Link>
+          {onEdit ? (
+            <button
+              type="button"
+              className="btn btn-primary px-4 d-inline-flex align-items-center gap-2"
+              onClick={onEdit}
+            >
+              <FiEdit size={16} />
+              Edit Employee
+            </button>
+          ) : (
+            <Link href="/" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
+              <FiEdit size={16} />
+              Edit your profile
+            </Link>
+          )}
         </div>
       </div>
     </div>

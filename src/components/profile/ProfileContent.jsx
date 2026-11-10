@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import TabOverviewContent from "@/components/customersView/TabOverviewContent";
 import TabNotificationsContent from "@/components/customersView/TabNotificationsContent";
@@ -12,10 +12,14 @@ import { useProfileStore } from "@/store/profile.store";
 import ProfileSkeleton from "@/components/loaders/ProfileSkeleton";
 import ProfileTabsSkeleton from "@/components/loaders/ProfileTabsSkeleton";
 import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
+import EditEmployeeSidebar from "@/components/profile/EditEmployeeSidebar";
+import { useAuthStore } from "@/store/authStore";
 
 const ProfileContent = () => {
   const params = useParams();
   const employeeIdFromRoute = params?.employeeId;
+  const [editSidebarOpen, setEditSidebarOpen] = useState(false);
+  const isAdmin = useAuthStore((state) => state.user?.role === "ADMIN");
   const profile = useProfileStore((state) => state.profile);
   const profileKey = useProfileStore((state) => state.profileKey);
   const profileLoading = useProfileStore((state) => state.profileLoading);
@@ -45,7 +49,10 @@ const ProfileContent = () => {
             {currentError}
           </div>
         ) : (
-          <Profile user={currentUser} />
+          <Profile
+            user={currentUser}
+            onEdit={employeeIdFromRoute && isAdmin ? () => setEditSidebarOpen(true) : undefined}
+          />
         )}
       </div>
 
@@ -174,6 +181,13 @@ const ProfileContent = () => {
           </div>
         )}
       </div>
+      {editSidebarOpen && currentUser && employeeIdFromRoute && isAdmin && (
+        <EditEmployeeSidebar
+          user={currentUser}
+          onClose={() => setEditSidebarOpen(false)}
+          onSaved={() => setEditSidebarOpen(false)}
+        />
+      )}
     </>
   );
 };
