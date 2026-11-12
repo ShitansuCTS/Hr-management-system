@@ -14,6 +14,7 @@ import ProfileTabsSkeleton from "@/components/loaders/ProfileTabsSkeleton";
 import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
 import EditEmployeeSidebar from "@/components/profile/EditEmployeeSidebar";
 import { useAuthStore } from "@/store/authStore";
+import AccountInfoContent from "../customersView/AccountInfoContent";
 
 const ProfileContent = () => {
   const params = useParams();
@@ -148,10 +149,8 @@ const ProfileContent = () => {
               <TabOverviewContent user={currentUser} />
 
               <div className="tab-pane fade" id="billingTab" role="tabpanel">
-                <ComingSoonSection
-                  image="/illustrations/coming-soon.png"
-                  title="No Account Information"
-                  description="Account details are not available for this profile yet."
+                <AccountInfoContent
+                  financialDetails={currentUser.financialDetails}
                 />
               </div>
 
