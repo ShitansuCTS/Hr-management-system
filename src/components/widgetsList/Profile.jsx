@@ -88,7 +88,7 @@ const Profile = ({ user, onEdit }) => {
               Edit Employee
             </button>
           ) : (
-            <Link href="/" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
+            <Link href="#" className="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
               <FiEdit size={16} />
               Edit your profile
             </Link>

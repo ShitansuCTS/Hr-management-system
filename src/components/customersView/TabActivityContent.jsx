@@ -12,6 +12,7 @@ import {
   FiArrowDownCircle,
 } from "react-icons/fi";
 import { useProfileStore } from "@/store/profile.store";
+import { Activity, ShieldCheck } from "lucide-react";
 
 const ACTIVITY_LABELS = {
   USER_CREATED: "Account created",
@@ -79,7 +80,8 @@ const TabActivityContent = ({ employeeId }) => {
           </div>
 
           {!loading && !error && (
-            <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
+            <span className="badge bg-soft-primary text-primary d-flex align-items-center gap-1">
+              <Activity size={15} />
               {activities.length} Activities
             </span>
           )}

@@ -53,6 +53,11 @@ export const useProfileStore = create((set, get) => ({
   activitiesFetchedAt: null,
   activitiesLoading: false,
   activitiesError: "",
+  leaveStatus: null,
+  leaveStatusEmployeeId: null,
+  leaveStatusFetchedAt: null,
+  leaveStatusLoading: false,
+  leaveStatusError: "",
   documents: [],
   documentsEmployeeId: null,
   documentsFetchedAt: null,
@@ -278,6 +283,71 @@ export const useProfileStore = create((set, get) => ({
     });
   },
 
+  fetchEmployeeLeaveStatus: async (employeeId, force = false) => {
+    const normalizedEmployeeId = employeeId?.trim();
+    if (!normalizedEmployeeId) throw new Error("Employee ID is required.");
+
+    const current = get();
+    if (
+      !force &&
+      current.leaveStatusEmployeeId === normalizedEmployeeId &&
+      current.leaveStatus &&
+      isFresh(current.leaveStatusFetchedAt)
+    ) {
+      return current.leaveStatus;
+    }
+
+    const requestKey = `leave-status:${normalizedEmployeeId}`;
+    const version = storeVersion;
+    set({
+      leaveStatus:
+        current.leaveStatusEmployeeId === normalizedEmployeeId
+          ? current.leaveStatus
+          : null,
+      leaveStatusEmployeeId: normalizedEmployeeId,
+      leaveStatusLoading: true,
+      leaveStatusError: "",
+    });
+
+    return dedupeRequest(requestKey, async () => {
+      try {
+        const result = await requestJson(
+          `/api/v1/users/users-profile/${encodeURIComponent(normalizedEmployeeId)}/leave-status`,
+          {},
+          "Unable to load employee leave status."
+        );
+        const leaveStatus = result.data;
+        if (!leaveStatus) throw new Error("Employee leave status was not returned.");
+
+        if (
+          version === storeVersion &&
+          get().leaveStatusEmployeeId === normalizedEmployeeId
+        ) {
+          set({
+            leaveStatus,
+            leaveStatusFetchedAt: Date.now(),
+            leaveStatusLoading: false,
+            leaveStatusError: "",
+          });
+        }
+
+        return leaveStatus;
+      } catch (error) {
+        if (
+          version === storeVersion &&
+          get().leaveStatusEmployeeId === normalizedEmployeeId
+        ) {
+          set({
+            leaveStatus: null,
+            leaveStatusLoading: false,
+            leaveStatusError: error.message,
+          });
+        }
+        throw error;
+      }
+    });
+  },
+
   fetchDocuments: async (employeeId, force = false) => {
     const normalizedEmployeeId = employeeId?.trim();
     if (!normalizedEmployeeId) return [];
@@ -388,6 +458,11 @@ export const useProfileStore = create((set, get) => ({
       activitiesFetchedAt: null,
       activitiesLoading: false,
       activitiesError: "",
+      leaveStatus: null,
+      leaveStatusEmployeeId: null,
+      leaveStatusFetchedAt: null,
+      leaveStatusLoading: false,
+      leaveStatusError: "",
       documents: [],
       documentsEmployeeId: null,
       documentsFetchedAt: null,

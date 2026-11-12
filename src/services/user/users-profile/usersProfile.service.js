@@ -28,7 +28,9 @@ export async function getUserProfileService(employeeId, currentUser) {
         employeeId: employeeId.trim(),
         organizationId,
         isDeleted: false,
-        role: "EMPLOYEE",
+        role: {
+          in: ["ADMIN", "EMPLOYEE"],
+        },
       },
 
       include: {
@@ -171,7 +173,9 @@ export async function updateUserProfileService(employeeId, body, currentUser) {
         where: {
           employeeId,
           organizationId: currentUser.organizationId,
-          role: "EMPLOYEE",
+          role: {
+            in: ["ADMIN", "EMPLOYEE"],
+          },
           isDeleted: false,
         },
         select: {
