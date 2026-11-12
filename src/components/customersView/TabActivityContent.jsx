@@ -1,11 +1,22 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { FiActivity, FiClock, FiCalendar, FiUser, FiLogIn, FiLogOut, FiCheckCircle, FiArrowDownCircle } from "react-icons/fi";
+import {
+  FiActivity,
+  FiClock,
+  FiCalendar,
+  FiUser,
+  FiLogIn,
+  FiLogOut,
+  FiCheckCircle,
+  FiArrowDownCircle,
+} from "react-icons/fi";
 import { useProfileStore } from "@/store/profile.store";
+import { Activity, ShieldCheck } from "lucide-react";
 
 const ACTIVITY_LABELS = {
   USER_CREATED: "Account created",
+  PROFILE_UPDATED: "Profile updated",
   LOGIN: "Signed in",
   LOGOUT: "Signed out",
   PUNCH_IN: "Punched in",
@@ -61,18 +72,16 @@ const TabActivityContent = ({ employeeId }) => {
   return (
     <div className="tab-pane fade" id="activityTab" role="tabpanel">
       <div className="p-3 p-md-4">
-
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <div>
             <h5 className="fw-bold mb-1">Activity history</h5>
-            <p className="text-muted small mb-0">
-              Recent account and attendance activities
-            </p>
+            <p className="text-muted small mb-0">Recent account and attendance activities</p>
           </div>
 
           {!loading && !error && (
-            <span className="badge bg-light text-dark border rounded-pill px-3 py-2">
+            <span className="badge bg-soft-primary text-primary d-flex align-items-center gap-1">
+              <Activity size={15} />
               {activities.length} Activities
             </span>
           )}
@@ -85,9 +94,7 @@ const TabActivityContent = ({ employeeId }) => {
             Loading activities...
           </div>
         ) : error ? (
-          <div className="alert alert-danger py-2 mb-0 small">
-            {error}
-          </div>
+          <div className="alert alert-danger py-2 mb-0 small">{error}</div>
         ) : activities.length === 0 ? (
           <div className="text-center py-4 border rounded-3">
             <FiClock size={22} className="text-muted mb-2" />
@@ -150,10 +157,7 @@ const TabActivityContent = ({ employeeId }) => {
                   key={activity.id}
                   className="d-flex align-items-center justify-content-between gap-2 px-3 py-3"
                   style={{
-                    borderBottom:
-                      index !== activities.length - 1
-                        ? "1px solid #f1f1f1"
-                        : "none",
+                    borderBottom: index !== activities.length - 1 ? "1px solid #f1f1f1" : "none",
                   }}
                 >
                   {/* Left: Icon and activity */}
@@ -172,8 +176,7 @@ const TabActivityContent = ({ employeeId }) => {
 
                     <div className="min-width-0">
                       <div className="fw-semibold text-dark small">
-                        {ACTIVITY_LABELS[action] ||
-                          action.replace(/_/g, " ")}
+                        {ACTIVITY_LABELS[action] || action.replace(/_/g, " ")}
                       </div>
 
                       {activity.description && (
@@ -205,10 +208,7 @@ const TabActivityContent = ({ employeeId }) => {
                       {current.badge}
                     </span>
 
-                    <div
-                      className="text-muted text-end"
-                      style={{ fontSize: 11, minWidth: 115 }}
-                    >
+                    <div className="text-muted text-end" style={{ fontSize: 11, minWidth: 115 }}>
                       {date.toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "short",
@@ -227,7 +227,6 @@ const TabActivityContent = ({ employeeId }) => {
             })}
           </div>
         )}
-
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ const RecentFileCard = ({
           <div
             className="card-body p-0 position-relative"
             style={{
-              height: "180px",
+              height: "120px",
               overflow: "hidden",
             }}
           >

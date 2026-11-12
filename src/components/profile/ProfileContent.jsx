@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import TabOverviewContent from "@/components/customersView/TabOverviewContent";
 import TabNotificationsContent from "@/components/customersView/TabNotificationsContent";
@@ -12,28 +12,66 @@ import { useProfileStore } from "@/store/profile.store";
 import ProfileSkeleton from "@/components/loaders/ProfileSkeleton";
 import ProfileTabsSkeleton from "@/components/loaders/ProfileTabsSkeleton";
 import ComingSoonSection from "@/components/sharedUi/ComingSoonSection";
+import EditEmployeeSidebar from "@/components/profile/EditEmployeeSidebar";
+import { useAuthStore } from "@/store/authStore";
+import AccountInfoContent from "../customersView/AccountInfoContent";
+import LeaveBalanceContent from "../customersView/LeaveBalanceContent";
 
 const ProfileContent = () => {
   const params = useParams();
   const employeeIdFromRoute = params?.employeeId;
+  const [editSidebarOpen, setEditSidebarOpen] = useState(false);
+  const isAdmin = useAuthStore((state) => state.user?.role === "ADMIN");
   const profile = useProfileStore((state) => state.profile);
   const profileKey = useProfileStore((state) => state.profileKey);
   const profileLoading = useProfileStore((state) => state.profileLoading);
   const profileError = useProfileStore((state) => state.profileError);
   const fetchProfile = useProfileStore((state) => state.fetchProfile);
+  const fetchEmployeeLeaveStatus = useProfileStore(
+    (state) => state.fetchEmployeeLeaveStatus
+  );
+  const leaveStatus = useProfileStore((state) => state.leaveStatus);
+  const leaveStatusEmployeeId = useProfileStore(
+    (state) => state.leaveStatusEmployeeId
+  );
+  const leaveStatusLoading = useProfileStore(
+    (state) => state.leaveStatusLoading
+  );
+  const leaveStatusError = useProfileStore((state) => state.leaveStatusError);
   const expectedProfileKey = employeeIdFromRoute
     ? `employee:${employeeIdFromRoute.trim()}`
     : "self";
 
   useEffect(() => {
-    fetchProfile(employeeIdFromRoute || null).catch((error) => {
-      console.error("Failed to load profile:", error);
-    });
-  }, [employeeIdFromRoute, fetchProfile]);
+    let active = true;
+
+    const loadProfileAndLeaveStatus = async () => {
+      try {
+        const loadedProfile = await fetchProfile(employeeIdFromRoute || null);
+        if (active && loadedProfile?.employeeId) {
+          await fetchEmployeeLeaveStatus(loadedProfile.employeeId);
+        }
+      } catch (error) {
+        console.error("Failed to load profile or leave status:", error);
+      }
+    };
+
+    loadProfileAndLeaveStatus();
+    return () => {
+      active = false;
+    };
+  }, [employeeIdFromRoute, fetchEmployeeLeaveStatus, fetchProfile]);
 
   const currentUser = profileKey === expectedProfileKey ? profile : null;
   const currentError = profileKey === expectedProfileKey ? profileError : "";
   const isLoading = profileLoading || (!currentUser && !currentError);
+  const currentLeaveStatus =
+    leaveStatusEmployeeId === currentUser?.employeeId ? leaveStatus : null;
+  const currentLeaveStatusError =
+    leaveStatusEmployeeId === currentUser?.employeeId ? leaveStatusError : "";
+  const currentLeaveStatusLoading =
+    Boolean(currentUser?.employeeId) &&
+    (leaveStatusEmployeeId !== currentUser.employeeId || leaveStatusLoading);
 
   return (
     <>
@@ -45,7 +83,10 @@ const ProfileContent = () => {
             {currentError}
           </div>
         ) : (
-          <Profile user={currentUser} />
+          <Profile
+            user={currentUser}
+            onEdit={employeeIdFromRoute && isAdmin ? () => setEditSidebarOpen(true) : undefined}
+          />
         )}
       </div>
 
@@ -141,10 +182,8 @@ const ProfileContent = () => {
               <TabOverviewContent user={currentUser} />
 
               <div className="tab-pane fade" id="billingTab" role="tabpanel">
-                <ComingSoonSection
-                  image="/illustrations/coming-soon.png"
-                  title="No Account Information"
-                  description="Account details are not available for this profile yet."
+                <AccountInfoContent
+                  financialDetails={currentUser.financialDetails}
                 />
               </div>
 
@@ -161,10 +200,12 @@ const ProfileContent = () => {
               </div>
 
               <div className="tab-pane fade" id="securityTab" role="tabpanel">
-                <ComingSoonSection
-                  image="/illustrations/coming-soon.png"
-                  title="No Leave Records"
-                  description="Leave information will be available here when data is present."
+        
+                <LeaveBalanceContent
+                  leaveBalances={currentLeaveStatus?.leaveBalances || []}
+                  leaves={currentLeaveStatus?.leaves || []}
+                  loading={currentLeaveStatusLoading}
+                  error={currentLeaveStatusError}
                 />
               </div>
 
@@ -174,6 +215,13 @@ const ProfileContent = () => {
           </div>
         )}
       </div>
+      {editSidebarOpen && currentUser && employeeIdFromRoute && isAdmin && (
+        <EditEmployeeSidebar
+          user={currentUser}
+          onClose={() => setEditSidebarOpen(false)}
+          onSaved={() => setEditSidebarOpen(false)}
+        />
+      )}
     </>
   );
 };
