@@ -17,6 +17,7 @@ import TimesheetsModal from "./TimesheetsModal";
 import HeaderDropDownModal from "./HeaderDropDownModal";
 import MegaMenu from "./megaManu/MegaMenu";
 import { NavigationContext } from "@/contentApi/navigationProvider";
+import { useAuthStore } from "@/store/authStore";
 
 const Header = () => {
   const { navigationOpen, setNavigationOpen } = useContext(NavigationContext);
@@ -24,6 +25,7 @@ const Header = () => {
   const [navigationExpend, setNavigationExpend] = useState(false);
   const miniButtonRef = useRef(null);
   const expendButtonRef = useRef(null);
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (openMegaMenu) {
@@ -219,8 +221,27 @@ const Header = () => {
             </div>
             {/* <!--! [Start] nxl-lavel-mega-menu-wrapper !--> */}
             <div className="nxl-lavel-mega-menu-wrapper d-flex gap-3">
-              <HeaderDropDownModal />
-              <MegaMenu />
+              {/* <HeaderDropDownModal />
+              <MegaMenu /> */}
+              <div className="d-flex align-items-center">
+                <h6 className="mb-0 fs-16 fw-bold text-dark">
+                  Hey,{" "}
+                  <span style={{ color: "#3156d3" }}>
+                    {user?.fullName?.trim().split(/\s+/)[0] || "there"}
+                  </span>
+                  <span className="text-muted fw-normal ms-2">
+                    {new Date().getHours() < 12
+                      ? "Good Morning"
+                      : new Date().getHours() < 17
+                        ? "Good Afternoon"
+                        : new Date().getHours() < 21
+                          ? "Good Evening"
+                          : "Good Night"}
+                  </span>
+                  <span className="ms-2">👋</span>
+                </h6>
+              </div>
+
             </div>
           </div>
         </div>
@@ -228,8 +249,8 @@ const Header = () => {
                 <!--! [Start] Header Right !--> */}
         <div className="header-right ms-auto">
           <div className="d-flex align-items-center">
-            <SearchModal />
-            <LanguagesModal />
+            {/* <SearchModal />
+            <LanguagesModal /> */}
             <div className="nxl-h-item d-none d-sm-flex">
               <div className="full-screen-switcher">
                 <span className="nxl-head-link me-0">

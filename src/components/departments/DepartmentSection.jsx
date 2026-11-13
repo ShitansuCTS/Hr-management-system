@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useOrganizationStore } from "@/store/useOrganizationStore";
 import Swal from "sweetalert2";
-import { Building2, Plus, Trash2, ArrowRight } from "lucide-react";
+import { Building2, Plus, Trash2, ArrowRight, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import DepartmentCardSkeleton from "@/components/loaders/organization/DepartmentCardSkeleton";
 
@@ -57,7 +57,7 @@ export default function DepartmentSection() {
       reverseButtons: true,
       focusCancel: true,
 
-      confirmButtonColor: "#3454d1 ",
+      confirmButtonColor: "#d14934 ",
       cancelButtonColor: "#eef2ff",
 
       iconColor: "#3454d1",
@@ -146,7 +146,7 @@ export default function DepartmentSection() {
           boxShadow: "0 6px 22px rgba(31, 61, 136, 0.08)",
         }}
       >
-        <div className="card-body p-4">
+        <div className="card-body p-4 ">
           <div className="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
             {/* Left Section */}
             <div>
@@ -285,38 +285,26 @@ export default function DepartmentSection() {
           </div>
         ) : (
           departments.map((department) => (
-            <div key={department.id} className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+
+
+            <div
+              key={department.id}
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4"
+            >
               <div
                 className="card h-100 border-0"
                 style={{
                   borderRadius: "12px",
-                  boxShadow: "0 6px 20px rgba(31, 61, 136, 0.08)",
+                  boxShadow: "0 4px 16px rgba(31, 61, 136, 0.07)",
                   overflow: "hidden",
                 }}
               >
-                <div
-                  style={{
-                    height: "4px",
-                    background: "#3156d3",
-                  }}
-                />
+                <div style={{ height: "3px", background: "#3156d3" }} />
 
-                <div className="card-body p-4">
-                  <div className="d-flex align-items-start justify-content-between gap-3">
+                <div className="card-body p-4 pb-0">
+                  {/* Department Header */}
+                  <div className="d-flex align-items-center justify-content-between gap-2">
                     <div className="d-flex align-items-center gap-3">
-                      {/* <div
-                        className="d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "42px",
-                          height: "42px",
-                          borderRadius: "10px",
-                          background: "#eef2ff",
-                          color: "#3156d3",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <Building2 size={20} />
-                      </div> */}
                       <div
                         className="d-flex align-items-center justify-content-center"
                         style={{
@@ -327,99 +315,81 @@ export default function DepartmentSection() {
                           flexShrink: 0,
                         }}
                       >
-                        <Building2
-                          size={19}
-                          style={{
-                            color: "#3156d3",
-                            stroke: "#3156d3",
-                          }}
-                        />
+                        <Building2 size={19} color="#3156d3" />
                       </div>
 
                       <div>
-                        <h6 className="fw-bold text-dark mb-1">{department.name}</h6>
-
-                        {/* <span className="text-muted fs-11">Organization Department</span> */}
+                        <h6 className="fw-bold text-dark mb-0">
+                          {department.name}
+                        </h6>
+                        <span className="text-muted fs-11">
+                          Department
+                        </span>
                       </div>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(department.id)}
-                      disabled={departmentActionLoading}
-                      className="btn d-flex align-items-center justify-content-center p-0"
+                    <div
+                      className="card h-100 border-0"
                       style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "8px",
-                        background: "#fff1f2",
-                        border: "none",
-                        flexShrink: 0,
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 16px rgba(31, 61, 136, 0.07)",
+                        overflow: "visible",
+                        position: "relative",
                       }}
-                      aria-label={`Delete ${department.name}`}
-                    >
-                      <Trash2
-                        size={15}
-                        strokeWidth={2}
-                        style={{
-                          color: "#dc3545",
-                          stroke: "#dc3545",
-                        }}
-                      />
-                    </button>
+                    >{/* Top Accent */}
+
+                    </div>
+
                   </div>
 
+
+                  {/* Footer */}
                   <div
                     className="d-flex align-items-center justify-content-between mt-4 pt-3"
                     style={{
                       borderTop: "1px solid #eef0f4",
                     }}
                   >
-                    <span
-                      className="badge"
+                    {/* Employee Count */}
+                    <div
+                      className="d-flex align-items-center gap-2"
                       style={{
-                        background: department.isActive ? "#ecfdf3" : "#fff1f2",
-                        color: department.isActive ? "#16803c" : "#dc3545",
-                        borderRadius: "20px",
-                        padding: "6px 10px",
-                        fontSize: "11px",
+                        color: "#64748b",
+                        fontSize: "12px",
                         fontWeight: 600,
                       }}
                     >
-                      {department.isActive ? "Active" : "Inactive"}
-                    </span>
+                      <Users size={15} color="#3156d3" />
+                      <span>{department.employeeCount ?? 0}</span>
+                      <span className="text-muted fw-normal">Employees</span>
+                    </div>
+
+                    {/* Delete Button */}
                     <button
                       type="button"
-                      className="btn btn-sm d-flex align-items-center gap-1"
+                      onClick={() => handleDelete(department.id)}
+                      disabled={departmentActionLoading}
+                      className="btn d-flex align-items-center justify-content-center p-0"
                       style={{
-                        background: "#eef2ff",
-                        borderRadius: "7px",
-                        border: "none",
-                        padding: "7px 11px",
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "50%",
+                        background: "#fff",
+                        border: "1px solid #f1d5d8",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        zIndex: 2,
                       }}
+                      aria-label={`Delete ${department.name}`}
+                      title="Delete Department"
                     >
-                      <span
-                        style={{
-                          color: "#3156d3",
-                          fontWeight: 600,
-                          fontSize: "12px",
-                        }}
-                      >
-                        View
-                      </span>
-
-                      <ArrowRight
-                        size={14}
-                        style={{
-                          color: "#3156d3",
-                          stroke: "#3156d3",
-                        }}
-                      />
+                      <Trash2 size={15} color="#dc3545" />
                     </button>
                   </div>
+
                 </div>
               </div>
             </div>
+
+
           ))
         )}
       </div>

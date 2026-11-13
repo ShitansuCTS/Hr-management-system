@@ -3,6 +3,7 @@ import { FiCalendar, FiX } from "react-icons/fi";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { upcomingScheduleList } from "@/utils/fackData/upcomingScheduleList";
 import ImageGroup from "@/components/shared/ImageGroup";
+import { CalendarDays } from "lucide-react";
 
 const CalenderSidebar = ({
   selectedCategories,
@@ -93,33 +94,43 @@ const CalenderSidebar = ({
               Events &amp; Schedules
             </h2>
           </div>
-          {upcomingScheduleList.map(({ date, id, schedule_name, team_members, color }) => (
-            <div key={id} className="p-4 border-top c-pointer single-item schedule-item">
-              <div className="d-flex align-items-start">
-                <div
-                  className={`wd-50 ht-50 bg-soft-${color} text-${color} lh-1 d-flex align-items-center justify-content-center flex-column rounded-2 schedule-date`}
-                >
-                  <span className="fs-18 fw-bold mb-1 d-block">{date.day}</span>
-                  <span className="fs-10 text-semibold text-uppercase d-block">{date.month}</span>
-                </div>
-                <div className="ms-3 schedule-body">
-                  <div className="text-dark">
-                    <h6 className="fw-bold my-1 text-truncate-1-line">{schedule_name}</h6>
-                    <span className="fs-11 fw-normal text-muted">
-                      8:00am - 9:00am, Engineering Room
+          <div className="p-4 border-top c-pointer single-item schedule-item">
+            <div className="d-flex align-items-start">
+              <div
+                className="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  background: "#eef2ff",
+                  color: "#3156d3",
+                }}
+              >
+                <CalendarDays size={20} />
+              </div>
+
+              <div className="ms-3 schedule-body flex-grow-1">
+                <div className="text-dark">
+                  <div className="d-flex align-items-center justify-content-between gap-2">
+                    <h6 className="fw-bold my-1 text-truncate-1-line">
+                      Monthly Team Meeting
+                    </h6>
+                    <span className="badge bg-soft-primary text-primary fs-10">
+                      Meeting
                     </span>
-                    <p className="fs-12 fw-normal text-muted my-3 text-truncate-2-line">
-                      Lorem ipsum quia dolor sit amet, consectetur, adipisci velit, abore et dolore
-                      magnam aliquam quaerat voluptatem.
-                    </p>
                   </div>
-                  <div className="img-group lh-0 ms-3 justify-content-start">
-                    <ImageGroup data={team_members} />
-                  </div>
+
+                  <span className="fs-11 fw-normal text-muted">
+                    10:00 AM - 11:00 AM, Conference Room
+                  </span>
+
+                  <p className="fs-12 fw-normal text-muted my-3 text-truncate-2-line">
+                    Discuss project updates, team performance, upcoming deadlines,
+                    and important organizational announcements.
+                  </p>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </PerfectScrollbar>
     </div>

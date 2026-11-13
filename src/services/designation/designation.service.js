@@ -21,9 +21,9 @@ export async function createDesignationService(currentUser, designationData) {
       throw error;
     }
 
-    console.log("name",designationData.name);
-    console.log("fulldata",designationData);
-    
+    console.log("name", designationData.name);
+    console.log("fulldata", designationData);
+
 
     const designation = await prisma.designation.create({
       data: {
@@ -85,6 +85,11 @@ export async function getDesignationService(currentUser) {
 
       include: {
         department: true,
+        _count: {
+          select: {
+            users: true,
+          },
+        },
       },
 
       orderBy: {
@@ -92,7 +97,10 @@ export async function getDesignationService(currentUser) {
       },
     });
 
-    return designations;
+    return designations.map((designation) => ({
+      ...designation,
+      employeeCount: designation._count.users,
+    }));
   } catch (error) {
     console.error("Get Designations Service Error:", error);
 
