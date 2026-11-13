@@ -33,9 +33,20 @@ export async function getDepartmentService(currentUser) {
     orderBy: {
       id: "asc",
     },
+    include: {
+      _count: {
+        select: {
+          users: true,
+        },
+      },
+    },
   });
 
-  return departments;
+  return departments.map((department) => ({
+    ...department,
+    employeeCount: department._count.users,
+    _count: undefined,
+  }));
 }
 
 export async function deleteDepartmentService(currentUser, id) {

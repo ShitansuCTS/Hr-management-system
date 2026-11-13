@@ -6,6 +6,9 @@ import { sendEmail } from "@/lib/email";
 import { adminLeaveNotificationTemplate } from "@/templates/adminLeaveNotification.template";
 import { employeeLeaveSubmittedTemplate } from "@/templates/employeeLeaveSubmitted.template";
 
+import { createSignedUrl } from "@/services/storage/createSignedUrl.service";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
+
 export async function createLeaveService(leaveData, currentUser) {
   try {
     const { leaveType, startDate, endDate, reason } = leaveData;
@@ -286,7 +289,60 @@ export async function getAllLeaveApplicationsService(currentUser) {
       },
     });
 
-    return allLeaveApplications;
+    // Get organization storage bucket
+    const bucket = getOrganizationBucket(organizationId);
+
+    // Cache signed URLs to avoid generating duplicate URLs
+    const imageUrlCache = new Map();
+
+    // Generate signed URLs for employee profile images
+    const formattedApplications = await Promise.all(
+      allLeaveApplications.map(async (application) => {
+        let profileImageUrl = null;
+
+        const imagePath = application.user?.profileImageUrl;
+
+        if (imagePath) {
+          const storagePath = imagePath.replace(/[\r\n]/g, "").trim();
+
+          try {
+            if (imageUrlCache.has(storagePath)) {
+              profileImageUrl = await imageUrlCache.get(storagePath);
+            } else {
+              const signedUrlPromise = createSignedUrl({
+                bucket,
+                storagePath,
+                expiresIn: 300,
+              }).then((result) => result.signedUrl);
+
+              imageUrlCache.set(storagePath, signedUrlPromise);
+
+              profileImageUrl = await signedUrlPromise;
+            }
+          } catch (error) {
+            console.error("Failed to generate leave applicant profile image URL:", {
+              userId: application.user?.id,
+              organizationId,
+              message: error.message,
+            });
+
+            imageUrlCache.delete(storagePath);
+          }
+        }
+
+        return {
+          ...application,
+          user: application.user
+            ? {
+              ...application.user,
+              profileImageUrl,
+            }
+            : null,
+        };
+      })
+    );
+
+    return formattedApplications;
   } catch (error) {
     console.error("Get All Leave Applications Service Error:", error);
 

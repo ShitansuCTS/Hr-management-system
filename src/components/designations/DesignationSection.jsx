@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BriefcaseBusiness, Plus, Trash2 } from "lucide-react";
+import { BriefcaseBusiness, Plus, Trash2, Users } from "lucide-react";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 
@@ -330,99 +330,73 @@ export default function DesignationPage() {
           </div>
         ) : (
           designations.map((item) => (
-            <div key={item.id} className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
+            <div
+              key={item.id}
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4"
+            >
               <div
                 className="card h-100 border-0"
                 style={{
                   borderRadius: "12px",
-                  boxShadow: "0 6px 20px rgba(31, 61, 136, 0.08)",
+                  boxShadow: "0 4px 16px rgba(31, 61, 136, 0.07)",
                   overflow: "hidden",
                 }}
               >
-                <div
-                  style={{
-                    height: "4px",
-                    background: "#3156d3",
-                  }}
-                />
+                {/* Top Accent */}
+                <div style={{ height: "3px", background: "#3156d3" }} />
 
-                <div className="card-body p-4">
-                  <div className="d-flex align-items-start justify-content-between gap-3">
-                    <div className="d-flex align-items-center gap-3">
-                      <div
-                        className="d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "42px",
-                          height: "42px",
-                          borderRadius: "10px",
-                          background: "#eef2ff",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <BriefcaseBusiness
-                          size={19}
-                          style={{
-                            color: "#3156d3",
-                            stroke: "#3156d3",
-                          }}
-                        />
-                      </div>
-
-                      <div>
-                        <h6 className="fw-bold mb-1 text-body">{item.name}</h6>
-
-                        {/* <span className="text-muted fs-11">{item.name}</span> */}
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(item.id)}
-                      disabled={designationActionLoading}
-                      className="btn d-flex align-items-center justify-content-center p-0"
+                <div className="card-body p-4 pb-3">
+                  {/* Designation Header */}
+                  <div className="d-flex align-items-center gap-3">
+                    <div
+                      className="d-flex align-items-center justify-content-center"
                       style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "8px",
-                        background: "#fff1f2",
-                        border: "none",
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "10px",
+                        background: "#eef2ff",
                         flexShrink: 0,
                       }}
-                      aria-label={`Delete ${item.title}`}
                     >
-                      <Trash2
-                        size={15}
-                        style={{
-                          color: "#dc3545",
-                          stroke: "#dc3545",
-                        }}
+                      <BriefcaseBusiness
+                        size={19}
+                        color="#3156d3"
                       />
-                    </button>
+                    </div>
+
+                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                      <h6 className="fw-bold text-dark mb-0 text-truncate">
+                        {item.name}
+                      </h6>
+                      <span className="text-muted fs-11">
+                        {item.department?.name || "No Department"}
+                      </span>
+                    </div>
                   </div>
 
+                  {/* Footer */}
                   <div
-                    className="d-flex justify-content-between align-items-center mt-4 pt-3 gap-2"
+                    className="d-flex align-items-center justify-content-between mt-4 pt-3 gap-2"
                     style={{
                       borderTop: "1px solid #eef0f4",
                     }}
                   >
-                    <span
-                      className="badge text-truncate"
+                    {/* Employee Count */}
+                    <div
+                      className="d-flex align-items-center gap-2"
                       style={{
-                        maxWidth: "150px",
-                        background: "#eef2ff",
-                        color: "#3156d3",
-                        borderRadius: "20px",
-                        padding: "6px 10px",
-                        fontSize: "11px",
+                        color: "#64748b",
+                        fontSize: "12px",
                         fontWeight: 600,
                       }}
-                      title={item.department?.name || "No Department"}
                     >
-                      {item.department?.name || "No Department"}
-                    </span>
+                      <Users size={15} color="#3156d3" />
+                      <span>{item.employeeCount ?? 0}</span>
+                      <span className="text-muted fw-normal">Employees</span>
+                    </div>
 
-                    <span
+                    {/* Status */}
+                    {/* <span
                       className="badge"
                       style={{
                         background: item.isActive ? "#ecfdf3" : "#fff1f2",
@@ -431,10 +405,32 @@ export default function DesignationPage() {
                         padding: "6px 10px",
                         fontSize: "11px",
                         fontWeight: 600,
+                        flexShrink: 0,
                       }}
                     >
                       {item.isActive ? "Active" : "Inactive"}
-                    </span>
+                    </span> */}
+
+                    {/* Delete Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(item.id)}
+                      disabled={designationActionLoading}
+                      className="btn d-flex align-items-center justify-content-center p-0"
+                      style={{
+                        width: "30px",
+                        height: "30px",
+                        borderRadius: "50%",
+                        background: "#fff",
+                        border: "1px solid #f1d5d8",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        flexShrink: 0,
+                      }}
+                      aria-label={`Delete ${item.name}`}
+                      title="Delete Designation"
+                    >
+                      <Trash2 size={15} color="#dc3545" />
+                    </button>
                   </div>
                 </div>
               </div>

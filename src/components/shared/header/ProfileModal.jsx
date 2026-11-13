@@ -80,7 +80,7 @@ const ProfileModal = () => {
             <div>
               <h6 className="text-dark mb-0">
                 {user?.fullName || "Alexandra Della"}
-                <span className="badge bg-soft-success text-success ms-1">PRO</span>
+                <span className="badge bg-soft-success text-success ms-1">{user?.status || "User"}</span>
               </h6>
               <span className="fs-12 fw-medium text-muted">
                 {user?.email || "alex.della@outlook.com"}
@@ -88,7 +88,7 @@ const ProfileModal = () => {
             </div>
           </div>
         </div>
-        <div className="dropdown">
+        {/* <div className="dropdown">
           <a href="#" className="dropdown-item" data-bs-toggle="dropdown">
             <span className="hstack">
               <i className="wd-10 ht-10 border border-2 border-gray-1 bg-success rounded-circle me-2"></i>
@@ -115,9 +115,9 @@ const ProfileModal = () => {
               );
             })}
           </div>
-        </div>
-        <div className="dropdown-divider"></div>
-        <div className="dropdown">
+        </div> */}
+        {/* <div className="dropdown-divider"></div> */}
+        {/* <div className="dropdown">
           <a href="#" className="dropdown-item" data-bs-toggle="dropdown">
             <span className="hstack">
               <i className=" me-2">
@@ -144,8 +144,8 @@ const ProfileModal = () => {
               );
             })}
           </div>
-        </div>
-        <div className="dropdown-divider"></div>
+        </div> */}
+        {/* <div className="dropdown-divider"></div> */}
         <Link href="/customers/profile" className="dropdown-item">
           <i>
             <FiUser />

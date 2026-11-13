@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import sanitizeHtml from "sanitize-html";
 
+import { createSignedUrl } from "@/services/storage/createSignedUrl.service";
+import { getOrganizationBucket } from "@/utils/storage/getOrganizationBucket";
+
+
 export async function createLeaveCommentService(commentData, leaveId, currentUser) {
   try {
     const organizationId = currentUser.organizationId;
@@ -96,7 +100,6 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
         id: leaveId,
         organizationId,
       },
-
       include: {
         user: {
           select: {
@@ -110,17 +113,13 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
 
     if (!leave) {
       const error = new Error("Leave not found");
-
       error.statusCode = 404;
-
       throw error;
     }
 
     if (leave.userId !== currentUser.id && currentUser.role !== "ADMIN") {
       const error = new Error("You are not allowed to view comments");
-
       error.statusCode = 403;
-
       throw error;
     }
 
@@ -129,7 +128,6 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
         leaveId,
         organizationId,
       },
-
       include: {
         user: {
           select: {
@@ -138,61 +136,107 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
           },
         },
       },
-
       orderBy: {
         createdAt: "asc",
       },
     });
 
+    // Get organization storage bucket
+    const bucket = getOrganizationBucket(organizationId);
+
+    // Cache signed URLs to avoid generating duplicate URLs
+    const imageUrlCache = new Map();
+
+    // Generate signed URL for profile images
+    const getSignedProfileImage = async (imagePath) => {
+      if (!imagePath) return null;
+
+      const storagePath = imagePath.replace(/[\r\n]/g, "").trim();
+
+      if (!storagePath) return null;
+
+      try {
+        if (imageUrlCache.has(storagePath)) {
+          return await imageUrlCache.get(storagePath);
+        }
+
+        const signedUrlPromise = createSignedUrl({
+          bucket,
+          storagePath,
+          expiresIn: 300,
+        }).then((result) => result.signedUrl);
+
+        imageUrlCache.set(storagePath, signedUrlPromise);
+
+        return await signedUrlPromise;
+      } catch (error) {
+        console.error("Failed to generate leave comment profile image URL:", {
+          organizationId,
+          storagePath,
+          message: error.message,
+        });
+
+        imageUrlCache.delete(storagePath);
+        return null;
+      }
+    };
+
+    // Format initial leave application note
     const initialNote = leave.reason
       ? [
-          {
-            id: `leave-note-${leave.id}`,
-
-            leaveId: leave.id,
-
-            userId: leave.userId,
-
-            message: leave.reason,
-
-            createdAt: leave.createdAt,
-
-            user: {
-              fullName: leave.user.fullName,
-
-              profileImageUrl: leave.user.profileImageUrl,
-            },
-
-            isInitialNote: true,
-          },
-        ]
+        {
+          id: `leave-note-${leave.id}`,
+          leaveId: leave.id,
+          userId: leave.userId,
+          message: leave.reason,
+          createdAt: leave.createdAt,
+          user: leave.user
+            ? {
+              ...leave.user,
+              profileImageUrl: await getSignedProfileImage(
+                leave.user.profileImageUrl
+              ),
+            }
+            : null,
+          isInitialNote: true,
+        },
+      ]
       : [];
 
-    return [...initialNote, ...comments];
+    // Format comments with signed profile image URLs
+    const formattedComments = await Promise.all(
+      comments.map(async (comment) => ({
+        ...comment,
+        user: comment.user
+          ? {
+            ...comment.user,
+            profileImageUrl: await getSignedProfileImage(
+              comment.user.profileImageUrl
+            ),
+          }
+          : null,
+      }))
+    );
+
+    return [...initialNote, ...formattedComments];
   } catch (error) {
     console.error("Get Leave Comments Service Error:", error);
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       const customError = new Error("Database operation failed.");
-
       customError.statusCode = 500;
-
       throw customError;
     }
 
     if (error instanceof Prisma.PrismaClientValidationError) {
       const customError = new Error("Database validation failed.");
-
       customError.statusCode = 500;
-
       throw customError;
     }
 
     if (error instanceof Prisma.PrismaClientInitializationError) {
       const customError = new Error("Database connection failed.");
-
       customError.statusCode = 500;
-
       throw customError;
     }
 
