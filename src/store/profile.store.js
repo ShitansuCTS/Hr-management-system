@@ -201,24 +201,24 @@ export const useProfileStore = create((set, get) => ({
         set((state) => ({
           ...(state.profileKey === profileKey
             ? {
-                profile,
-                profileFetchedAt: Date.now(),
-                profileError: "",
-              }
+              profile,
+              profileFetchedAt: Date.now(),
+              profileError: "",
+            }
             : {}),
           ...(state.activityEmployeeId === normalizedEmployeeId
             ? {
-                activities: [
-                  {
-                    id: `optimistic-profile-updated-${Date.now()}`,
-                    action: "PROFILE_UPDATED",
-                    description: "Employee profile updated by ADMIN.",
-                    createdAt: new Date().toISOString(),
-                  },
-                  ...state.activities,
-                ],
-                activitiesFetchedAt: Date.now(),
-              }
+              activities: [
+                {
+                  id: `optimistic-profile-updated-${Date.now()}`,
+                  action: "PROFILE_UPDATED",
+                  description: "Employee profile updated by ADMIN.",
+                  createdAt: new Date().toISOString(),
+                },
+                ...state.activities,
+              ],
+              activitiesFetchedAt: Date.now(),
+            }
             : {}),
           profileUpdateLoading: false,
         }));

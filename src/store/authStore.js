@@ -107,15 +107,14 @@ export const useAuthStore = create((set, get) => ({
     // Fetch Profile
     // =============================
     fetchProfile: async (force = false) => {
-        if (get().initialized && !force) return get().user;
         const requestVersion = authRequestVersion;
 
         try {
-            set({
-                loading: true,
-            });
+            set({ loading: true });
 
-            const user = await useProfileStore.getState().fetchProfile(null, force);
+            const user = await useProfileStore
+                .getState()
+                .fetchProfile(null, force);
 
             if (requestVersion !== authRequestVersion) return get().user;
 
@@ -125,6 +124,7 @@ export const useAuthStore = create((set, get) => ({
                 initialized: true,
                 isAuthenticated: !!user,
             });
+
             return user;
         } catch (error) {
             console.error("Fetch Profile Error:", error);
@@ -137,6 +137,7 @@ export const useAuthStore = create((set, get) => ({
                 initialized: true,
                 isAuthenticated: false,
             });
+
             return null;
         }
     },
@@ -158,7 +159,7 @@ export const useAuthStore = create((set, get) => ({
     // Refresh Profile
     // =============================
     refreshProfile: async () => {
-        await get().fetchProfile(true);
+        return await get().fetchProfile(true);
     },
 
     // =============================

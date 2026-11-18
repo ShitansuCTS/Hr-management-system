@@ -56,7 +56,7 @@ export async function GET(request) {
         const signedUrl = await createSignedUrl({
           bucket,
           storagePath,
-          expiresIn: 300,
+          expiresIn: 3600, // 1 hour
         });
 
         profileImageUrl = signedUrl.signedUrl;

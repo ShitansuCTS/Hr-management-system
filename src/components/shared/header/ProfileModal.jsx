@@ -73,6 +73,7 @@ const ProfileModal = () => {
           <div className="d-flex align-items-center">
             <img
               src={user?.profileImageUrl || "/images/avatar/1.png"}
+              // src={user?.profileImageUrl || "/images/avatar/1.png"}
               alt="user-image"
               className="img-fluid user-avtar"
               style={{ width: "40px", height: "40px" }}
