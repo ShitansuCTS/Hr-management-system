@@ -88,7 +88,7 @@ export async function getDocumentsService(employeeId, currentUser) {
         const { signedUrl: fileUrl } = await createSignedUrl({
           bucket,
           storagePath: document.storagePath,
-          expiresIn: 300,
+          expiresIn: 3600,
         });
 
         return {

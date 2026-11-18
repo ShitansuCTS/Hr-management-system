@@ -248,7 +248,7 @@ export async function getAllUsersDetailsService(currentUser, departmentId) {
           const signedUrl = await createSignedUrl({
             bucket,
             storagePath: user.profileImageUrl,
-            expiresIn: 300,
+            expiresIn: 3600,
           });
 
           console.log("image link", signedUrl.signedUrl);
