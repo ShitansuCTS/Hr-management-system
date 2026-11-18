@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { createProfileImageUrlResolver } from "@/services/storage/createProfileImageUrlResolver.service";
 
 export async function getDashboardService(currentUser) {
   try {
@@ -55,12 +56,25 @@ export async function getDashboardService(currentUser) {
         }),
       ]);
 
+    const getProfileImageUrl = createProfileImageUrlResolver(
+      organizationId,
+      "Failed to generate dashboard profile image URL:"
+    );
+    const usersWithProfileImageUrls = await Promise.all(
+      users.map(async (user) => ({
+        ...user,
+        profileImageUrl: await getProfileImageUrl(user.profileImageUrl, {
+          userId: user.id,
+        }),
+      }))
+    );
+
     const totalEmployees = users.length;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const upcomingBirthdays = users
+    const upcomingBirthdays = usersWithProfileImageUrls
       .filter((u) => u.dateOfBirth)
       .map((user) => {
         const dob = new Date(user.dateOfBirth);
@@ -89,7 +103,7 @@ export async function getDashboardService(currentUser) {
         };
       });
 
-    const upcomingAnniversaries = users
+    const upcomingAnniversaries = usersWithProfileImageUrls
       .filter((u) => u.dateOfJoining)
       .map((user) => {
         const doj = new Date(user.dateOfJoining);
@@ -150,9 +164,9 @@ export async function getDashboardService(currentUser) {
       );
     };
     const charts = {
-      department: groupCount(users, "department"),
-      employmentType: groupCount(users, "employmentType"),
-      status: groupCount(users, "status"),
+      department: groupCount(usersWithProfileImageUrls, "department"),
+      employmentType: groupCount(usersWithProfileImageUrls, "employmentType"),
+      status: groupCount(usersWithProfileImageUrls, "status"),
     };
 
     return {

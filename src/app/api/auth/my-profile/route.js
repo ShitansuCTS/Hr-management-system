@@ -90,6 +90,8 @@ export async function GET(request) {
       }
     }
 
+    console.log("THE PROFILE IMAGE URL IS", profileImageUrl);
+
     return NextResponse.json({
       success: true,
       user: {

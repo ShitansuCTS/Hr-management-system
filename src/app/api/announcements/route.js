@@ -129,7 +129,7 @@ export async function POST(request) {
 
     // send email to all the users
     await resend.emails.send({
-      from: "HR Team <hr@odishabiz.com>",
+      from: "HR Team <admin@testctsl.in>",
       to: emailList, // 👈 bulk emails here
       subject: subject,
       html: `

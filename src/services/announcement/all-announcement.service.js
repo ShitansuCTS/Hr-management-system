@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { createProfileImageUrlResolver } from "@/services/storage/createProfileImageUrlResolver.service";
 
 export async function getAllAnnouncementService(currentUser) {
   try {
@@ -70,7 +71,27 @@ export async function getAllAnnouncementService(currentUser) {
       throw error;
     }
 
-    return allAnnouncements;
+    const getProfileImageUrl = createProfileImageUrlResolver(
+      currentUser.organizationId,
+      "Failed to generate announcement author profile image URL:"
+    );
+
+    const announcementsWithProfileImageUrls = await Promise.all(
+      allAnnouncements.map(async (announcement) => ({
+        ...announcement,
+        createdBy: announcement.createdBy
+          ? {
+              ...announcement.createdBy,
+              profileImageUrl: await getProfileImageUrl(
+                announcement.createdBy.profileImageUrl,
+                { userId: announcement.createdBy.id }
+              ),
+            }
+          : announcement.createdBy,
+      }))
+    );
+
+    return announcementsWithProfileImageUrls;
   } catch (error) {
     console.error("Get All Announcements Service Error:", error);
 
