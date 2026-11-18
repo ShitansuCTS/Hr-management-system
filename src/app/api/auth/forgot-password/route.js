@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import crypto from "crypto";
 import { Resend } from "resend";
+import { passwordResetTemplate } from "@/templates/passwordReset.template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -40,13 +41,12 @@ export async function POST(request) {
     // 🔗 Create reset link (send raw token in URL)
     const resetLink = `${process.env.BASE_URL}/authentication/reset/reset-password/${resetToken}`;
 
-    console.log("The reset link is ,", resetLink);
-
     // 📧 Send Email using Resend
     await resend.emails.send({
-      from: "Crushaders Erp <noreply@odishabiz.com>",
+      from: "Crushaders Erp <admin@testctsl.in>",
       to: email,
-      subject: "Password Reset Request",
+      subject: "Reset your Crushaders account password",
+      html: passwordResetTemplate(user.fullName, resetLink),
       text: `Click the link below to reset your password:\n\n${resetLink}`,
     });
 

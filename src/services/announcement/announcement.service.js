@@ -113,7 +113,7 @@ export async function createAnnouncementService(announcementData, currentUser) {
     });
 
     const emailResponse = await resend.emails.send({
-      from: "HR Team <hr@odishabiz.com>",
+      from: "HR Team <admin@testctsl.in>",
 
       to: emailList,
 

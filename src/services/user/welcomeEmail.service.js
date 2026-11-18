@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWelcomeEmail(user) {
   try {
     await resend.emails.send({
-      from: "HR Team <hr@odishabiz.com>",
+      from: "HR Team <admin@testctsl.in>",
 
       to: user.email,
 
