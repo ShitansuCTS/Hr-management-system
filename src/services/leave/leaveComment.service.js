@@ -163,7 +163,7 @@ export async function getLeaveCommentsService(leaveId, currentUser) {
         const signedUrlPromise = createSignedUrl({
           bucket,
           storagePath,
-          expiresIn: 300,
+          expiresIn: 3600,
         }).then((result) => result.signedUrl);
 
         imageUrlCache.set(storagePath, signedUrlPromise);

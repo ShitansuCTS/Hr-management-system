@@ -92,7 +92,7 @@ export async function getSingleDocumentService(employeeId, documentId, currentUs
     const { signedUrl: downloadUrl } = await createSignedUrl({
       bucket: getOrganizationBucket(organizationId),
       storagePath: document.storagePath,
-      expiresIn: 300,
+      expiresIn: 3600,
     });
 
     if (!downloadUrl) {
@@ -114,7 +114,7 @@ export async function getSingleDocumentService(employeeId, documentId, currentUs
       createdAt: document.createdAt,
       updatedAt: document.updatedAt,
       downloadUrl,
-      expiresIn: 300,
+      expiresIn: 3600,
     };
   } catch (error) {
     console.error("Get User Document Service Error:", error);

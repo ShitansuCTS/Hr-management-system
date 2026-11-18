@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase";
 
-export async function createSignedUrl({ bucket, storagePath, expiresIn = 300 }) {
+export async function createSignedUrl({ bucket, storagePath, expiresIn = 3600 }) {
   try {
     if (!bucket) {
       const error = new Error("Storage bucket is required.");

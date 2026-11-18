@@ -23,7 +23,7 @@ export function createProfileImageUrlResolver(organizationId, logMessage) {
           createSignedUrl({
             bucket,
             storagePath,
-            expiresIn: 300,
+            expiresIn: 3600,
           }).then(({ signedUrl }) => signedUrl)
         );
       }

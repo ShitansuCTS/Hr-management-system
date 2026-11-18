@@ -62,7 +62,7 @@ export async function getUserProfileService(employeeId, currentUser) {
         const signedUrl = await createSignedUrl({
           bucket,
           storagePath: safeUser.profileImageUrl,
-          expiresIn: 300,
+          expiresIn: 3600,
         });
 
         profileImageUrl = signedUrl.signedUrl;
