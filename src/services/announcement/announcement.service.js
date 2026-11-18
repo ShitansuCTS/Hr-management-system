@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { createProfileImageUrlResolver } from "@/services/storage/createProfileImageUrlResolver.service";
 import { Resend } from "resend";
 import sanitizeHtml from "sanitize-html";
 import { announcementTemplate } from "@/templates/announcement.template";
@@ -210,7 +211,31 @@ export async function getAnnouncementService(currentUser) {
       },
     });
 
-    return announcements;
+    const getProfileImageUrl = createProfileImageUrlResolver(
+      currentUser.organizationId,
+      "Failed to generate announcement recipient profile image URL:"
+    );
+
+    const announcementsWithProfileImageUrls = await Promise.all(
+      announcements.map(async (announcement) => ({
+        ...announcement,
+        recipients: await Promise.all(
+          announcement.recipients.map(async (recipient) => ({
+            ...recipient,
+            user: recipient.user
+              ? {
+                  ...recipient.user,
+                  profileImageUrl: await getProfileImageUrl(
+                    recipient.user.profileImageUrl
+                  ),
+                }
+              : recipient.user,
+          }))
+        ),
+      }))
+    );
+
+    return announcementsWithProfileImageUrls;
   } catch (error) {
     console.error("Get announcement service failed:", error);
 
